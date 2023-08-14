@@ -4,7 +4,6 @@ from multiprocessing import Pool
 from sklearn.neighbors import KDTree
 from functools import partial
 import gudhi as gd
-from sklearn.neighbors import KernelDensity
 
 
 def hausd_distance(X, m, pairwise_dist, *args):
@@ -73,11 +72,38 @@ def bootstrap_distance_interval(
 
 
 def bootstrap_function_interval(
-    X,
-    alpha=0.05,
-    B=100,
-    value_function=None,
-    **value_function_params,
+        X,
+        alpha=0.05,
+        B=100,
+        ncores=None,
+        value_function=None,
+        grid_n=100,
+        **value_function_params
 ):
-    
-    
+    n = np.size(X, 0)
+
+    def parallel_distance():
+        idxs = np.random.choice(n, n)
+        bootstrap_X = X[idxs, :]
+        bootstrap_f_values = value_function(bootstrap_X, positions)
+        bootstrap_dgm = gd.CubicalComplex(
+            dimensions=[nx, ny], top_dimensional_cells=bootstrap_f_values
+        ).persistence()
+        return gd.bottleneck_distance(dgm, bootstrap_dgm)
+
+    col_mins = np.min(X, axis=0)
+    col_maxs = np.max(X, axis=0)
+    step = np.max(col_maxs - col_mins) / grid_n
+    xval = np.arange(0, 10, step)
+    yval = np.arange(0, 10, step)
+    nx = len(xval)
+    ny = len(yval)
+    positions = np.array([[u, v] for u in xval for v in yval])
+    f_values = value_function(X, positions)
+    dgm = gd.CubicalComplex(dimensions=[nx, ny], top_dimensional_cells=f_values).persistence()
+
+    with Pool(ncores) as p:
+        dist_vec = p.map(parallel_distance, ["identifier_map"]*B)
+    p.close()
+
+    return np.quantile(dist_vec, 1 - alpha)
