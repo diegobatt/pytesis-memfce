@@ -2,13 +2,17 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from scipy.stats import truncnorm
+import seaborn as sns
 
 
-def ggplot_dataset(X, title="Conjunto de datos", h=None):
+plt.style.use("seaborn")
+
+
+def ggplot_dataset(X, title="Conjunto de datos"):
     df = pd.DataFrame(X, columns=["x", "y"])
     plt.figure()
-    plt.hist2d(df["x"], df["y"], bins=100, cmap="viridis", cmin=1, alpha=0.7)
-    plt.colorbar()
+    sns.kdeplot(data=df, x="x", y="y", fill=True, cut=1, cmap="PuBu", bw_method=0.3)
+    plt.scatter(x=df["x"], y=df["y"], alpha=0.5)
     plt.title(title)
     plt.xlabel("x")
     plt.ylabel("y")

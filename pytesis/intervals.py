@@ -38,7 +38,7 @@ def get_birth_death(dgm: Dgm) -> BirthDeaths:
 
 def kde_value_f(X, positions, h=0.3):
     kde = KernelDensity(kernel="gaussian", bandwidth=h).fit(X)
-    return -kde.score_samples(positions)
+    return -kde.score_samples(X=positions)
 
 
 def hausd_distance(X, m, pairwise_dist):
@@ -48,8 +48,8 @@ def hausd_distance(X, m, pairwise_dist):
     idxs_complement = [item for item in np.arange(n) if item not in idxs]
     if pairwise_dist:
         return np.max([np.min(X[idxs, j]) for j in idxs_complement])
-    tree = KDTree(X[idxs,], leaf_size=2)
-    dist, _ = tree.query(X[idxs_complement,], k=1)
+    tree = KDTree(X[idxs, ], leaf_size=2)
+    dist, _ = tree.query(X[idxs_complement, ], k=1)
     hdist = max(dist)
     return hdist[0]
 
@@ -144,9 +144,11 @@ def bootstrap_function_interval(
     n = np.size(X, 0)
     col_mins = np.min(X, axis=0)
     col_maxs = np.max(X, axis=0)
+    col_mins *= (1 - 2 * 0.3 * np.sign(col_mins))
+    col_maxs *= (1 + 2 * 0.3 * np.sign(col_maxs))
     step = np.max(col_maxs - col_mins) / grid_n
-    xval = np.arange(0, 10, step)
-    yval = np.arange(0, 10, step)
+    xval = np.arange(col_mins[0], col_maxs[0], step)
+    yval = np.arange(col_mins[1], col_maxs[1], step)
     nx = len(xval)
     ny = len(yval)
     positions = np.array([[u, v] for u in xval for v in yval])

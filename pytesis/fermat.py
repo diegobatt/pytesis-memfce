@@ -4,13 +4,7 @@ from sklearn.metrics import pairwise_distances
 import networkx as nx
 
 
-class FermatDistance:
-    def __init__(self, sp, method):
-        self.sp = sp
-        self.method = method
-
-
-def fermat_dist(X, method="full", alpha=2, landmarks_frac=0.1):
+def fermat_dist(X, method="full", alpha=2, landmarks_frac=0.1) -> np.ndarray:
     available_methods = ["full", "knn", "landmarks"]
     if method not in available_methods:
         raise ValueError("Method is not available")
@@ -47,7 +41,5 @@ def fermat_dist(X, method="full", alpha=2, landmarks_frac=0.1):
         sp = pd.DataFrame(sp)
         sp = sp.sort_index(axis=0).sort_index(axis=1).to_numpy()
 
-    return FermatDistance(sp=sp, method=method)
-
-# Example usage
+    return sp
 
