@@ -25,6 +25,7 @@ Xtype = NDArray[np.float64]
 @dataclass
 class IntervalResult:
     dgm: Dgm
+    distances: np.ndarray
     width: float
 
     @property
@@ -74,7 +75,7 @@ def hausd_interval(
     dgm = rips_complex.create_simplex_tree(max_dimension=2).persistence()
     width = 2 * np.quantile(dist_vec, 1 - alpha)
 
-    return IntervalResult(width=width, dgm=dgm)
+    return IntervalResult(width=width, dgm=dgm, distances=dist_vec)
 
 
 def _parallel_dgm_distance(
@@ -110,7 +111,7 @@ def bootstrap_distance_interval(
     p.close()
 
     width = np.quantile(dist_vec, 1 - alpha)
-    return IntervalResult(width=width, dgm=dgm)
+    return IntervalResult(width=width, dgm=dgm, distances=dist_vec)
 
 
 def _parallel_function_dgm_distance(
@@ -164,4 +165,4 @@ def bootstrap_function_interval(
         dist_vec = p.map(parallel_distance, np.arange(B))
     p.close()
     width = np.quantile(dist_vec, 1 - alpha)
-    return IntervalResult(width=width, dgm=dgm)
+    return IntervalResult(width=width, dgm=dgm, distances=dist_vec)

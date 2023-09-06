@@ -58,9 +58,9 @@ def arc(center=(0, 0), r=1, n=500, sampling="uniform", max_abs_angle=np.pi, angl
         theta = truncnorm.rvs(-max_abs_angle, max_abs_angle, loc=0, scale=angle_sd, size=n)
     else:
         raise ValueError("Sampling should be either 'uniform' or 'normal'")
-
-    x = center[0] + r * np.cos(theta - angle_shift)
-    y = center[1] + r * np.sin(theta - angle_shift)
+    r = [r] if not hasattr(r, "__getitem__") else r
+    x = center[0] + r[0] * np.cos(theta - angle_shift)
+    y = center[1] + r[len(r) - 1] * np.sin(theta - angle_shift)
     return np.column_stack((x, y))
 
 

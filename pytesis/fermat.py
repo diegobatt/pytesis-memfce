@@ -10,7 +10,7 @@ def fermat_dist(X, method="full", alpha=2, landmarks_frac=0.1) -> np.ndarray:
         raise ValueError("Method is not available")
 
     n = X.shape[0]
-    dist_matrix = pairwise_distances(X, metric="euclidean", squared=True) ** alpha
+    dist_matrix = pairwise_distances(X, metric="euclidean") ** alpha
 
     if method == "knn":
         k = int(np.sqrt(n))
