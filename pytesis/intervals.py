@@ -10,7 +10,7 @@ import numpy as np
 from numpy.typing import NDArray
 from sklearn.neighbors import KDTree, KernelDensity
 
-logging.basicConfig(level=logging.INFO)
+# logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("intervals")
 
 
@@ -39,7 +39,8 @@ def get_birth_death(dgm: Dgm) -> BirthDeaths:
 
 def kde_value_f(X, positions, h=0.3):
     kde = KernelDensity(kernel="gaussian", bandwidth=h).fit(X)
-    return -kde.score_samples(X=positions)
+    score = -np.exp(kde.score_samples(positions))
+    return score
 
 
 def hausd_distance(X, m, pairwise_dist):
@@ -147,9 +148,8 @@ def bootstrap_function_interval(
     col_maxs = np.max(X, axis=0)
     col_mins *= (1 - 2 * 0.3 * np.sign(col_mins))
     col_maxs *= (1 + 2 * 0.3 * np.sign(col_maxs))
-    step = np.max(col_maxs - col_mins) / grid_n
-    xval = np.arange(col_mins[0], col_maxs[0], step)
-    yval = np.arange(col_mins[1], col_maxs[1], step)
+    xval = np.linspace(col_mins[0], col_maxs[0], num=grid_n)
+    yval = np.linspace(col_mins[1], col_maxs[1], num=grid_n)
     nx = len(xval)
     ny = len(yval)
     positions = np.array([[u, v] for u in xval for v in yval])

@@ -1,7 +1,11 @@
+import logging
 import numpy as np
 import pandas as pd
 from sklearn.metrics import pairwise_distances
 import networkx as nx
+
+
+logger = logging.getLogger("fermat")
 
 
 def fermat_dist(X, method="full", alpha=2, landmarks_frac=0.1) -> np.ndarray:
@@ -11,6 +15,7 @@ def fermat_dist(X, method="full", alpha=2, landmarks_frac=0.1) -> np.ndarray:
 
     n = X.shape[0]
     dist_matrix = pairwise_distances(X, metric="euclidean") ** alpha
+    logger.info("Finished computing pairwise distances")
 
     if method == "knn":
         k = int(np.sqrt(n))
@@ -21,7 +26,7 @@ def fermat_dist(X, method="full", alpha=2, landmarks_frac=0.1) -> np.ndarray:
             dist_matrix[remove_nodes, i] = 0
 
     g = nx.from_numpy_array(dist_matrix, create_using=nx.Graph)
-
+    logger.info("Finished creating graph from matrix")
     if method == "landmarks":
         landmarks_ids = np.random.choice(n, size=int(n * landmarks_frac), replace=False)
         landmarks_sp = dict(nx.single_source_dijkstra_path_length(g, source=None, cutoff=None, weight='weight'))
@@ -37,9 +42,11 @@ def fermat_dist(X, method="full", alpha=2, landmarks_frac=0.1) -> np.ndarray:
                 sp[i, j] = min_path
 
     else:
-        sp = dict(nx.all_pairs_dijkstra_path_length(g, weight='weight'))
-        sp = pd.DataFrame(sp)
-        sp = sp.sort_index(axis=0).sort_index(axis=1).to_numpy()
+        # sp = dict(nx.all_pairs_dijkstra_path_length(g, weight='weight'))
+        logger.info("Computed all shortest paths")
+        # sp = pd.DataFrame(sp)
+        # sp = sp.sort_index(axis=0).sort_index(axis=1).to_numpy()
+        sp = nx.floyd_warshall_numpy(g, weight="weight")
 
     return sp
 
