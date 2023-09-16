@@ -9,6 +9,15 @@ import seaborn as sns
 plt.style.use("seaborn")
 
 
+def _ellipse_length(d1, d2) -> float:
+    r1 = d1 / 2
+    r2 = d2 / 2
+    a_ellipse = max(r1, r2)
+    b_ellipse = min(r1, r2)
+    e_ellipse = 1.0 - b_ellipse**2/a_ellipse**2
+    return 4 * a_ellipse * ellipe(e_ellipse)
+
+
 def ggplot_dataset(X, title="Conjunto de datos"):
     df = pd.DataFrame(X, columns=["x", "y"])
     plt.figure()
@@ -30,14 +39,7 @@ def eyeglasses(center=(0, 0), r=1, separation=3, n=500, bridge_height=0.2, exclu
 
     tunnel_offset = r * np.cos(exclude_theta)
     tunnel_diameter = separation - 2 * tunnel_offset
-
-    # tunnel_length = 2 * np.pi / 2 * np.sqrt(tunnel_diameter**2 + bridge_height**2) / 2
-    # tunnel_length = 2 * np.pi / 2 * np.sqrt(tunnel_diameter**2 + bridge_height**2) / 4
-    a_ellipse = max(bridge_height / 2, tunnel_diameter / 2)
-    b_ellipse = min(bridge_height / 2, tunnel_diameter / 2)
-    e_ellipse = 1.0 - b_ellipse**2/a_ellipse**2
-    # circumference formula
-    tunnel_length = 4 * a_ellipse * ellipe(e_ellipse) / 2
+    tunnel_length = _ellipse_length(bridge_height, tunnel_diameter) / 2
 
     arc_length = 2 * effective_angle * r
     total_length = 2 * arc_length + 2 * tunnel_length
