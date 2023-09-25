@@ -43,9 +43,9 @@ def fermat_dist(X, method="full", alpha=2, landmarks_frac=0.1) -> np.ndarray:
 
     else:
         # sp = dict(nx.all_pairs_dijkstra_path_length(g, weight='weight'))
-        logger.info("Computed all shortest paths")
         # sp = pd.DataFrame(sp)
         # sp = sp.sort_index(axis=0).sort_index(axis=1).to_numpy()
+        logger.info("Computed all shortest paths")
         sp = nx.floyd_warshall_numpy(g, weight="weight")
 
     return sp

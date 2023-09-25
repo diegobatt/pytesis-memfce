@@ -33,14 +33,22 @@ class IntervalResult:
         return np.sqrt(2) * self.width
 
 
-def get_birth_death(dgm: Dgm) -> BirthDeaths:
-    return np.array([x[1] for x in dgm])
-
-
-def kde_value_f(X, positions, h=0.3):
-    kde = KernelDensity(kernel="gaussian", bandwidth=h).fit(X)
-    score = -np.exp(kde.score_samples(positions))
-    return score
+def plot_result(result: IntervalResult, title="Diagrama de Persistencia", ax=None):
+    ax = gd.plot_persistence_diagram(result.dgm, axes=ax)
+    max_lim = max(ax.get_xlim()[1], ax.get_ylim()[1])
+    min_lim = min(ax.get_xlim()[0], ax.get_ylim()[0])
+    base_line = np.array([min_lim, max_lim])
+    ax.plot(base_line, base_line + result.band)
+    ax.fill_between(
+        x=base_line,
+        y1=base_line,
+        y2=base_line + result.band,
+        alpha=0.3
+    )
+    ax.set_xlabel("Nacimiento")
+    ax.set_ylabel("Muerte")
+    ax.set_title(title)
+    return ax
 
 
 def hausd_distance(X, m, pairwise_dist):

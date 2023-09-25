@@ -9,6 +9,18 @@ import seaborn as sns
 plt.style.use("seaborn")
 
 
+def plot_dataset(X, title="Conjunto de datos", ax=None):
+    df = pd.DataFrame(X, columns=["x", "y"])
+    if ax is None:
+        ax = plt.gca()
+    sns.kdeplot(data=df, x="x", y="y", fill=True, cut=1, cmap="Blues", ax=ax)
+    ax.scatter(x=df["x"], y=df["y"], alpha=0.5)
+    ax.set_title(title)
+    ax.set_xlabel("x")
+    ax.set_ylabel("y")
+    return ax
+
+
 def _ellipse_length(d1, d2) -> float:
     r1 = d1 / 2
     r2 = d2 / 2
@@ -16,17 +28,6 @@ def _ellipse_length(d1, d2) -> float:
     b_ellipse = min(r1, r2)
     e_ellipse = 1.0 - b_ellipse**2/a_ellipse**2
     return 4 * a_ellipse * ellipe(e_ellipse)
-
-
-def ggplot_dataset(X, title="Conjunto de datos"):
-    df = pd.DataFrame(X, columns=["x", "y"])
-    plt.figure()
-    sns.kdeplot(data=df, x="x", y="y", fill=True, cut=1, cmap="PuBu", bw_method=0.3)
-    plt.scatter(x=df["x"], y=df["y"], alpha=0.5)
-    plt.title(title)
-    plt.xlabel("x")
-    plt.ylabel("y")
-    plt.show()
 
 
 def eyeglasses(center=(0, 0), r=1, separation=3, n=500, bridge_height=0.2, exclude_theta=None):
@@ -103,10 +104,3 @@ def add_dummy_dimensions(X, d=1):
     n, _ = X.shape
     new_columns = np.random.normal(0, 1, (n, d))
     return np.hstack((X, new_columns))
-
-# # Example usage
-# X = eyeglasses(center=(0, 0), r=1, separation=3, n=2000, bridge_height=0.2)
-# X = add_noise(X, sd=0.05)
-# X = add_outliers(X, frac=0.05, iqr_factor=1.5)
-# X = add_dummy_dimensions(X, d=1)
-# ggplot_dataset(X)
