@@ -4,6 +4,8 @@ import pandas as pd
 from scipy.stats import truncnorm
 from scipy.special import ellipe
 import seaborn as sns
+import pathlib
+
 
 
 plt.style.use("seaborn")
@@ -81,6 +83,27 @@ def filled_circle(center=(0, 0), max_r=1, r_power=4, n=500):
     x = center[0] + r * np.cos(theta)
     y = center[1] + r * np.sin(theta)
     return np.column_stack((x, y))
+
+
+def football_sensor(tag_id: int, second_half: bool = False):
+    root_path = pathlib.Path(__file__).parent.parent.resolve()
+    df = pd.read_csv(f"{root_path}/datasets/2013-11-03_tromso_stromsgodset_raw_first.csv")
+    if second_half:
+        second_df = pd.read_csv("../datasets/2013-11-03_tromso_stromsgodset_raw_second.csv")
+        df = pd.concat([df, second_df])
+    df.columns = [
+        "timestamp",
+        "tag_id",
+        "x",
+        "y",
+        "heading",
+        "direction",
+        "energy",
+        "speed",
+        "total_distance"
+    ]
+    df.query("tag_id == @tag_id", inplace=True)
+    return df[["x", "y"]]
 
 
 def add_noise(X, sd=1):
