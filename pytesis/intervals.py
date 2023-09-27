@@ -7,26 +7,28 @@ from typing import Callable
 
 import gudhi as gd
 import numpy as np
-from numpy.typing import NDArray
-from sklearn.neighbors import KDTree, KernelDensity
+
+from pytesis.tda import (
+    BirthDeaths,
+    Dgm,
+    Xtype,
+    build_distance_diagram,
+    build_function_diagram,
+    get_birth_death,
+    hausd_distance,
+    make_grid,
+)
 
 # logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger("intervals")
-
-
+LOGGER = logging.getLogger("intervals")
 DEFAULT_CORES = mp.cpu_count()
-
-
-BirthDeaths = list[tuple[float, float]]
-Dgm = list[tuple[int, tuple[float, float]]]
-Xtype = NDArray[np.float64]
 
 
 @dataclass
 class IntervalResult:
     dgm: Dgm
-    distances: np.ndarray
-    width: float
+    distances: list[np.float64]
+    width: np.float64
 
     @property
     def band(self):
@@ -39,33 +41,15 @@ def plot_result(result: IntervalResult, title="Diagrama de Persistencia", ax=Non
     min_lim = min(ax.get_xlim()[0], ax.get_ylim()[0])
     base_line = np.array([min_lim, max_lim])
     ax.plot(base_line, base_line + result.band)
-    ax.fill_between(
-        x=base_line,
-        y1=base_line,
-        y2=base_line + result.band,
-        alpha=0.3
-    )
+    ax.fill_between(x=base_line, y1=base_line, y2=base_line + result.band, alpha=0.3)
     ax.set_xlabel("Nacimiento")
     ax.set_ylabel("Muerte")
     ax.set_title(title)
     return ax
 
 
-def hausd_distance(X, m, pairwise_dist):
-    n = np.size(X, 0)
-    m = m or int(4 * n / np.log(n))
-    idxs = np.random.choice(n, m)
-    idxs_complement = [item for item in np.arange(n) if item not in idxs]
-    if pairwise_dist:
-        return np.max([np.min(X[idxs, j]) for j in idxs_complement])
-    tree = KDTree(X[idxs, ], leaf_size=2)
-    dist, _ = tree.query(X[idxs_complement, ], k=1)
-    hdist = max(dist)
-    return hdist[0]
-
-
 def _parallel_hausd_distance(X, m, pairwise_dist, ix):
-    logger.info("Iteration: %s", ix)
+    LOGGER.info("Iteration: %s", ix)
     return hausd_distance(X, m, pairwise_dist)
 
 
@@ -80,26 +64,19 @@ def hausd_interval(
         dist_vec = p.map(parallel_distance, np.arange(B))
     p.close()
 
-    rips_complex = gd.RipsComplex(distance_matrix=X) if pairwise_dist else gd.RipsComplex(points=X)
-    dgm = rips_complex.create_simplex_tree(max_dimension=2).persistence()
+    dgm = build_distance_diagram(X, pairwise_dist=pairwise_dist)
     width = 2 * np.quantile(dist_vec, 1 - alpha)
 
     return IntervalResult(width=width, dgm=dgm, distances=dist_vec)
 
 
-def _parallel_dgm_distance(
+def _parallel_distance_dgm(
     X: Xtype, base_dgm: BirthDeaths, n: int, dist_function: Callable | None, ix
 ):
-    logger.info("Iteration: %s", ix)
+    LOGGER.info("Iteration: %s", ix)
     idxs = np.random.choice(n, n)
     bootstrap_X = X[idxs, :]
-    if dist_function:
-        complex_kwargs = {"distance_matrix": dist_function(bootstrap_X)}
-    else:
-        complex_kwargs = {"points": bootstrap_X}
-    bootstrap_dgm = (
-        gd.RipsComplex(**complex_kwargs).create_simplex_tree(max_dimension=2).persistence()
-    )
+    bootstrap_dgm = build_distance_diagram(bootstrap_X, dist_function)
     return gd.bottleneck_distance(base_dgm, get_birth_death(bootstrap_dgm))
 
 
@@ -107,14 +84,10 @@ def bootstrap_distance_interval(
     X, alpha=0.05, dist_function=None, B=100, ncores=DEFAULT_CORES
 ) -> IntervalResult:
     n = np.size(X, 0)
-    if dist_function:
-        complex_kwargs = {"distance_matrix": dist_function(X)}
-    else:
-        complex_kwargs = {"points": X}
-    dgm = gd.RipsComplex(**complex_kwargs).create_simplex_tree(max_dimension=2).persistence()
+    dgm = build_distance_diagram(X, dist_function)
     dgm_birth_deaths = get_birth_death(dgm)
-    parallel_distance = partial(_parallel_dgm_distance, X, dgm_birth_deaths, n, dist_function)
-    logger.info("Finished pre-processing!")
+    parallel_distance = partial(_parallel_distance_dgm, X, dgm_birth_deaths, n, dist_function)
+    LOGGER.info("Finished pre-processing!")
     with Pool(ncores or 1) as p:
         dist_vec = p.map(parallel_distance, np.arange(B))
     p.close()
@@ -123,52 +96,43 @@ def bootstrap_distance_interval(
     return IntervalResult(width=width, dgm=dgm, distances=dist_vec)
 
 
-def _parallel_function_dgm_distance(
+def _parallel_function_dgm(
     X: Xtype,
     base_dgm: BirthDeaths,
     n: int,
     value_function: Callable,
     positions: np.ndarray,
-    nx: int,
-    ny: int,
+    dimensions: tuple[int, int],
     ix,
 ):
-    logger.info("Iteration: %s", ix)
+    LOGGER.info("Iteration: %s", ix)
     idxs = np.random.choice(n, n)
     bootstrap_X = X[idxs, :]
-    bootstrap_f_values = value_function(bootstrap_X, positions)
-    bootstrap_dgm = gd.CubicalComplex(
-        dimensions=[nx, ny], top_dimensional_cells=bootstrap_f_values
-    ).persistence()
+    bootstrap_dgm = build_function_diagram(
+        bootstrap_X, value_function, dimensions=dimensions, positions=positions
+    )
     return gd.bottleneck_distance(base_dgm, get_birth_death(bootstrap_dgm))
 
 
 def bootstrap_function_interval(
     X,
+    value_function: Callable,
     alpha=0.05,
     B=100,
     ncores=DEFAULT_CORES,
-    value_function=None,
     grid_n=100,
 ) -> IntervalResult:
     n = np.size(X, 0)
-    col_mins = np.min(X, axis=0)
-    col_maxs = np.max(X, axis=0)
-    col_mins *= (1 - 2 * 0.3 * np.sign(col_mins))
-    col_maxs *= (1 + 2 * 0.3 * np.sign(col_maxs))
-    xval = np.linspace(col_mins[0], col_maxs[0], num=grid_n)
-    yval = np.linspace(col_mins[1], col_maxs[1], num=grid_n)
-    nx = len(xval)
-    ny = len(yval)
-    positions = np.array([[u, v] for u in xval for v in yval])
-    f_values = value_function(X, positions)
-    dgm = gd.CubicalComplex(dimensions=[nx, ny], top_dimensional_cells=f_values).persistence()
+    dimensions, positions = make_grid(X, grid_n)
+    dgm = build_function_diagram(
+        X, value_function, dimensions=dimensions, positions=positions, grid_n=grid_n
+    )
     dgm_birth_deaths = get_birth_death(dgm)
     parallel_distance = partial(
-        _parallel_function_dgm_distance, X, dgm_birth_deaths, n, value_function, positions, nx, ny
+        _parallel_function_dgm, X, dgm_birth_deaths, n, value_function, positions, dimensions
     )
 
-    logger.info("Finished pre-processing!")
+    LOGGER.info("Finished pre-processing!")
     with Pool(ncores or 1) as p:
         dist_vec = p.map(parallel_distance, np.arange(B))
     p.close()

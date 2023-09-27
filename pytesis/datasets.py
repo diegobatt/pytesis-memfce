@@ -1,12 +1,11 @@
+import pathlib
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from scipy.stats import truncnorm
-from scipy.special import ellipe
 import seaborn as sns
-import pathlib
-
-
+from scipy.special import ellipe
+from scipy.stats import truncnorm
 
 plt.style.use("seaborn")
 
@@ -28,7 +27,7 @@ def _ellipse_length(d1, d2) -> float:
     r2 = d2 / 2
     a_ellipse = max(r1, r2)
     b_ellipse = min(r1, r2)
-    e_ellipse = 1.0 - b_ellipse**2/a_ellipse**2
+    e_ellipse = 1.0 - b_ellipse**2 / a_ellipse**2
     return 4 * a_ellipse * ellipe(e_ellipse)
 
 
@@ -51,14 +50,30 @@ def eyeglasses(center=(0, 0), r=1, separation=3, n=500, bridge_height=0.2, exclu
     n_arc = round(arc_length / total_length * n)
     n_reminder = n - 2 * n_tunnel - 2 * n_arc
 
-    circle1 = arc(center=(c_x1, c_y), r=r, n=n_arc + n_reminder, max_abs_angle=effective_angle, angle_shift=np.pi)
+    circle1 = arc(
+        center=(c_x1, c_y),
+        r=r,
+        n=n_arc + n_reminder,
+        max_abs_angle=effective_angle,
+        angle_shift=np.pi,
+    )
     circle2 = arc(center=(c_x2, c_y), r=r, n=n_arc, max_abs_angle=effective_angle)
 
     tunnel_c_x = c_x1 + tunnel_offset + tunnel_diameter / 2
-    top_tunnel = arc(center=(tunnel_c_x, c_y + bridge_height), r=(tunnel_diameter / 2, bridge_height / 2),
-                     n=n_tunnel, max_abs_angle=np.pi / 2, angle_shift=np.pi / 2)
-    bottom_tunnel = arc(center=(tunnel_c_x, c_y - bridge_height), r=(tunnel_diameter / 2, bridge_height / 2),
-                        n=n_tunnel, max_abs_angle=np.pi / 2, angle_shift=-np.pi / 2)
+    top_tunnel = arc(
+        center=(tunnel_c_x, c_y + bridge_height),
+        r=(tunnel_diameter / 2, bridge_height / 2),
+        n=n_tunnel,
+        max_abs_angle=np.pi / 2,
+        angle_shift=np.pi / 2,
+    )
+    bottom_tunnel = arc(
+        center=(tunnel_c_x, c_y - bridge_height),
+        r=(tunnel_diameter / 2, bridge_height / 2),
+        n=n_tunnel,
+        max_abs_angle=np.pi / 2,
+        angle_shift=-np.pi / 2,
+    )
 
     return np.vstack((circle1, circle2, top_tunnel, bottom_tunnel))
 
@@ -85,7 +100,7 @@ def filled_circle(center=(0, 0), max_r=1, r_power=4, n=500):
     return np.column_stack((x, y))
 
 
-def football_sensor(tag_id: int, second_half: bool = False):
+def football_sensor(n: int, tag_id: int, second_half: bool = False):
     root_path = pathlib.Path(__file__).parent.parent.resolve()
     df = pd.read_csv(f"{root_path}/datasets/2013-11-03_tromso_stromsgodset_raw_first.csv")
     if second_half:
@@ -100,10 +115,10 @@ def football_sensor(tag_id: int, second_half: bool = False):
         "direction",
         "energy",
         "speed",
-        "total_distance"
+        "total_distance",
     ]
     df.query("tag_id == @tag_id", inplace=True)
-    return df[["x", "y"]]
+    return df[["x", "y"]].sample(n)
 
 
 def add_noise(X, sd=1):
