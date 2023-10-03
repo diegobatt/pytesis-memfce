@@ -1,4 +1,4 @@
-from typing import Callable, Type
+from typing import Callable, TypeAlias
 
 import gudhi as gd
 import numpy as np
@@ -7,7 +7,7 @@ from sklearn.neighbors import KDTree, KernelDensity
 
 BirthDeaths = list[tuple[float, float]]
 Dgm = list[tuple[int, tuple[float, float]]]
-Xtype = Type[NDArray[np.float64]]
+Xtype: TypeAlias = NDArray[np.float64]
 
 
 def get_birth_death(dgm: Dgm) -> BirthDeaths:
@@ -23,7 +23,7 @@ def kde_grid(X, positions, h=0.3):
 def hausd_distance(X: Xtype, m: int, pairwise_dist: bool) -> np.float64:
     n = np.size(X, 0)
     m = m or int(4 * n / np.log(n))
-    idxs = np.random.choice(n, m)
+    idxs = np.random.choice(n, m, replace=False)
     idxs_complement = [item for item in np.arange(n) if item not in idxs]
     if pairwise_dist:
         return np.max([np.min(X[idxs, j]) for j in idxs_complement])
