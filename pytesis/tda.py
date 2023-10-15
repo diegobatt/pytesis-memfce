@@ -3,7 +3,7 @@ from typing import Callable, TypeAlias
 import gudhi as gd
 import numpy as np
 from numpy.typing import NDArray
-from sklearn.neighbors import KDTree, KernelDensity
+from sklearn.neighbors import KDTree
 
 BirthDeaths = list[tuple[float, float]]
 Dgm = list[tuple[int, tuple[float, float]]]
@@ -12,12 +12,6 @@ Xtype: TypeAlias = NDArray[np.float64]
 
 def get_birth_death(dgm: Dgm) -> BirthDeaths:
     return np.array([x[1] for x in dgm])
-
-
-def kde_grid(X, positions, h=0.3):
-    kde = KernelDensity(kernel="gaussian", bandwidth=h).fit(X)
-    score = -np.exp(kde.score_samples(positions))
-    return score
 
 
 def hausd_distance(X: Xtype, m: int, pairwise_dist: bool) -> np.float64:

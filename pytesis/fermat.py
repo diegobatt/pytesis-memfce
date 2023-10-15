@@ -1,9 +1,9 @@
 import logging
+
+import networkx as nx
 import numpy as np
 import pandas as pd
 from sklearn.metrics import pairwise_distances
-import networkx as nx
-
 
 logger = logging.getLogger("fermat")
 
@@ -29,7 +29,9 @@ def fermat_dist(X, method="full", alpha=2, landmarks_frac=0.1) -> np.ndarray:
     logger.info("Finished creating graph from matrix")
     if method == "landmarks":
         landmarks_ids = np.random.choice(n, size=int(n * landmarks_frac), replace=False)
-        landmarks_sp = dict(nx.single_source_dijkstra_path_length(g, source=None, cutoff=None, weight='weight'))
+        landmarks_sp = dict(
+            nx.single_source_dijkstra_path_length(g, source=None, cutoff=None, weight="weight")
+        )
         sp = np.zeros((n, n))
 
         for i in range(n):
@@ -49,4 +51,3 @@ def fermat_dist(X, method="full", alpha=2, landmarks_frac=0.1) -> np.ndarray:
         sp = nx.floyd_warshall_numpy(g, weight="weight")
 
     return sp
-

@@ -59,13 +59,6 @@ def compute_dgm_power(
     )
     with Pool(ncores or 1) as p:
         significant_holes = p.map(parallel_compute_dgm_power, np.arange(B))
-    # for b in range(B):
-    #     X = dataset_factory()
-    #     dgm = dgm_factory(X, **dgm_kwargs)
-    #     holes_birth_deaths = np.array([x[1] for x in dgm if x[0] == 1])
-    #     significant_holes[b] = np.sum(
-    #         np.abs(holes_birth_deaths[:, 1] - holes_birth_deaths[:, 0]) > band
-    #     )
     return PowerResult(significant_holes=significant_holes)
 
 

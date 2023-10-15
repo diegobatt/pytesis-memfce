@@ -100,6 +100,22 @@ def filled_circle(center=(0, 0), max_r=1, r_power=4, n=500):
     return np.column_stack((x, y))
 
 
+def rectangle(n: int, length_x: float, length_y: float):
+    cum_lengths = np.cumsum([length_y, length_x, length_y, length_x])
+    samples = np.random.uniform(0, max(cum_lengths), size=n)
+    result_samples = np.empty(shape=(n, 2))
+    for i, x in enumerate(samples):
+        if x < cum_lengths[0]:
+            result_samples[i] = [0, x]
+        elif x < cum_lengths[1]:
+            result_samples[i] = [x - cum_lengths[0], 0]
+        elif x < cum_lengths[2]:
+            result_samples[i] = [length_x, x - cum_lengths[1]]
+        elif x < cum_lengths[3]:
+            result_samples[i] = [x - cum_lengths[2], length_y]
+    return pd.DataFrame(result_samples, columns=["x", "y"])
+
+
 def football_sensor(n: int, tag_id: int, second_half: bool = False):
     root_path = pathlib.Path(__file__).parent.parent.resolve()
     df = pd.read_csv(f"{root_path}/datasets/2013-11-03_tromso_stromsgodset_raw_first.csv")
