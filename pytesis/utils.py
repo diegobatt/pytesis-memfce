@@ -1,4 +1,5 @@
-from typing import Callable
+from functools import partial, reduce
+from typing import Callable, Iterable
 
 import numpy as np
 from sklearn.neighbors import KernelDensity, NearestNeighbors
@@ -14,6 +15,21 @@ def kde_grid(X, positions, h: float = 0.3):
     return score
 
 
-def kde_distance(X, distance_function: Callable, h: float = 0.3):
-    nn = NearestNeighbors(n_neighbors=1, algorithm="ball_tree").fit(X)
-    distances, indices = nn.kneighbors(X)
+def _compose_call(f: Callable, g: Callable):
+    return f(g())
+
+
+def _compose_two(f: Callable, g: Callable):
+    return partial(_compose_call, f, g)
+
+
+def compose(*functions: Callable) -> Callable:
+    return reduce(_compose_two, functions)
+
+
+# def compose(*functions: Callable) -> Callable:
+#     def compose2(f: Callable, g: Callable):
+#         def compose_():
+#             return f(g())
+#         return compose_
+#     return reduce(compose2, functions)
