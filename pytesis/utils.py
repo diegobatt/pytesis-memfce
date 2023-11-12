@@ -20,16 +20,12 @@ def _compose_call(f: Callable, g: Callable):
 
 
 def _compose_two(f: Callable, g: Callable):
-    return partial(_compose_call, f, g)
+    f_name = getattr(f, "__name__", f.func.__name__)
+    g_name = getattr(g, "__name__", g.func.__name__)
+    return_f = partial(_compose_call, f, g)
+    return_f.func.__name__ = f"{f_name}({g_name})"
+    return return_f
 
 
 def compose(*functions: Callable) -> Callable:
     return reduce(_compose_two, functions)
-
-
-# def compose(*functions: Callable) -> Callable:
-#     def compose2(f: Callable, g: Callable):
-#         def compose_():
-#             return f(g())
-#         return compose_
-#     return reduce(compose2, functions)

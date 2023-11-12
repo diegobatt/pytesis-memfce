@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from functools import partial
 from typing import Callable
 
+import diskcache as dc
 import matplotlib.pyplot as plt
 import pandas as pd
 
@@ -16,6 +17,8 @@ from pytesis.intervals import (
 )
 from pytesis.power import distance_power, function_power
 from pytesis.utils import kde_grid
+
+CACHE_NAME = "cache_runs"
 
 
 @dataclass
@@ -66,39 +69,74 @@ def run_all(
     B_interval: int = 300,
     grid_n: int = 100,
     ncores: int = 3,
+    log: bool = True,
+    cache_key: str | None = None,
 ) -> Results:
-    print("Starting computing intervals")
-    X = dataset_factory()
-    intervals = run_all_intervals(X, h=h, B=B_interval, grid_n=grid_n)
+    func_name = getattr(dataset_factory, "__name__", dataset_factory.func.__name__)
+    cache_prefix = cache_key or f"{func_name}_{h}_{B_power}_{B_interval}_{grid_n}"
+    cache = dc.Cache(CACHE_NAME)
 
-    print("Starting power analysis")
-    power_euclid = distance_power(
-        dataset_factory,
-        band=intervals.euclidean.band,
-        dist_function=None,
-        B=B_power,
-        ncores=ncores,
-    )
-    print("Finished euclid power analysis")
-    power_fermat = distance_power(
-        dataset_factory,
-        band=intervals.fermat.band,
-        dist_function=fermat_dist,
-        B=B_power,
-        ncores=ncores,
-    )
-    print("Finished fermat power analysis")
-    dimensions, positions = make_grid(X, grid_n=grid_n)
-    power_kde = function_power(
-        dataset_factory,
-        band=intervals.kde.band,
-        value_function=partial(kde_grid, h=h),
-        positions=positions,
-        dimensions=dimensions,
-        B=B_power,
-        ncores=ncores,
-    )
-    print("Finished kde power analysis")
+    if log:
+        print("Starting computing intervals")
+        print("Intervals found in cache: ", "intervals" in cache)
+    X = dataset_factory()
+
+    intervals_key = f"{cache_prefix}_intervals"
+    if intervals_key not in cache:
+        intervals = run_all_intervals(X, h=h, B=B_interval, grid_n=grid_n)
+        cache[intervals_key] = intervals
+    intervals: Intervals = cache[intervals_key]  # type: ignore
+
+    euclid_power_key = f"{cache_prefix}_euclid_power"
+    fermat_power_key = f"{cache_prefix}_fermat_power"
+    kde_power_key = f"{cache_prefix}_kde_power"
+    if log:
+        print("Starting power analysis")
+        print("Euclid in cache: ", euclid_power_key in cache)
+        print("Fermat in cache: ", fermat_power_key in cache)
+        print("KDE in cache: ", kde_power_key in cache)
+
+    if euclid_power_key not in cache:
+        power_euclid = distance_power(
+            dataset_factory,
+            band=intervals.euclidean.band,
+            dist_function=None,
+            B=B_power,
+            ncores=ncores,
+        )
+        cache[euclid_power_key] = power_euclid
+        if log:
+            print("Finished euclid power analysis")
+    power_euclid = cache[euclid_power_key]
+
+    if fermat_power_key not in cache:
+        power_fermat = distance_power(
+            dataset_factory,
+            band=intervals.fermat.band,
+            dist_function=fermat_dist,
+            B=B_power,
+            ncores=ncores,
+        )
+        cache[fermat_power_key] = power_fermat
+        if log:
+            print("Finished fermat power analysis")
+    power_fermat = cache[fermat_power_key]
+
+    if kde_power_key not in cache:
+        dimensions, positions = make_grid(X, grid_n=grid_n)
+        power_kde = function_power(
+            dataset_factory,
+            band=intervals.kde.band,
+            value_function=partial(kde_grid, h=h),
+            positions=positions,
+            dimensions=dimensions,
+            B=B_power,
+            ncores=ncores,
+        )
+        cache[kde_power_key] = power_kde
+        if log:
+            print("Finished kde power analysis")
+    power_kde = cache[kde_power_key]
 
     power_results = pd.concat(
         [power_euclid.table, power_fermat.table, power_kde.table],
@@ -111,4 +149,5 @@ def run_all(
         pd.MultiIndex.from_product([power_results.index.levels[0], power_results.index.levels[1]]),
         fill_value=0,
     )
+    cache.close()
     return Results(intervals=intervals, powers=power_results)
