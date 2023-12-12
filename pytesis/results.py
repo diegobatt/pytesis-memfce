@@ -16,7 +16,7 @@ from pytesis.intervals import (
     plot_result,
 )
 from pytesis.power import distance_power, function_power
-from pytesis.utils import kde_grid, get_func_name
+from pytesis.utils import get_func_name, kde_grid
 
 CACHE_NAME = "cache_runs"
 
