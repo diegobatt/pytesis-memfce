@@ -16,7 +16,7 @@ from pytesis.intervals import (
     plot_result,
 )
 from pytesis.power import distance_power, function_power
-from pytesis.utils import kde_grid
+from pytesis.utils import kde_grid, get_func_name
 
 CACHE_NAME = "cache_runs"
 
@@ -72,7 +72,7 @@ def run_all(
     log: bool = True,
     cache_key: str | None = None,
 ) -> Results:
-    func_name = getattr(dataset_factory, "__name__", dataset_factory.func.__name__)
+    func_name = get_func_name(dataset_factory)
     cache_prefix = cache_key or f"{func_name}_{h}_{B_power}_{B_interval}_{grid_n}"
     cache = dc.Cache(CACHE_NAME)
 

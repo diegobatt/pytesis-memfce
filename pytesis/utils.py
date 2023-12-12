@@ -19,11 +19,20 @@ def _compose_call(f: Callable, g: Callable):
     return f(g())
 
 
+def get_func_name(f: Callable):
+    if hasattr(f, "__func_name__"):
+        return f.__func_name__
+    base_name = getattr(f, "__name__", f.func.__name__)
+    f_args = "_".join(getattr(f, "args", []))
+    f_kwargs = "_".join([f"{k}={v}" for k, v in getattr(f, "keywords", {}).items()])
+    return f"{base_name}({f_args}, {f_kwargs})"
+
+
 def _compose_two(f: Callable, g: Callable):
-    f_name = getattr(f, "__name__", f.func.__name__)
-    g_name = getattr(g, "__name__", g.func.__name__)
+    f_name = get_func_name(f)
+    g_name = get_func_name(g)
     return_f = partial(_compose_call, f, g)
-    return_f.func.__name__ = f"{f_name}({g_name})"
+    return_f.__func_name__ = f"{f_name}({g_name})"
     return return_f
 
 
