@@ -23,6 +23,7 @@ CACHE_NAME = "cache_runs"
 
 @dataclass
 class Intervals:
+    X: pd.DataFrame
     euclidean: IntervalResult
     fermat: IntervalResult
     kde: IntervalResult
@@ -32,6 +33,15 @@ class Intervals:
 class Results:
     intervals: Intervals
     powers: pd.DataFrame
+
+
+def plot_all_intervals(intervals: Intervals):
+    fig, axs = plt.subplots(nrows=2, ncols=2, figsize=(14, 10))
+    plot_dataset(intervals.X, ax=axs[0, 0])
+    plot_result(intervals.euclidean, ax=axs[0, 1], title="Euclideo")
+    plot_result(intervals.fermat, ax=axs[1, 0], title="Fermat")
+    plot_result(intervals.kde, ax=axs[1, 1], title="Densidad")
+    fig.show()
 
 
 def run_all_intervals(
@@ -52,14 +62,10 @@ def run_all_intervals(
     print("Computed fermat distance matrix")
     result_fermat = hausd_interval(fermat_matrix, B=B, pairwise_dist=True)
     print("Finished running Fermat")
+    intervals = Intervals(X=X, euclidean=result_euclid, fermat=result_fermat, kde=result_kde)
     if plot:
-        fig, axs = plt.subplots(nrows=2, ncols=2, figsize=(14, 10))
-        plot_dataset(X, ax=axs[0, 0])
-        plot_result(result_euclid, ax=axs[0, 1], title="Euclideo")
-        plot_result(result_fermat, ax=axs[1, 0], title="Fermat")
-        plot_result(result_kde, ax=axs[1, 1], title="Densidad")
-        fig.show()
-    return Intervals(euclidean=result_euclid, fermat=result_fermat, kde=result_kde)
+        plot_all_intervals(intervals)
+    return intervals
 
 
 def run_all(
@@ -70,22 +76,30 @@ def run_all(
     grid_n: int = 100,
     ncores: int = 3,
     log: bool = True,
+    plot: bool = True,
     cache_key: str | None = None,
 ) -> Results:
     func_name = get_func_name(dataset_factory)
     cache_prefix = cache_key or f"{func_name}_{h}_{B_power}_{B_interval}_{grid_n}"
     cache = dc.Cache(CACHE_NAME)
 
-    if log:
-        print("Starting computing intervals")
-        print("Intervals found in cache: ", "intervals" in cache)
     X = dataset_factory()
 
     intervals_key = f"{cache_prefix}_intervals"
+    if log:
+        print("Starting computing intervals")
+        print("Intervals found in cache: ", intervals_key in cache)
     if intervals_key not in cache:
-        intervals = run_all_intervals(X, h=h, B=B_interval, grid_n=grid_n)
+        intervals = run_all_intervals(X, h=h, B=B_interval, grid_n=grid_n, plot=False)
         cache[intervals_key] = intervals
     intervals: Intervals = cache[intervals_key]  # type: ignore
+    # TODO: X was added to intervals after most of the caches where created. If you decide to
+    # redo the caches, this wont be needed
+    if not hasattr(intervals, "X"):
+        intervals.X = X
+    # END TODO
+    if plot:
+        plot_all_intervals(intervals)
 
     euclid_power_key = f"{cache_prefix}_euclid_power"
     fermat_power_key = f"{cache_prefix}_fermat_power"
@@ -143,6 +157,7 @@ def run_all(
         keys=["Euclídeo", "Fermat", "KDE"],
     )
     power_results.columns = ["Agujeros", "# Detecciones", "% Detecciones"]
+    power_results["% Detecciones"] = power_results["% Detecciones"] * 100
     power_results.index = power_results.index.get_level_values(0)
     power_results.set_index(keys="Agujeros", append=True, inplace=True)
     power_results = power_results.reindex(
