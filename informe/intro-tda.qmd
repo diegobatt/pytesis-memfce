@@ -1,0 +1,131 @@
+## Análisis de Datos Topológicos (TDA)
+
+El análisis de Datos Topológicos o TDA es una área recientemente surgida de la ciencia de datos cuya principal motivación es la idea de que la topología y geometría proveen un acercamiento poderoso para inferir información robusta, cualitativa y a veces cuantitativa sobre la estructura de los datos [@IntroductionTDA]. El objetivo de esta sección es brindar una introducción a las herramientas y conceptos del TDA que utilizaremos para el desarrollo de esta Tesis.
+
+### Espacios métricos {#sec-espacios-metricos}
+
+Las cualidades topológicas y geométricas de un espacio estan usualmente asociadas a espacios continuos, por lo que los datos representados como un conjunto finito de observaciones no revelan directamente ninguna información topológica por si mismos. Una forma natural de destacar la estructura topológica de los datos es "conectar" los puntos que estan "cerca" con el objectivo de exibir una estructura global subyacente de los datos. La "cercanía" entre puntos se mide mediante una función de distancia, por lo que resulta conveniente considerar a los conjuntos de datos como muestras de un espacio métrico.
+
+**Espacio Métrico**. Una espacio métrico $(M, \rho)$ es un conjunto $M$ con una fúncion $\rho: M \times M \longrightarrow \mathbb{R}^{+}$, llamada distancia, tal que para cualquier trío de puntos $\mathbf{x}, \mathbf{y}, \mathbf{z} \in M$ se cumple:
+
+I.  No negatividad: $\rho(\mathbf{x}, \mathbf{y}) \geq 0$ y $\rho(\mathbf{x}, \mathbf{y}) = 0$ solo sí $\mathbf{x} = \mathbf{y}$
+II.  Simetría: $\rho(\mathbf{x}, \mathbf{y}) = \rho(\mathbf{y}, \mathbf{x})$
+III.  Desigualdad triangular: $\rho(\mathbf{x}, \mathbf{z}) \leq \rho(\mathbf{x}, \mathbf{y}) + \rho(\mathbf{y}, \mathbf{z})$
+
+Puede demostrarse que la distancia de Fermat cumple las condiciones para ser una distancia según esta definición.
+
+#### Distancia de Hausdorff
+
+Dados dos sub-conjuntos compactos $A, B \subseteq M$ la distancia de Hausdorff $d_H(A, B)$ entre $A$ y $B$ se define como el valor $\delta$ mas pequeño tal que para cualquier $\mathbf{a} \in A$ existe un $\mathbf{b} \in B$ tal que $\rho(\mathbf{a}, \mathbf{b}) \leq \delta$ (Ver @fig-hausdorff-subsets)
+
+![Describir Imagen y decir que es extraida de [@IntroductionTDA]](imagenes/hausdorff-subsets.png){#fig-hausdorff-subsets}
+
+En otras palabras, si para todo sub-conjunto compacto $C \subseteq M$ denotamos $d(\cdot, C) : M \longrightarrow \mathbb{R}^{+}$ como la función de distancia a $C$, definida como
+$$
+d(\mathbf{x}, C) := \inf_{\mathbf{c} \in C} \rho(\mathbf{x}, \mathbf{c}), \quad \forall \mathbf{x} \in M
+$$
+
+Puede probarse que la distance de Hausdorff entre $A$ y $B$ esta definida mediante cualquiera de las siguientes igualdades
+
+$$
+d_H(A, B) = \max\{ \sup_{\mathbf{b} \in B} d(\mathbf{b}, A), sup_{\mathbf{a} \in A} d(\mathbf{a}, B)\}
+$$
+
+$$
+d_H(A, B) = \sup_{\mathbf{x} \in M} |d(\mathbf{x}, A) - d(\mathbf{x}, B)| = ||d(\cdot, A) - d(\cdot, B)||_{\infty}
+$$
+
+La distancia de Hausdorff provee una forma conveniente de cuantificar la proximidad entre diferentes conjuntos de datos provenientes del mismo espacio métrico.
+
+### Homología persistente
+
+Resta entonces la pregunta de como calcular la homología de un *manifold* $\mathcal{M}$ a partir de una muestra $\mathcal{S}_N$ obtenida mediante una función de densidad $f$ con soporte en $\mathcal{M}$. \textcolor{red}{ACA DIRIA QUE ME FALTA HACER OTRA SECCION QUE HABLE UN POCO DE QUE ES HOMOLOGIA, AGUJEROS, TOPOLOGIA, SIENTO QUE NO ESTA BIEN EXPLICADO} Como se menciono brevemente en la @sec-espacios-metricos, esto se realiza mediante la elección de una medida de distancia. Concretamente, se define el espacio generado por una unión de bolas de radio $\epsilon$ centradas en las muestran de $\mathcal{S}_N$, es decir
+
+$$ \mathcal{S}_N^{\epsilon} = \cup_{\mathbf{x} \in \mathcal{S}_N} B(\mathbf{x}, \epsilon)$$
+
+Donde
+$$
+B(\mathbf{x}_i, \epsilon) = \{ \mathbf{x} \mid d(\mathbf{x}_i, \mathbf{x}) < \epsilon \}
+$$
+
+con $d(\cdot, \cdot)$ una función de distancia.
+Se demuestra que cuando $\mathcal{M}$ es un *manifold* compacto y suave, bajo condiciones poco restrictivas sobre $d_{H}(\mathcal{S}_N, \mathcal{M})$ y una elección apropiada del valor $\epsilon$, entonces el espacio $\mathcal{S}_N^{\epsilon}$ es topologicamente equivalente a $\mathcal{M}$ [@Niyogi2008]. Esto significa que podemos inferir la topología de $\mathcal{M}$ a partir de $\mathcal{S}_N^{\epsilon}$.
+
+![Describir Imagen y decir que es extraida de [@IntroductionTDA]](imagenes/topologia-equivalente-epsilon.png){#fig-topologia-equivalente width=60%}
+
+En la práctica, este enfoque resulta en dos problemas fundamentales
+
+1. A pesar de ser posible, resulta complejo inferir la topología a partir de $\mathcal{S}_N^{\epsilon}$. Es por esto que se introducen los complejos simpliciales para eficientizar el computo.
+
+2. La elección del $epsilon$ apropiado no resulta obvia. Como se observa en la @fig-topologia-equivalente la homología de $\mathcal{S}_N^{\epsilon}$ varía con la elección de $\epsilon$. La respuesta a este problema viene dada por las técnicas de homología persistente, que esencialmente consisten en evaluar la homología de $\mathcal{S}_N^{\epsilon}$ no solo para un valor de $epsilon$, si no para un rango de valores lo suficientemente grande. La homología persistente busca resumir como las cualidades topológicas de $\mathcal{S}_N^{\epsilon}$ cambian a medida que varía el valor de $\epsilon$, por ejemplo los agujeros pueden aparecer o cerrarse a medida que el radio de las bolas aumenta.
+Este procedimiento da como resultado un gráfico conocido como "diagrama de persistencia" que resume este procedimiento
+
+#### Diagrama de persistencia {#sec-intro-diagramas-persistencia}
+
+El procedimiento de variar $\epsilon$ y evaluar las cualidades topológicas de $\mathcal{S}_N^{\epsilon}$ para cada valor da como resultado un tiempo de nacimiento $b_i$ en el que la cualidad topológica $i$ aparece en $\mathcal{S}_N^{\epsilon}$ y un valor de muerte $d_i$, en el que esa misma cualidad desaparece. Un ejemplo de esto sería por ejemplo el valor de $\epsilon$ en el que un agujero aparece y el valor en el que todo el espacio de este agujero es tapado por las bolas $B(\mathbf{x}_i, \epsilon)$.
+Al combinar estos valores obtenemos un par ordenado $(b_i, d_i)$ para cada cualidad topológica, que si son dispuestos conjuntamente en un plano dan lugar al diagrama de persistencia. Este procedimiento se ilustra en la figura @fig-intro-persistence-diagram.
+El diagrama de persistencia representa una medida de resumen sobre las características topológicas de los datos utilizados. Puntos cercanos a la diagonal en el diagrama representan cualidades topológicas con corto tiempo de vida y serán consideradas como "ruido topológico". Las aplicaciones estan usualmente interesadas en cualidades que pueden ser distinguidas del ruido, es decir, cualidades que persistence para un amplio rango de valores $\epsilon$ [@ConfidenceSetsForPersistenceDiagrams, @DynamicalSystemsFeaturePersistentHomology @TopologicalTimeSeriesPersistentHomology, @DelayEmbeddingsWheezeDetectionPersistentHomology]. Es el rol de los test de hipótesis el de determinar bajo cierto nivel de confianza cuales características topológicas son distintas a ruido
+
+![Describir Imagen y decir que es extraida de [@ConfidenceSetsForPersistenceDiagrams]](imagenes/intro-persistence-diagram.png){#fig-intro-persistence-diagram width=80%}
+
+#### Distancia entre diagramas de persistencia {#sec-distancia-diagramas}
+
+Sean $\mathcal{X}$ y $\mathcal{Y}$ dos diagramas de persistencia, resulta natural preguntarse como estos pueden ser comparados entre sí. Mas aun, si los conjuntos de datos que dieron lugar a los diagramas de persistencia $\mathcal{X}$ y $\mathcal{Y}$ son muy distintas, serán tambien estos diagramas resultantes muy disimiles? Para responder estas preguntas se debe definir la noción de distancia entre diagramas de persistencia conocida como distancia _bottleneck_ [@IntroductionComputationalTopology].
+
+Sean entonces $\mathcal{X}$ e $\mathcal{Y}$ dos diagramas de persistencia, para definir la distancia _bottleneck_ entre estos consideraremos una biyección $\eta : \mathcal{X} \rightarrow \mathcal{Y}$, es decir, una función que le asigna a cada punto $x \in  \mathcal{X}$ un punto $y \in  \mathcal{Y}$ y viceversa. guardaremos el supremo de las distancias entre puntos correspondientes a cada diagrama, midiendose esta distancia como
+
+$$|| x - y ||_{\infty} = \max\{|x_1 - y_1|, |x_2 - y_2|\}$$
+
+
+entonces se define la distancia _bottleneck_ $W_{\infty}(\mathcal{X}, \mathcal{Y})$ en la @eq-bottleneck-distance
+
+$$
+W_{\infty}(\mathcal{X}, \mathcal{Y}) = \inf_{\eta : \mathcal{X} \rightarrow \mathcal{Y}} \sup_{x \in \mathcal{X}} || x - \eta(x) ||_{\infty}
+$$ {#eq-bottleneck-distance}
+
+Cabe mencionar la posibilidad de que $\mathcal{X}$ e $\mathcal{Y}$ no cuenten con la misma cantidad de puntos, en cuyo caso, se considera que ambos diagramas de persistencia tambien poseen infinitos puntos en su diagonal, estos puntos se utilizarán en la medida que sean necesarios para formar la biyección $\eta : \mathcal{X} \rightarrow \mathcal{Y}$.
+
+La distancia _bottleneck_ entonces se calcula como la mayor distancia entre dos pares de puntos correspondientes a la biyeccion que minimiza esta máxima distancia
+En la @fig-intro-bottleneck-distance se ilustra el cálculo de esta distancia, En la que se dibujo un cuadrado de lado dos veces la distancia _bottleneck_ centrado en cada uno de los puntos de $\mathcal{X}$, de forma que este cuadrado contenga a su par correspondiente en $\mathcal{Y}$
+
+![Superposición de dos diagramas de persistencia con puntos agregados en la diagonal para completar la biyección. La distancio _bottleneck_ es equivalente a la mitad del lado de los cuadrados que ilustran la biyección. Imagen extraida de [@IntroductionComputationalTopology]](imagenes/bottleneck-distance.png){#fig-intro-bottleneck-distance width=60%}
+
+Resulta evidente que $W_{\infty}(\mathcal{X}, \mathcal{Y}) = 0$ solo sí $\mathcal{X} = \mathcal{Y}$, más aún, $W_{\infty}(\mathcal{X}, \mathcal{Y}) = W_{\infty}(\mathcal{Y}, \mathcal{X})$ y $W_{\infty}(\mathcal{X}, \mathcal{Z}) \leq W_{\infty}(\mathcal{X}, \mathcal{Y}) + W_{\infty}(\mathcal{Y}, \mathcal{Z})$ por lo que la distancia _bottleneck_ cumple todos los axiomas de una métrica y merece ser llamada una distancia [@IntroductionComputationalTopology].
+
+Una desventaja de la distancia _bottleneck_ es su falta de sensibilidad a detalles de la biyección por fuera de la distancia entre puntos a máxima distancia de la misma. Para sobrellevar esta desventaja, se introduce la distancia de _Wasserstein_ de grado $q$. Esta distancia reemplaza el cálculo del supremo en la distancia _bottleneck_ mediante la suma de las $q$-écima potencias  de las distancias $|| x - \eta(x) ||_{\infty}$, nuevamente, minimizando para todas las biyecciones posibles y finalmente tomando la raiz $q$-écima, como se ilustra en la @eq-wasserstein-distance
+
+$$
+W_q(\mathcal{Y}, \mathcal{X}) = \left( \inf_{\eta : \mathcal{X} \rightarrow \mathcal{Y}} \sum_{x \in \mathcal{X}} || x - \eta(x) ||_{\infty}^q \right)^{1/q}
+$$ {#eq-wasserstein-distance}
+
+Como la similitud entre la notación de las ecuaciones [-@eq-bottleneck-distance] y [-@eq-wasserstein-distance] lo sugiere, la distancia _bottleneck_ es el límite de la distancia _Wasserstein_ para $q$ tendiendo a infinito. Análogamente a la distancia _bottleneck_, es fácil verificar que $W_q$ satisface los requerimientos de una métrica y también merece ser llamada distancia [@IntroductionComputationalTopology]
+
+Estas distancias definidas son de suma importancia ya que se logra probar para cada una de ellas, mediante los teoremas de estabilidad que las mismas estan acotadas por la distancia real que existe entre los espacios topológicos subyacentes que dan lugar a los conjuntos de datos sobre los cuales se calculan los diagramas de persistencia [@IntroductionComputationalTopology]
+
+#### Complejos simpliciales
+
+Como se mencionó previamente, calcular la homología $H(\mathcal{M})$ directamente a partir de $\mathcal{S}_N^{\epsilon}$ resulta una tarea difícil, por lo que esto se realiza mediante la construccion del complejo simplicial a partir de $\mathcal{S}_N$. Un complejo simplicial es un conjunto de simplexs definidos al conectar puntos a menos distancia que $\epsilon$. En particular, un complejo simplicial muy utilizado en topología computacional es el complejo de Čech. El complejo denotado como $Čech(\mathcal{S}_N, \epsilon)$ representa el conjunto de simplexs $\sigma$ con vertices $\mathbf{v}_1, \cdots, \mathbf{v}_k \in \mathcal{S}_N$ tales que
+
+$$ \bigcap_{i=1}^k B(\mathbf{v}_i, \epsilon) = \emptyset $$
+
+El teorema del Nervio garantiza que $\mathcal{S}_N^{\epsilon}$ y $Čech(\mathcal{S}_N, \epsilon)$ son homotopicamente equivalentes [@NerveTheorem], es decir, comparten la misma homología.
+
+Por cuestiones de eficiencia computacional, es común aproximar el complejo de Čech con el complejo de Vietoris-Rips [@ConfidenceSetsForPersistenceDiagrams], denotado como $V(\mathcal{S}_N, \epsilon)$, que consiste en los simplexs con vertices en $\mathcal{S}_N$ de diametro maximo $2\epsilon$. En otras palabras, el simplex $\sigma$ es incluido en el complejo si cada par de vertices en $\sigma$ esta separado como máximo a distancia  $2\epsilon$. Este complejo resulta de cálculo más eficiente que el de Čech ya que solo las distancias de a pares entre los puntos son necesarias, y el mismo cumple la siguiente igualdad [@ConfidenceSetsForPersistenceDiagrams]
+
+$$
+Čech(\mathcal{S}_N, \epsilon) \subset V(\mathcal{S}_N, \epsilon) \subset Čech(\mathcal{S}_N, \sqrt{2}\epsilon)
+$$
+
+Por lo que si se evalua para un rango de valores de $\epsilon$, las conclusiones a las que se llegará en cuanto a la homología de  $\mathcal{S}_N$ serán equivalentes. En particular, el diagrama de persistencia será análogo. En la @fig-cech-vs-rips se ilustra la diferencia entre estos dos complejos simpliciales.
+
+![Describir Imagen y decir que es extraida de [@IntroductionTDA]](imagenes/cech-vs-rips.png){#fig-cech-vs-rips width=80%}
+
+#### Diagramas de persistencia de conjuntos de nivel
+
+Hasta el momento se discutió como estimar la homología de $\mathcal{M}$ a partir de una muestra $\mathcal{S}_N$ variando un parámetro $\epsilon$ y construyendo las bolas $B(\mathbf{x}_i, \epsilon)$ que puede demostrarse conservan la homología del espacio original para un $\epsilon$ desconocido, por lo que el mismo se varía construyendo el diagrama de persistencia. Teniendo en cuenta que la unión de bolas $B(\mathbf{x}_i, \epsilon)$ puede definirse como los conjuntos de nivel inferiores del mínimo de la función de distancia a los datos de la muestra, es decir:
+$$
+L_{\epsilon} = \cup_{\mathbf{x} \in \mathcal{S}_N} B(\mathbf{x}, \epsilon) = \{ \mathbf{x} \mid \min_{\mathbf{x}_i \in \mathcal{S}_N}d(\mathbf{x}_i, \mathbf{x}) < \epsilon \}
+$$
+
+Este procedimiento puede expresarse en términos mas generales reemplazando $min_{\mathbf{x}_i \in \mathcal{S}_N}d(\mathbf{x}_i, \mathbf{x})$ por una función arbitraria $g(\mathbf{x})$, cuyos conjuntos de nivel arbitrarios serán utilizados para construir el diagrama de persistencia y así estimar la homología de $\mathcal{M}$.
+Para algunas funciones $g$, como por ejemplo la correspondiente a la estimación de densidad de probabilidad por ventanas [@ConfidenceSetsForPersistenceDiagrams], la homología reproducida conserva las cualidades topológicas del espacio original pero con ventajas adicionales como pueden ser mayor robustes ante datos atípicos o ruido, es por esto que la inferencia de las cualidades topológicas del espacio original $\mathcal{M}$ puede realizarse directamente sobre un diagrama de persistencia construido con los conjuntos de nivel de alguna otra función $g(x)$.

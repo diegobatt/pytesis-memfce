@@ -1,0 +1,45 @@
+## Distancia de Fermat
+
+En una gran cantidad de aplicaciones de aprendizaje automático resulta de crucial impotancia la elección de una medida de distancia apropiada para representar el espacio, como por ejemplo, durante la construcción de diagramas de persistencia desarrollados durante esta Tesis. Un enfoque a la hora de elegir esta medida es dejar que la misma se infiera a partir de los datos, en vez de ser elegida arbitrariamente. Este enfoque resulta de particular interés cuando la data priviene de un *manifold* desconocido de dimension menor, siendo esto una situación típica en distintos tipos de aplicaciones [@RepresentationLearningBengio]. Para atacar este problema usaremos la distancia de Fermat, que se define a continuación:
+
+Sea una muestra de $N$ puntos
+
+$$\mathcal{S}_{N} = \{\mathbf{x}_1, \dots, \mathbf{x}_N \} \subset \mathcal{M}$$
+
+Donde $\mathcal{M} \subseteq \mathbb{R}^D$ es un manifold de dimension $d \geq 1$ y tal que $d \ll D$. Sea además $l(\cdot, \cdot)$ una función de distancia definida en $\mathcal{M} \times \mathcal{M}$ (Siendo una opción típica la distancia euclidea, pero pudiendo ser considerada cualquier otra distancia).
+Se define entonces la distancia de fermat para el par de puntos $\mathbf{p}, \mathbf{q} \in \mathcal{M}$ como:
+
+$$
+\mathcal{D}_{\mathcal{S}_n}(\mathbf{p}, \mathbf{q}) = \min_{\mathcal{S}_n^K} \sum_{i = 1}^{K-1} l\left( \mathbf{x}^i, \mathbf{x}^{i+1} \right) ^\alpha
+$$ {#eq-def-fermat}
+
+Donde $\mathcal{S}_n^K$, $K \geq 2$, representa todas las secuencias de puntos compuestas por $K$ elementos tomados de $\mathcal{S}_n$ con
+$$
+\mathbf{x}^1 = \argmin_{\mathbf{x} \in \mathcal{S}_n} l\left( \mathbf{p} , \mathbf{x} \right)
+$$ {#eq-def-fermat-x1}
+$$
+\mathbf{x}^K = \argmin_{\mathbf{x} \in \mathcal{S}_n} l\left( \mathbf{q} , \mathbf{x} \right)
+$$ {#eq-def-fermat-xk}
+
+La minimización se realiza sobre todos los valores posibles de $K$. Esta distancia captura por sí sola características topológicas del espacio [@PatuPercolationDistanceLearning], por lo que se espera que ayude a la posterior inferencia sobre el diagrama de persistencia construido.
+
+Uno de los principales resultados de la distancia de Fermat es que si $\mathcal{S}_N$ es una muestra i.i.d, entonces sea $f: \mathcal{M} \longrightarrow \mathbb{R}$ una función de densidad desconocida con soporte en $\mathcal{M}$, entonces se demuestra en [@PatuFermatDistance] que
+
+$$ \lim_{N \rightarrow \infty} N^{\alpha} \mathcal{D}_{\mathcal{S}_n}(\mathbf{p}, \mathbf{q}) = c_{d, D} \inf_{\Gamma \subset \mathcal{M}} \int_{\Gamma} \frac{1}{f^{\alpha}}$$
+
+Es decir, la distancia de fermat es un estimador consistente de la distancia geodesica sobre $\mathcal{M}$ en la que los caminos se ponderan por el valor de la función de densidad. Esto significa que la distancia de fermat recupera tanto caracteristicas de la topología del espacio $\mathcal{M}$ como de la función de distribución a partir de la cual se muestrea $\mathcal{S}_N$
+
+### Aproximación *k*-NN
+
+Teniendo en cuenta que la carga computacional del cálculo de la distancia de Fermat es altamente elevado, siendo este $\mathcal{O}(N^3)$ para todas las distancias entre pares de un conjunto de $N$ puntos, una heurística sencilla para reducir este tiempo, sin perdida de garantias en cuanto a los resultados asintóticos, es tomar solo los $k$ vecinos más cercanos de $\mathbf{x}^i$ como posibles $\mathbf{x}^{i+1}$ durante la construccion de las secuencias $\mathcal{S}_n^K$ sobre las cuales se realiza la maximización.
+Formalemente, si se define $\mathcal{N}_k(\mathbf{x})$ como el conjunto de $k$ vecinos más cercercanos ($k$-NN) de $\mathbf{x}$, entonces la distancia de Fermat se define analogamente a la @eq-def-fermat pero siendo $\mathcal{S}_n^K$, $K \geq 2$ todas las sequencias posibles de puntos compuestos de $K$ elementos tomados de $\mathcal{S}_n$ tal que $\mathbf{x}^{i+1} \in \mathcal{N}_k(\mathbf{x}^i) \forall i$.
+
+Con esta modificación, el cómputo de la distancia de fermat para todos los pares de un conjunto de $N$ puntos tiene una complejidad asintótica de $\mathcal{O}(N^2 \log N)$
+
+### Aproximación por *Landmarks*
+
+
+
+### Implementación
+
+La distancia de Fermat, tanto en su versión tradicional como en la aproximación por $k$ vecinos más cercanos, se encuentra implementada en GitHub para [*Python*](https://github.com/facusapienza21/Fermat-distance) y [*R*](https://github.com/diegobatt/fermat-distance), habiendo sido la librería para este último lenguaje construida especialmente para el desarrollo de esta Tesis.

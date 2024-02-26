@@ -1,0 +1,48 @@
+
+---
+format:
+  pdf:
+    toc: true
+    include-before-body: latex/caratula.tex
+bibliography: "latex/references.bib"
+csl: "latex/vancouver-brackets.csl"
+---
+
+
+<!-- Entre TOC y Primer Sección -->
+{{< pagebreak >}}
+# Resumen {#sec-abstract}
+
+{{< include abstract.qmd >}}
+
+{{< pagebreak >}}
+# Introducción y marco teórico {#sec-intro}
+
+{{< include intro-tda.qmd >}}
+
+{{< pagebreak >}}
+
+{{< include intro-intervalos.qmd >}}
+
+{{< pagebreak >}}
+
+{{< include intro-fermat.qmd >}}
+
+{{< pagebreak >}}
+# Métodos y desarrollo {#sec-methods}
+
+{{< include methods.qmd >}}
+
+{{< pagebreak >}}
+# Resultados {#sec-results}
+
+{{< include simulations.qmd >}}
+
+{{< pagebreak >}}
+# Discusión y Proximos pasos {#sec-next-steps}
+
+{{< pagebreak >}}
+# Conclusión {#sec-conclution}
+
+{{< pagebreak >}}
+# Referencias

@@ -1,0 +1,241 @@
+## Conjuntos de datos sintéticos  {#sec-methods-data-synth}
+
+Es común en la literatura de topología computacional enfocarse en unos conjuntos de datos sintéticos simples, sobre los cuales se corren los métodos de interés. Al ser estos utilizados por diferentes trabajos los resultados pueden ser facilmente constrastados [@ConfidenceSetsForPersistenceDiagrams]. A continuación se muestran los conjuntos de datos sintéticos que se utilizarán durante la @sec-results. En cada caso se agregarán tambien muestras atípicas o ruido para lograr una mayor variabilidad en los conjuntos que puedan dificultarle la tarea a las técnicas desarrolladas.
+
+
+<!-- ```{r}
+box::use(cowplot[plot_grid])
+box::use(rtesis/datasets[ggplot_dataset, eyeglasses, arc, add_noise, add_outliers])
+
+set.seed(20)
+
+n <- 250
+``` -->
+
+
+### Circunferencia uniforme
+
+El más sencillo de los conjuntos de datos a utilizar es el círculo uniforme, en donde la distancia al centro de los puntos es fija mientras que el ángulo proviene de una distribución uniforme en el intervalo $(-\pi, \pi)$, es decir
+
+$$\angle \mathbf{x} \sim \mathcal{U}(-\pi, \pi), \qquad |\mathbf{x}| = r$$
+
+En la @fig-circle-uniform se observa una muestra de `r n` elementos provenientes de esta distribución, junto con su versión con ruido agregado y datos atípicos.
+
+<!-- ```{r}
+#| label: fig-circle-uniform
+#| fig-cap: Conjunto de datos sintéticos correspondientes al circulo uniforme
+#| fig-subcap:
+#|   - "Muestre uniforme"
+#|   - "Ruido agregado"
+#|   - "Datos atípicos"
+#| layout: [[-4, 10, -4], [1, 1]]
+X_circle <- arc(n = n)
+X_circle_noise <- add_noise(X_circle, sd = 0.1)
+X_circle_outliers <- add_outliers(X_circle, iqr_factor = 0.3)
+ggplot_dataset(X_circle, title = "Uniforme")
+ggplot_dataset(X_circle_noise, title = "Ruido")
+ggplot_dataset(X_circle_outliers, title = "Datos Atípicos")
+``` -->
+
+
+### Circunferencia gaussiana
+
+Una variación utilizada del círculo uniforme que busca enfatizar regiones con menor densidad de muestras, aunque manteniendo el soporte del cual se obtienen las muestras, es el círculo gaussiano. La definición de este conjunto de datos es análoga a la del caso uniforme, pero en este caso el ángulo $\angle \mathbf{x}$ se obtiene de una distribución normal truncada entre $-\pi$ y $\pi$, es decir
+
+$$
+\angle \mathbf{x} \sim \mathrm{TruncNormal}(-\pi, \pi, \mu, \sigma)
+$$
+
+Donde la media $\mu$ será igual a 0, mientras que la desviación estandar $\sigma$ se elije de tal forma que el $95\%$ de las muestras de una gaussiana tradicional esten comprendidas dentro del intervalo $(-\pi, \pi)$. En la @fig-circle-gaussian se observa el conjunto de datos provenientes de esta distribución junto con sus análogos con ruido y datos atípicos.
+
+<!-- ```{r}
+#| label: fig-circle-gaussian
+#| fig-cap: Conjunto de datos sintéticos correspondientes al circulo gaussiano
+#| fig-subcap:
+#|   - "Muestre uniforme"
+#|   - "Ruido agregado"
+#|   - "Datos atípicos"
+#| layout: [[-4, 10, -4], [1, 1]]
+X_circle_gauss <- arc(n = n, sampling = "normal")
+X_circle_gauss_noise <- add_noise(X_circle_gauss, sd = 0.1)
+X_circle_gauss_outliers <- add_outliers(X_circle_gauss, iqr_factor = 0.3)
+ggplot_dataset(X_circle_gauss, title = "Uniforme")
+ggplot_dataset(X_circle_gauss_noise, title = "Ruido")
+ggplot_dataset(X_circle_gauss_outliers, title = "Datos Atípicos")
+``` -->
+
+
+### Eyeglasses
+
+El conjunto de datos que llamaremos *eyeglasses* se ilustra a continuación en la @fig-eyeglasses, junto con sus análogos con ruido gaussiana y datos atípicos.
+Esta topología resulta similar a un óvalo de Cassini y debe su nombre en inglés a su parecido con unos anteojos. La misma presenta dos circulos conectados mediante una apertura en ellos. Se utiliza extensivamente durante el cálculo de intervalos de confianza para datos sintéticos ya que la topología en realidad posee un único agujero de grado 1, pero resulta sencillo para los algoritmos confundirse y detectar dos agujeros significativos dependiendo del grado de apertura [@ConfidenceSetsForPersistenceDiagrams].
+
+<!-- ```{r}
+#| label: fig-eyeglasses
+#| fig-cap: Conjunto de datos sintéticos correspondientes a los eyeglasses
+#| fig-subcap:
+#|   - "Muestre uniforme"
+#|   - "Ruido agregado"
+#|   - "Datos atípicos"
+#| layout: [[-4, 10, -4], [1, 1]]
+X_eyeglasses <- eyeglasses(n = n, bridge_height = 0.5)
+X_eyeglasses_noise <- add_noise(X_eyeglasses, sd = 0.1)
+X_eyeglasses_outliers <- add_outliers(X_eyeglasses, iqr_factor = 0.3)
+ggplot_dataset(X_eyeglasses, title = "Uniforme")
+ggplot_dataset(X_eyeglasses_noise, title = "Ruido")
+ggplot_dataset(X_eyeglasses_outliers, title = "Datos Atípicos")
+``` -->
+
+### Círculo con densidad dependiente del radio
+
+
+## Intervalos de confianza {#sec-methods-intervals}
+
+Haciendo uso de los conjuntos de datos descriptos, junto con sus variaciones, en la @sec-methods-data-synth, calcularemos los intervalos de confianza para los diagramas de persistencia resultantes haciendo uso de cuatro métodos. Tres de ellos propuestos por la literatura, en particular analizados extensivamente en [@ConfidenceSetsForPersistenceDiagrams] y un método adicional, que consiste en reemplazar la distancia euclidea utlizada por la distancia de Fermat, con el objetivo de observar las dieferencias obtenidas en los intervalos de confianza y las cualidades topológicas detectadas. A continuación se describen los métodos a utilizar para calcular estos intervalos de confianza
+
+### Sub-muestreo con distancia euclidea {#sec-methods-subsampling}
+
+El primer método de cálculo de intervalos de confianza para diagramas de persistencia será mediante el sub-muestreo con distancia euclidea, desarrollado en [@ConfidenceSetsForPersistenceDiagrams]. Este método consiste en usar la técnica de submuestreo, introducida en la @sec-intro-subsampling para obtener sub-muestras $\mathcal{S}_{N, b}^j$ mediante las cuales calcular directamente la distancia de Hausdorff basada en una distancia euclidea. Es decir, sea $\mathcal{S}_{N, b}^j$ una sub-muestra sin reposición de tamaño $b$ sobre $\mathcal{S}_N$ y sea $\theta_j = d_H(\mathcal{S}_{N}, \mathcal{S}_{N, b}^j)$ la distancia de Hausdorff entre $\mathcal{S}_N$ y $\mathcal{S}_{N, b}^j$, definimos
+
+$$
+L_b(t) = \frac{1}{M}\sum_{j=1}^M I(\theta_j > t)
+$$
+
+con $I(.)$ la función indicadora. Si definimos $c_b = 2L^{-1}_b(\alpha)$ entonces puede demostrarse el siguiente resultado [@ConfidenceSetsForPersistenceDiagrams]
+
+$$
+\mathbb{P}(W_{\infty}(\hat{\mathcal{P}}, \mathcal{P}) > c_b) \leq \mathbb{P}(d_H(\mathcal{S}_N, \mathcal{M}) > c_b) \leq \alpha + \mathcal{O}\left(\frac{b}{N} \right)^{1/4}
+$$
+
+es decir, $c_b$ es un intervalo de confianza de nivel $1-\alpha$ para las cualidades topológicas de nuestro diagrama de persistencia $\hat{\mathcal{P}}$.
+
+De esta forma haremos uso del siguiente algoritmo para obtener nuestro primer intervalo de confianza para los diagramas de persistencia calculados:
+
+
+\begin{algorithm}[H]
+    \KwIn{$\mathcal{S}_N, \ b, \ \alpha, \ M$}
+    $j \leftarrow 1$ \;
+    $\theta \leftarrow array(M)$ \;
+    \While{$j \leq  M$}{
+        $\mathcal{S}_{N, b}^j$ : Submuestro sin reposición de $\mathcal{S}_N$\;
+        $\theta[j] \leftarrow d_H(\mathcal{S}_{N}, \mathcal{S}_{N, b}^j)$;
+    }
+    \Return 2 * quantile($\theta$, $1-\alpha$)
+\end{algorithm}
+
+### Sub-muestreo con distancia de Fermat {#sec-methods-subsampling}
+
+<!-- ### Bootstrap con distancia euclidea {#sec-metodos-bootstrap-euclidea}
+
+El método de sub-muestro con distancia euclidea presenta la ventaja computacional de que no es necesario calcular el diagrama de persistencia para obtener el intervalo de confianza estimado, reduciendo fuertemente el tiempo de cómputo. Sin enbargo, si se busca hallar intervalos de confianza para diagramas de persistencia construidos mediante funciones más complejas que la distancia euclidea, se debe recurrir al *bootstrap* tradicional. De esta forma, basandonos en la técnica de *bootstrap* introducida en la @sec-intro-bootstrap, realizaremos el siguiente procedimiento: Sea $\mathcal{S}_N^j$ una muestra de $N$ elementos tomados con reposición sobre $\mathcal{S}_N$, se definen sendos diagramas de persistencia
+
+$$
+\begin{split}
+\hat{\mathcal{P}} = \mathrm{PersistenceDiagram}(\mathcal{S}_N) \\
+\hat{\mathcal{P}}^j = \mathrm{PersistenceDiagram}(\mathcal{S}_N^j)
+\end{split}
+$$
+
+A partir de los cuales se obtiene la distancia entre los mismos haciendo uso de las distancias definidas en la @sec-distancia-diagramas. En particular, si por ejemplo usamos la distancia _bottleneck_, obtenemos para cada muestra bootstrap un valor de distancia
+
+$$
+\theta_j = W_{\infty}(\hat{\mathcal{P}}, \hat{\mathcal{P}}^j)
+$$
+
+Este procedimiento se repite $M$ veces para obtener la distribución del estadístico distancia $\theta^j$, a partir de la cual podemos obtener su cuantil $1 - \alpha$ definiendo
+
+$$
+L(t) = \frac{1}{M}\sum_{j=1}^M I(\theta_j > t)
+$$
+
+y obteniendo
+
+$$
+c = \inf{t : L(t) \leq \alpha}
+$$
+
+para estimar el intervalo de confianza
+
+$$
+\mathbb{P}(W_{\infty}(\hat{\mathcal{P}}, \mathcal{P}) > c) \leq \alpha
+$$
+
+A continuación se ilustra a modo de resumen el algoritmo a utilizar para calcular intervalos de confianza mediante bootstrap con distancia euclidea
+
+\begin{algorithm}[H]
+    \KwIn{$\mathcal{S}_N, \ \alpha, \ M$}
+    $j \leftarrow 1$ \;
+    $\theta \leftarrow array(M)$ \;
+    $\hat{\mathcal{P}}$ : Diagrama de persistencia de $\mathcal{S}_{N}$;
+    \While{$j \leq  M$}{
+        $\mathcal{S}_{N}^j$ : Submuestro de tamaño $N$ con reposición de $\mathcal{S}_N$\;
+        $\hat{\mathcal{P}}^j$ : Diagrama de persistencia de $\mathcal{S}_{N}^j$;
+        $\theta[j] \leftarrow W_{\infty}(\hat{\mathcal{P}}, \hat{\mathcal{P}}^j)$;
+    }
+    \Return 2 * quantile($\theta$, $1-\alpha$)
+\end{algorithm}
+
+
+### Bootstrap con distancia de fermat {#sec-methods-bootstrap-fermat}
+
+Análogamente a lo realizado en la @sec-metodos-bootstrap-euclidea utilizaremos este mismo mecanismo para estimar el intervalo de confianza pero haciendo uso de una función de distancia más compleja, en particular, la distancia de fermat. El algoritmo se mantiene similar, aunque previo a calcular el diagrama de persistencia, computaremos la matriz de distancias de fermat entre sí de los puntos de $\mathcal{S}_{N}$ y $\mathcal{S}_{N}^j$ respectivamente para poder construir el diagrama de persistencia a partir de esta función. El algoritmo modificado se ilustra a continuación
+
+\begin{algorithm}[H]
+    \KwIn{$\mathcal{S}_N, \ \alpha, \ M$}
+    $j \leftarrow 1$\;
+    $\theta \leftarrow array(M)$\;
+    $FermatDistance_{S_{N}}$: Matriz de distancias de fermat entre los pares de puntos de $\mathcal{S}_{N}$\;
+    $\hat{\mathcal{P}}$ : Diagrama de persistencia de $FermatDistance_{S_{N}}$\;
+    \While{$j \leq  M$}{
+        $\mathcal{S}_{N}^j$ : Submuestro de tamaño $N$ con reposición de $\mathcal{S}_N$\;
+        $FermatDistance_{S_{N}^j}$: Matriz de distancias de fermat entre los pares de puntos de $\mathcal{S}_{N}^j$\;
+        $\hat{\mathcal{P}}^j$ : Diagrama de persistencia de $FermatDistance_{S_{N}^j}$\;
+        $\theta[j] \leftarrow W_{\infty}(\hat{\mathcal{P}}, \hat{\mathcal{P}}^j)$;
+    }
+    \Return 2 * quantile($\theta$, $1-\alpha$)
+\end{algorithm}
+
+Se espera que este intervalo de confianza de lugar a una prueba más potente que las efectuadas a partir de los intervalos obtenidos en base a la distancia euclídea. -->
+
+### Bootstrap con estimación por densidad {#sec-methods-bootstrap-density}
+
+Este enfoque es distinto a los tratados anteriormente ya que no se basa en una distancia propiamente dicha, el mismo consta de construir un estimador de densidad suave a partir de los datos para posteriormente calcular el diagrama de persistencia a partir de una filtración de las curvas de nivel superior de la función del estimador de densidad [@ConfidenceSetsForPersistenceDiagrams].
+
+Sea $\mathcal{S}_{N}$ un conjunto de muestras *i.i.d* obtenidas mediante una función de densidad $f$ con soporte en un *manifold* $\mathcal{M}$, se define
+
+$$
+f_h(x) = \int_{\mathcal{M}} \frac{1}{h^D} K \left( \frac{||x - u||_2}{h}\right) df(u)
+$$
+
+$f_h$ representa entonces la densidad de la medida de probabilidad $f_h$ que es la convolución $f_h =  f \star \mathbb{K}_h$ con $\mathbb{K}_h(A) = h^{-D} \mathbb{K}(h^{-1}A)$ y $\mathbb{K}(A) = \int_{A}K(t)dt$. Esto básicamente significa que $f_h$ es una version suavizada de $f$.
+Nuestro objetivo será entonces el de computar el diagrama de persistencia de los conjuntos de nivel superiores de $f_h$, $\mathcal{P}_h$.
+
+Estos conjuntos de nivel son relevantes ya que se demuestra que conservan la información topológica de $\mathcal{M}$ y que son más estables, al costo de  omitir detalles más sutiles de la topologia del espacio original [@ConfidenceSetsForPersistenceDiagrams]. Esto resulta de especial importancia en los casos en los que la muestra $\mathcal{S}_{N}$ se obtiene, no directamente de la densidad $f$ sobre $\mathcal{M}$, sino con un agregado de ruido o posiblemente de datos atípicos. Este método podria ser capaz de ignorar los detalles ruidosos y concentrarse mejor en las características topológicas relevantes del espacio subyacente.
+
+Dado que $f_h$ es desconocido, utilizaremos su estimador usual
+
+$$
+\hat{f}_h(x) = \frac{1}{n} \sum_{i=1}^N \frac{1}{h^D} K \left( \frac{||x - x_i||_2}{h} \right)
+$$
+
+Que será evaluado en una grilla de puntos, a partir del cual construiremos el diagrama de persistencia.
+
+Para obtener el intervalo de confianza, repetiremos el procedimiento realizado en las secciones precedentes para utilizar *bootstrap*. El algoritmo se muestra a continuación
+
+\begin{algorithm}[H]
+    \KwIn{$\mathcal{S}_N, \ \alpha, \ M$}
+    $j \leftarrow 1$\;
+    $\theta \leftarrow array(M)$\;
+    $\hat{f}_h(x)$: Estimador de  densidad de $f$\;
+    $\hat{\mathcal{P}}$ : Diagrama de persistencia de una grilla de $\hat{f}_h(x)$\;
+    \While{$j \leq  M$}{
+        $\mathcal{S}_{N}^j$ : Submuestro de tamaño $N$ con reposición de $\mathcal{S}_N$\;
+        $\hat{f}_h(x)^j$: Estimador de  densidad de $f$ basado en la submuestra\;
+        $\hat{\mathcal{P}}^j$ : Diagrama de persistencia de una grilla de $\hat{f}_h(x)^j$\;
+        $\theta[j] \leftarrow W_{\infty}(\hat{\mathcal{P}}, \hat{\mathcal{P}}^j)$;
+    }
+    \Return 2 * quantile($\theta$, $1-\alpha$)
+\end{algorithm}
+
+
+Se demuestra que este método resulta en pruebas más potentes frente a las realizadas haciendo uso de la distancia euclídea [@ConfidenceSetsForPersistenceDiagrams]. Será de interés verificar su rendimiento frente a los *test* de hipótesis que se obtengan haciendo uso de la distancia de Fermat

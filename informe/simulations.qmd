@@ -1,0 +1,587 @@
+A continuación se disponen los resultados obtenidos de los intervalos de confianza para los conjuntos de datos introducidos en la @sec-methods-data-synth. Se observa en primera instancia un ejemplo de resultado de diagrama de persistencia junto con su intervalo de confianza para cada caso discutido y posteriormente se procede a, como se detallo en la @sec-methods, repetir el experimento una cantidad $M$ de veces para analizar la potencia a la hora de detectar los agujeros de los distintos espacios topológicos sintéticos presentados
+
+<!-- ```{r}
+#| label: sims-init
+box::use(cowplot[plot_grid])
+box::use(purrr[...])
+box::use(gt[...])
+box::use(dplyr[...])
+box::use(tidyr[...])
+box::use(rtesis/datasets[...])
+box::use(rtesis/bootstrap[...])
+box::use(rtesis/tdastats[...])
+box::use(fermatdistance[...])
+
+
+fermatDistFunction = compose(as.matrix, partial(fermat_dist, alpha=2, method = "full"))
+
+
+set.seed(30)
+
+maxdimension <- 1
+alpha <- 0.05
+diagram_distance <- "bottleneck"
+cores <- 8
+
+sd <- 0.1
+iqr_factor <- 0.2
+outliers_frac <- 0.05
+n <- 300
+B <- 100
+h <- 0.3
+m <- as.integer(4 * n / log(n))
+euclidean_maxscale <- 1.1
+
+eyeglass_sd <- 0.05
+eyeglass_n <- 400
+bridge_height <- 0.5
+eyeglass_euclidean_maxscale <- 2
+
+datasets <- list()
+datasets[["Círculo"]] <- arc(n = n)
+datasets[["Círculo gaussiano"]] <- arc(n = n, sampling = "normal")
+datasets[["Eyeglasses"]] <- eyeglasses(n = eyeglass_n, bridge_height = bridge_height)
+
+base_datasets_names <- names(datasets)
+noise_datasets_names <- base_datasets_names %>% map(function(name) paste(name, "con ruido"))
+outliers_datasets_names <- base_datasets_names %>% map(function(name) paste(name, "con outliers"))
+
+for (i in 1:length(base_datasets_names)) {
+    base_dataset_name <- base_datasets_names[[i]]
+    datasets[[noise_datasets_names[[i]]]] <- add_noise(
+        datasets[[]],
+        sd = if(base_dataset_name == "Eyeglasses") eyeglass_sd else sd
+    )
+    datasets[[outliers_datasets_names[[i]]]] <- add_outliers(
+        datasets[[base_datasets_names[[i]]]],
+        iqr_factor = iqr_factor,
+        frac = outliers_frac
+    )
+}
+
+subsampling_f <- partial(
+    subsampling_distance_stats,
+    maxdimension = maxdimension,
+    alpha = alpha,
+    parallel = T
+)
+
+euclidean_f <- partial(
+    bootstrap_distance_stats,
+    maxdimension = maxdimension,
+    alpha = alpha,
+    distance = diagram_distance,
+    parallel = T,
+    cores = cores
+)
+
+kde_f <- partial(
+    bootstrap_kde_stats,
+    maxdimension = maxdimension,
+    alpha = alpha,
+    distance = diagram_distance,
+    parallel = T
+)
+
+fermat_f <- partial(
+    bootstrap_distance_stats,
+    maxdimension = maxdimension,
+    alpha = alpha,
+    distance = diagram_distance,
+    distFunction = fermatDistFunction,
+    parallel = T,
+    cores = cores
+)
+``` -->
+
+
+## Diagramas de persistencia e intervalos {#sec-results-diagrams-plus-intervals}
+
+Como se detalló en la @sec-methods-intervals, de los cuatro métodos a utilizar para el cómputo de los intervalos de confianza sobre diagramas de persistencia dos de ellos se basan en la distancia euclídea, por lo que pueden ser superpuestos sobre un mismo diagrama. Por otro lado, utilizaremos el método detallado en la sección @sec-metodos-bootstrap-density para, al igual que para los métodos euclídeos, calcular el diagrama de persistencia basado en estimación por densidad junto con su intervalo de confianza obtenido mediante la técnica de _bootstrap_.
+Finalmente, utilizando la distancia de Fermat para construir el diagrama de persistencia y estimando el intervalo de confianza del mismo mediante _bootstrap_, tal y como se detallo en la @sec-methods-bootstrap-fermat, se contrastan los resultados obtenidos con los métodos anteriores.
+De esta forma, para cada conjunto de datos sintéticos estudiado, se visualizarán cuatros figuras: La primera siendo el gráfico de dispersión que nos permitira obtener información del exito o fracaso de los metodos segun la topologia de partida, seguido a ella se encontraran las figuras correspondientes a los intervalos euclideos, estimacion por densidad y distancia de fermat, respectivamente
+
+
+<!-- ```{r, echo=FALSE, message=FALSE, results='hide'}
+#| label: sims-diagrams-vars
+#| cache: true
+#| dependson: sims-init
+subsampling_diagrams <- list()
+euclidean_bootstrap_diagrams <- list()
+kde_bootstrap_diagrams <- list()
+fermat_bootstrap_diagrams <- list()
+``` -->
+
+
+
+### Círculo uniforme
+
+A continuación se muestran los resultados obtenidos para el circulo uniforme
+
+
+### Distancia euclídea {#sec-results-diagrams-plus-intervals-euclidea}
+
+Como se detalló en la @sec-methods-intervals, de los cuatro métodos a utilizar para el cómputo de los intervalos de confianza sobre diagramas de persistencia dos de ellos se basan en la distancia euclídea, por lo que pueden ser superpuestos sobre un mismo diagrama. En la @fig-simulations-diagrams-euclidean se observan los diagramas de persistencia correspondientes a los tres conjuntos de datos sintéticos descriptos en la @sec-methods-data-synth, sobre los cuales se superponen los intervalos de confianza calculados mediante sub-muestreo y _bootstrap_, desarrollados en las secciones [-@sec-methods-subsampling] y [-@sec-metodos-bootstrap-euclidea] respectivamente.
+
+<!-- ```{r, echo=FALSE, message=FALSE, results='hide'}
+#| label: sims-diagrams-vars
+#| cache: true
+#| dependson: sims-init
+maxdimension <- 1
+euclidean_maxscale <- 1
+fermat_maxscale <- 0.5
+m <- as.integer(n / 3)
+alpha <- 0.05
+B <- 80
+diagram_distance <- "bottleneck"
+kde_h <- 0.3
+
+
+subsampling_diagrams <- list()
+euclidean_bootstrap_diagrams <- list()
+kde_bootstrap_diagrams <- list()
+fermat_bootstrap_diagrams <- list()
+``` -->
+
+
+<!-- ```{r}
+#| label: sims-diagrams-subsampling
+#| cache: true
+#| dependson: sims-init
+for (dataset_name in names(datasets)) {
+    dataset <- datasets[[dataset_name]]
+    subsampling_diagrams[[dataset_name]] <- subsampling_distance_stats(
+        dataset,
+        maxdimension = maxdimension,
+        maxscale = euclidean_maxscale,
+        m = m,
+        B = B,
+        alpha = alpha,
+        parallel = T
+    )
+}
+``` -->
+
+<!-- ```{r}
+#| label: sims-diagrams-euclidean-bootstrap
+#| cache: true
+#| dependson: sims-init
+for (dataset_name in names(datasets)) {
+    dataset <- datasets[[dataset_name]]
+    euclidean_bootstrap_diagrams[[dataset_name]] <- bootstrap_distance_stats(
+        dataset,
+        maxdimension = maxdimension,
+        maxscale = euclidean_maxscale,
+        B = B,
+        alpha = alpha,
+        distance = diagram_distance,
+        parallel = T
+    )
+}
+``` -->
+
+<!-- ```{r}
+#| label: sims-diagrams-kde-bootstrap
+#| cache: true
+#| dependson: sims-init
+for (dataset_name in names(datasets)) {
+    dataset <- datasets[[dataset_name]]
+    kde_bootstrap_diagrams[[dataset_name]] <- bootstrap_kde_stats(
+        dataset,
+        maxdimension = maxdimension,
+        h = kde_h,
+        B = B,
+        alpha = alpha,
+        distance = diagram_distance,
+        parallel = T,
+    )
+}
+``` -->
+
+<!-- ```{r}
+#| label: sims-diagrams-fermat-bootstrap
+#| cache: true
+#| dependson: sims-init
+for (dataset_name in names(datasets)) {
+    dataset <- datasets[[dataset_name]]
+    fermat_bootstrap_diagrams[[dataset_name]] <- bootstrap_distance_stats(
+        dataset,
+        maxdimension = maxdimension,
+        maxscale = fermat_maxscale,
+        distFunction = fermatDistFunction,
+        B = B,
+        alpha = alpha,
+        distance = diagram_distance,
+        parallel = T
+    )
+}
+``` -->
+
+<!-- ```{r}
+#| label: fig-simulations-diagrams-euclidean
+#| fig-cap: Diagramas de persistencia e intervalos de confianza basados en distancia euclídea para los tres conjuntos de datos sintéticos utilizados
+#| fig-subcap:
+#|   - "Círculo uniforme"
+#|   - "Círculo gaussiano"
+#|   - "Eyeglasses"
+#| layout: [[-4, 10, -4], [1, 1]]
+for (name in base_datasets_names) {
+    p <- ggplot_diagram(
+        subsampling_diagrams[[name]]$diagram,
+        band = c(
+            subsampling_diagrams[[name]]$band,
+            euclidean_bootstrap_diagrams[[name]]$band
+        ),
+        band_name = c("Subsampling", "Bootstrap")
+    )
+    print(p)
+}
+``` -->
+
+Análogamente, se realiza el mismo ejercicio para los conjuntos de datos pero ahora con el agregado de ruido y datos atípicos. Los resultados se observan en las figuras [-@fig-simulations-diagrams-euclidean-noise] y [-@fig-simulations-diagrams-euclidean-outliers], respectivamente
+
+
+<!-- ```{r}
+#| label: fig-simulations-diagrams-euclidean-noise
+#| fig-cap: Diagramas de persistencia e intervalos de confianza basados en distancia euclídea para los tres conjuntos de datos sintéticos utilizados con ruido agregados
+#| fig-subcap:
+#|   - "Círculo uniforme con ruido"
+#|   - "Círculo gaussiano con ruido"
+#|   - "Eyeglasses con ruido"
+#| layout: [[-4, 10, -4], [1, 1]]
+for (name in noise_datasets_names) {
+    p <- ggplot_diagram(
+        subsampling_diagrams[[name]]$diagram,
+        band = c(
+            subsampling_diagrams[[name]]$band,
+            euclidean_bootstrap_diagrams[[name]]$band
+        ),
+        band_name = c("Subsampling", "Bootstrap")
+    )
+    print(p)
+}
+``` -->
+
+
+<!-- ```{r}
+#| label: fig-simulations-diagrams-euclidean-outliers
+#| fig-cap: Diagramas de persistencia e intervalos de confianza basados en distancia euclídea para los tres conjuntos de datos sintéticos utilizados con datos atípicos agregados
+#| fig-subcap:
+#|   - "Círculo uniforme con _outliers_"
+#|   - "Círculo gaussiano con _outliers_"
+#|   - "Eyeglasses con _outliers_"
+#| layout: [[-4, 10, -4], [1, 1]]
+for (name in outliers_datasets_names) {
+    p <- ggplot_diagram(
+        subsampling_diagrams[[name]]$diagram,
+        band = c(
+            subsampling_diagrams[[name]]$band,
+            euclidean_bootstrap_diagrams[[name]]$band
+        ),
+        band_name = c("Subsampling", "Bootstrap")
+    )
+    print(p)
+}
+``` -->
+
+
+### Estimación por densidad {#sec-results-diagrams-plus-intervals-density}
+
+Utilizaremos ahora el método detallado en la sección @sec-metodos-bootstrap-density para, al igual que en la @sec-results-diagrams-plus-intervals-euclidea, calcular el diagrama de persistencia basado en estimación por densidad junto con su intervalo de confianza obtenido mediante _bootstrap_. En la @fig-simulations-diagrams-kde se muestran los resultados para los tres conjuntos de datos sintéticos utilizados, mientras que en las figuras [-@fig-simulations-diagrams-kde-noise] y [-@fig-simulations-diagrams-kde-outliers] se aprecian los resultados para los conjuntos de datos con ruido y outliers agregados, respectivamente.
+
+<!-- ```{r}
+#| label: fig-simulations-diagrams-kde
+#| fig-cap: Diagramas de persistencia e intervalos de confianza basados en estimación por densidad para los tres conjuntos de datos sintéticos utilizados
+#| fig-subcap:
+#|   - "Círculo uniforme"
+#|   - "Círculo gaussiano"
+#|   - "Eyeglasses"
+#| layout: [[-4, 10, -4], [1, 1]]
+for (name in base_datasets_names) {
+    p <- ggplot_diagram(
+        kde_bootstrap_diagrams[[name]]$diagram,
+        band = kde_bootstrap_diagrams[[name]]$band,
+        band_name = "Bootstrap"
+    )
+    print(p)
+}
+``` -->
+
+<!-- ```{r}
+#| label: fig-simulations-diagrams-kde-noise
+#| fig-cap: Diagramas de persistencia e intervalos de confianza basados en estimación por densidad para los tres conjuntos de datos sintéticos utilizados con ruido agregado
+#| fig-subcap:
+#|   - "Círculo uniforme con ruido"
+#|   - "Círculo gaussiano con ruido"
+#|   - "Eyeglasses con ruido"
+#| layout: [[-4, 10, -4], [1, 1]]
+for (name in noise_datasets_names) {
+    p <- ggplot_diagram(
+        kde_bootstrap_diagrams[[name]]$diagram,
+        band = kde_bootstrap_diagrams[[name]]$band,
+        band_name = "Bootstrap"
+    )
+    print(p)
+}
+``` -->
+
+
+<!-- ```{r}
+#| label: fig-simulations-diagrams-kde-outliers
+#| fig-cap: Diagramas de persistencia e intervalos de confianza basados en estimación por densidad para los tres conjuntos de datos sintéticos utilizados con datos atípicos agregados
+#| fig-subcap:
+#|   - "Círculo uniforme con _outliers_"
+#|   - "Círculo gaussiano con _outliers_"
+#|   - "Eyeglasses con _outliers_"
+#| layout: [[-4, 10, -4], [1, 1]]
+for (name in outliers_datasets_names) {
+    p <- ggplot_diagram(
+        kde_bootstrap_diagrams[[name]]$diagram,
+        band = kde_bootstrap_diagrams[[name]]$band,
+        band_name = "Bootstrap"
+    )
+    print(p)
+}
+``` -->
+
+
+### Distancia de Fermat {#sec-results-diagrams-plus-intervals-fermat}
+
+Utilizando ahora la distancia de fermat para construir el diagrama de persistencia y estimando el intervalo de confianza del mismo mediante _bootstrap_, tal y como se detallo en la @sec-methods-bootstrap-fermat, se observan en la @fig-simulations-diagrams-fermat los resultados para los tres conjuntos de datos estudiados, mientras que en las figuras [-@fig-simulations-diagrams-fermat-noise] y [-@fig-simulations-diagrams-fermat-outliers] se observan los resultados obtenidos para ruido y datos atípicos agregados, respectivamente
+
+<!-- ```{r}
+#| label: fig-simulations-diagrams-fermat
+#| fig-cap: Diagramas de persistencia e intervalos de confianza basados en la distancia de Fermat para los tres conjuntos de datos sintéticos utilizados
+#| fig-subcap:
+#|   - "Círculo uniforme"
+#|   - "Círculo gaussiano"
+#|   - "Eyeglasses"
+#| layout: [[-4, 10, -4], [1, 1]]
+for (name in base_datasets_names) {
+    p <- ggplot_diagram(
+        fermat_bootstrap_diagrams[[name]]$diagram,
+        band = fermat_bootstrap_diagrams[[name]]$band,
+        band_name = "Bootstrap"
+    )
+    print(p)
+}
+``` -->
+
+<!-- ```{r}
+#| label: fig-simulations-diagrams-fermat-noise
+#| fig-cap: Diagramas de persistencia e intervalos de confianza basados en la distancia de Fermat para los tres conjuntos de datos sintéticos con ruido agregado
+#| fig-subcap:
+#|   - "Círculo uniforme con ruido"
+#|   - "Círculo gaussiano con ruido"
+#|   - "Eyeglasses con ruido"
+#| layout: [[-4, 10, -4], [1, 1]]
+for (name in noise_datasets_names) {
+    p <- ggplot_diagram(
+        fermat_bootstrap_diagrams[[name]]$diagram,
+        band = fermat_bootstrap_diagrams[[name]]$band,
+        band_name = "Bootstrap"
+    )
+    print(p)
+}
+``` -->
+
+<!-- ```{r}
+#| label: fig-simulations-diagrams-fermat-outliers
+#| fig-cap: Diagramas de persistencia e intervalos de confianza basados en la distancia de Fermat para los tres conjuntos de datos sintéticos con datos atípicos agregados
+#| fig-subcap:
+#|   - "Círculo uniforme con _outliers_"
+#|   - "Círculo gaussiano con _outliers_"
+#|   - "Eyeglasses con _outliers_"
+#| layout: [[-4, 10, -4], [1, 1]]
+for (name in outliers_datasets_names) {
+    p <- ggplot_diagram(
+        fermat_bootstrap_diagrams[[name]]$diagram,
+        band = fermat_bootstrap_diagrams[[name]]$band,
+        band_name = "Bootstrap"
+    )
+    print(p)
+}
+``` -->
+
+## Potencia {#sec-results-power}
+
+Si ahora se repite en procedimiento realizado en la @sec-results-diagrams-plus-intervals un cantidad $M$ de veces con el objetivo de analizar la frecuencia en la que el intervalo estimado contiene efectivamente a la cantidad de agujeros reales, siendo en nuestro caso un agujero real para todos los conjuntos de datos analizados, entonces se obtiene la potencia del test, es decir, la probabilidad de rechazar la hipótesis nula dado que esta es falsa, donde la hipótesis nula representa la no existencia de agujeros en la topología
+
+<!-- ```{r}
+#| label: sims-power-init
+#| cache: true
+#| dependson: sims-init
+m_power <- 25
+
+subsampling_power <- list()
+euclidean_bootstrap_power <- list()
+kde_bootstrap_power <- list()
+fermat_bootstrap_power <- list()
+
+power_to_table <- function(power) {
+    df <- data.frame(table(unname(unlist(power)), useNA = "always"))
+    colnames(df) <- c("Agujeros", "Frecuencia")
+    df$Agujeros <- as.integer(df$Agujeros)
+    df[is.na(df)] <- 0
+    df
+}
+
+get_dataset_generator <- function(dataset_name) {
+    X_generator <- NULL
+    dataset_generator <- NULL
+
+    if (startsWith(dataset_name, "Eyeglasses")) {
+        X_generator <- partial(eyeglasses, n = n, bridge_height = 0.4)
+    } else if (startsWith(dataset_name, "Círculo gaussiano")) {
+        X_generator <- partial(arc, n = n, sampling = "normal")
+    } else {
+        X_generator <- partial(arc, n = n)
+    }
+
+    if (grepl("noise", dataset_name)) {
+        dataset_generator <- compose(
+            partial(add_noise, sd = sd),
+            X_generator
+        )
+    } else if (grepl("outliers", dataset_name)) {
+        dataset_generator <- compose(
+            partial(add_outliers, iqr_factor = iqr_factor),
+            X_generator
+        )
+    } else {
+        dataset_generator <- X_generator
+    }
+    dataset_generator
+}
+``` -->
+
+<!-- ```{r}
+#| label: sims-power-subsampling
+#| cache: true
+#| dependson: sims-power-init
+for (dataset_name in names(datasets)) {
+    dataset_generator <- get_dataset_generator(dataset_name)
+    subsampling_power[[dataset_name]] <- power_to_table(replicate(
+        m_power,
+        subsampling_distance_stats(
+            dataset_generator(),
+            maxdimension = maxdimension,
+            maxscale = euclidean_maxscale,
+            m = m,
+            B = B,
+            alpha = alpha,
+            parallel = T
+        )$features[2, "n"]
+    ))
+}
+``` -->
+
+<!-- ```{r}
+#| label: sims-power-euclidean-bootstrap
+#| cache: true
+#| dependson: sims-power-init
+for (dataset_name in names(datasets)) {
+    dataset_generator <- get_dataset_generator(dataset_name)
+    euclidean_bootstrap_power[[dataset_name]] <- power_to_table(replicate(
+        m_power,
+        bootstrap_distance_stats(
+            dataset_generator(),
+            maxdimension = maxdimension,
+            maxscale = euclidean_maxscale,
+            B = B,
+            alpha = alpha,
+            distance = diagram_distance,
+            parallel = T
+        )$features[2, "n"]
+    ))
+}
+``` -->
+
+<!-- ```{r}
+#| label: sims-power-kde-bootstrap
+#| cache: true
+#| dependson: sims-power-init
+for (dataset_name in names(datasets)) {
+    dataset_generator <- get_dataset_generator(dataset_name)
+    kde_bootstrap_power[[dataset_name]] <- power_to_table(replicate(
+        m_power,
+        bootstrap_kde_stats(
+            dataset_generator(),
+            maxdimension = maxdimension,
+            h = kde_h,
+            B = B,
+            alpha = alpha,
+            distance = diagram_distance,
+            parallel = T,
+        )$features[2, "n"]
+    ))
+}
+``` -->
+
+<!-- ```{r}
+#| label: sims-power-fermat-bootstrap
+#| cache: true
+#| dependson: sims-power-init
+for (dataset_name in names(datasets)) {
+    dataset_generator <- get_dataset_generator(dataset_name)
+    fermat_bootstrap_power[[dataset_name]] <- power_to_table(replicate(
+        m_power,
+        bootstrap_distance_stats(
+            dataset_generator(),
+            maxdimension = maxdimension,
+            maxscale = fermat_maxscale,
+            distFunction = fermatDistFunction,
+            B = B,
+            alpha = alpha,
+            distance = diagram_distance,
+            parallel = T
+        )$features[2, "n"]
+    ))
+}
+``` -->
+
+<!-- ```{r}
+#| label: sims-power-wrangling-plot
+#| cache: true
+#| dependson: sims-power-init
+subsampling_power_table <- bind_rows(subsampling_power, .id = "Dataset")
+euclidean_bootstrap_power_table <- bind_rows(euclidean_bootstrap_power, .id = "Dataset")
+kde_bootstrap_power_table <- bind_rows(kde_bootstrap_power, .id = "Dataset")
+fermat_bootstrap_power_table <- bind_rows(fermat_bootstrap_power, .id = "Dataset")
+
+power_results_table <- bind_rows(
+    list(
+        Subsampleo = subsampling_power_table,
+        `Bootstrap distancia euclídea` = euclidean_bootstrap_power_table,
+        `Bootstrap estimación por densidad` = kde_bootstrap_power_table,
+        `Bootstrap distancia de Fermat` = fermat_bootstrap_power_table
+    ),
+    .id = "Método"
+) %>%
+spread(Agujeros, Frecuencia, fill = 0) %>%
+arrange(desc(Dataset), desc("Método"))
+
+``` -->
+
+En la @tbl-simulations-power-results se observan los resultados para los conjuntos de datos analizados
+
+<!-- ```{r}
+#| label: tbl-simulations-power-results
+#| tbl-cap: Frecuencia de detección de cantidad de agujeros por método y conjunto de datos
+gt(power_results_table) %>%
+    tab_header(
+        title = "Resultados obtenidos por método y conjunto de datos",
+        subtitle = "Cantidad de agujeros detectados por la prueba de hipótesis"
+    )  %>%
+    tab_spanner(
+        label = "Agujeros",
+        columns = c("0", "1", "2")
+    ) %>%
+    tab_style(
+        style = cell_fill(color = "green"),
+        location = cells_body(
+            columns = "1",
+        )
+    )
+
+``` -->

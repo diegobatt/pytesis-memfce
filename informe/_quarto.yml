@@ -1,0 +1,17 @@
+pdf-engine: pdflatex
+format:
+  pdf:
+    toc: false
+    fig-pos: 'h'
+header-includes:
+    - \newcommand{\argmin}{\mathop{\mathrm{argmin}}\limits}
+    - \usepackage{algorithm2e}
+geometry: "left=3cm,right=3cm,top=2cm,bottom=2.5cm"
+urlcolor: blue
+toc-title: "Tabla de contenidos"
+lang: es
+nocite: '@*'
+number-sections: true
+execute:
+  echo: false
+  message: false
