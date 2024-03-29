@@ -9,6 +9,7 @@ import pandas as pd
 from pytesis.datasets import plot_dataset
 from pytesis.fermat import fermat_dist
 from pytesis.intervals import (
+    DEFAULT_CORES,
     IntervalResult,
     bootstrap_function_interval,
     hausd_interval,
@@ -36,31 +37,45 @@ class Results:
 
 
 def plot_all_intervals(intervals: Intervals):
-    fig, axs = plt.subplots(nrows=2, ncols=2, figsize=(14, 10))
-    plot_dataset(intervals.X, ax=axs[0, 0])
-    plot_result(intervals.euclidean, ax=axs[0, 1], title="Euclideo")
-    plot_result(intervals.fermat, ax=axs[1, 0], title="Fermat")
-    plot_result(intervals.kde, ax=axs[1, 1], title="Densidad")
+    fig = plt.figure(figsize=(14, 10))
+    d = intervals.X.shape[1]
+    if d == 2:
+        ax1 = fig.add_subplot(2, 2, 1)
+    elif d == 3:
+        ax1 = fig.add_subplot(2, 2, 1, projection="3d")
+    else:
+        raise ValueError("Only 2D and 3D datasets are supported")
+    ax2 = fig.add_subplot(2, 2, 2)
+    ax3 = fig.add_subplot(2, 2, 3)
+    ax4 = fig.add_subplot(2, 2, 4)
+    plot_dataset(intervals.X, ax=ax1)
+    plot_result(intervals.euclidean, ax=ax2, title="Euclideo")
+    plot_result(intervals.fermat, ax=ax3, title="Fermat")
+    plot_result(intervals.kde, ax=ax4, title="Densidad")
     fig.show()
 
 
 def run_all_intervals(
     X,
     h: float = 0.3,
+    robust_quantile: float | None = None,
     B: int = 300,
     grid_n: int = 100,
     plot: bool = True,
+    ncores: int = DEFAULT_CORES,
 ) -> Intervals:
     print("Starting run...")
-    result_euclid = hausd_interval(X, B=B)
+    result_euclid = hausd_interval(X, B=B, robust_quantile=robust_quantile, ncores=ncores)
     print("Finished running euclidean")
     result_kde = bootstrap_function_interval(
-        X, B=B, value_function=partial(kde_grid, h=h), grid_n=grid_n
+        X, B=B, value_function=partial(kde_grid, h=h), grid_n=grid_n, ncores=ncores
     )
     print("Finished running KDE")
     fermat_matrix = fermat_dist(X, alpha=2)
     print("Computed fermat distance matrix")
-    result_fermat = hausd_interval(fermat_matrix, B=B, pairwise_dist=True)
+    result_fermat = hausd_interval(
+        fermat_matrix, B=B, pairwise_dist=True, robust_quantile=robust_quantile, ncores=ncores
+    )
     print("Finished running Fermat")
     intervals = Intervals(X=X, euclidean=result_euclid, fermat=result_fermat, kde=result_kde)
     if plot:
@@ -71,6 +86,7 @@ def run_all_intervals(
 def run_all(
     dataset_factory: Callable,
     h: float = 0.3,
+    robust_quantile: float | None = None,
     B_power: int = 30,
     B_interval: int = 300,
     grid_n: int = 100,
@@ -81,6 +97,9 @@ def run_all(
 ) -> Results:
     func_name = get_func_name(dataset_factory)
     cache_prefix = cache_key or f"{func_name}_{h}_{B_power}_{B_interval}_{grid_n}"
+    # NOTE: robust_quantile was added after, so don't interfiere with previous stored caches
+    if not cache_key and robust_quantile is not None:
+        cache_prefix += f"_{robust_quantile}"
     cache = dc.Cache(CACHE_NAME)
 
     X = dataset_factory()
@@ -90,7 +109,9 @@ def run_all(
         print("Starting computing intervals")
         print("Intervals found in cache: ", intervals_key in cache)
     if intervals_key not in cache:
-        intervals = run_all_intervals(X, h=h, B=B_interval, grid_n=grid_n, plot=False)
+        intervals = run_all_intervals(
+            X, h=h, B=B_interval, grid_n=grid_n, plot=False, robust_quantile=robust_quantile
+        )
         cache[intervals_key] = intervals
     intervals: Intervals = cache[intervals_key]  # type: ignore
     # TODO: X was added to intervals after most of the caches where created. If you decide to

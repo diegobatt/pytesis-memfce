@@ -1,25 +1,48 @@
 import pathlib
+from typing import Literal
 
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
+from mpl_toolkits.mplot3d.axes3d import Axes3D
 from scipy.special import ellipe
 from scipy.stats import truncnorm
 
 plt.style.use("seaborn")
 
 
-def plot_dataset(X, title="Conjunto de datos", ax=None):
-    df = pd.DataFrame(X, columns=["x", "y"])
+def plot_dataset_2d(X, ax=None, title="Conjunto de datos"):
     if ax is None:
         ax = plt.gca()
+    df = pd.DataFrame(X, columns=["x", "y"])
     sns.kdeplot(data=df, x="x", y="y", fill=True, cut=1, cmap="Blues", ax=ax)
     ax.scatter(x=df["x"], y=df["y"], alpha=0.5)
     ax.set_title(title)
     ax.set_xlabel("x")
     ax.set_ylabel("y")
     return ax
+
+
+def plot_dataset_3d(X, ax: Axes3D, title="Conjunto de datos"):
+    df = pd.DataFrame(X, columns=["x", "y", "z"])
+    ax.scatter(df["x"], df["y"], df["z"], alpha=0.5)
+    ax.set_title(title)
+    ax.set_label
+    ax.set_xlabel("x")
+    ax.set_ylabel("y")
+    ax.set_zlabel("z")
+    return ax
+
+
+def plot_dataset(X, title="Conjunto de datos", ax=None):
+    d = X.shape[1]
+    if d == 2:
+        return plot_dataset_2d(X, ax=ax, title=title)
+    elif d == 3 and ax is not None:
+        return plot_dataset_3d(X, ax=ax, title=title)
+    else:
+        raise ValueError("Only 2D and 3D datasets are supported")
 
 
 def _ellipse_length(d1, d2) -> float:
@@ -100,9 +123,17 @@ def filled_circle(center=(0, 0), max_r=1, r_power=4, n=500):
     return np.column_stack((x, y))
 
 
-def rectangle(n: int, length_x: float, length_y: float):
+def rectangle(
+    n: int,
+    length_x: float,
+    length_y: float,
+    random: bool = True,
+):
     cum_lengths = np.cumsum([length_y, length_x, length_y, length_x])
-    samples = np.random.uniform(0, max(cum_lengths), size=n)
+    if random:
+        samples = np.random.uniform(0, max(cum_lengths), size=n)
+    else:
+        samples = np.linspace(0, max(cum_lengths), num=n)
     result_samples = np.empty(shape=(n, 2))
     for i, x in enumerate(samples):
         if x < cum_lengths[0]:
@@ -119,10 +150,7 @@ def rectangle(n: int, length_x: float, length_y: float):
 def football_sensor(n: int, tag_id: int, second_half: bool = False):
     root_path = pathlib.Path(__file__).parent.parent.resolve()
     df = pd.read_csv(f"{root_path}/datasets/2013-11-03_tromso_stromsgodset_raw_first.csv")
-    if second_half:
-        second_df = pd.read_csv("../datasets/2013-11-03_tromso_stromsgodset_raw_second.csv")
-        df = pd.concat([df, second_df])
-    df.columns = [
+    column_names = [
         "timestamp",
         "tag_id",
         "x",
@@ -133,6 +161,15 @@ def football_sensor(n: int, tag_id: int, second_half: bool = False):
         "speed",
         "total_distance",
     ]
+    df.columns = column_names
+    if second_half:
+        second_df = pd.read_csv(
+            f"{root_path}/datasets/2013-11-03_tromso_stromsgodset_raw_second.csv"
+        )
+        second_df.columns = column_names
+        print("aaaa", df.columns)
+        print("bbbb", second_df.columns)
+        df = pd.concat([df, second_df], ignore_index=True)
     df.query("tag_id == @tag_id", inplace=True)
     return df[["x", "y"]].sample(n)
 

@@ -48,18 +48,26 @@ def plot_result(result: IntervalResult, title="Diagrama de Persistencia", ax=Non
     return ax
 
 
-def _parallel_hausd_distance(X, m, pairwise_dist, ix):
+def _parallel_hausd_distance(X, m, pairwise_dist, ix, robust_quantile: float | None = None):
     LOGGER.info("Iteration: %s", ix)
-    return hausd_distance(X, m, pairwise_dist)
+    return hausd_distance(X, m, pairwise_dist, robust_quantile=robust_quantile)
 
 
 def hausd_interval(
-    X, alpha=0.05, m=None, B=1000, pairwise_dist=False, ncores=None
+    X,
+    alpha=0.05,
+    m=None,
+    B=1000,
+    pairwise_dist=False,
+    robust_quantile: float | None = None,
+    ncores=None,
 ) -> IntervalResult:
     n = np.size(X, 0)
     m = m or int(n / np.log(n))
 
-    parallel_distance = partial(_parallel_hausd_distance, X, m, pairwise_dist)
+    parallel_distance = partial(
+        _parallel_hausd_distance, X, m, pairwise_dist, robust_quantile=robust_quantile
+    )
     with Pool(ncores or 1) as p:
         dist_vec = p.map(parallel_distance, np.arange(B))
     p.close()
