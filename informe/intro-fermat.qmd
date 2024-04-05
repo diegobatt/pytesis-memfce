@@ -29,17 +29,52 @@ $$ \lim_{N \rightarrow \infty} N^{\alpha} \mathcal{D}_{\mathcal{S}_n}(\mathbf{p}
 
 Es decir, la distancia de fermat es un estimador consistente de la distancia geodesica sobre $\mathcal{M}$ en la que los caminos se ponderan por el valor de la función de densidad. Esto significa que la distancia de fermat recupera tanto caracteristicas de la topología del espacio $\mathcal{M}$ como de la función de distribución a partir de la cual se muestrea $\mathcal{S}_N$
 
-### Aproximación *k*-NN
+### Aproximación por *k*-NN
 
 Teniendo en cuenta que la carga computacional del cálculo de la distancia de Fermat es altamente elevado, siendo este $\mathcal{O}(N^3)$ para todas las distancias entre pares de un conjunto de $N$ puntos, una heurística sencilla para reducir este tiempo, sin perdida de garantias en cuanto a los resultados asintóticos, es tomar solo los $k$ vecinos más cercanos de $\mathbf{x}^i$ como posibles $\mathbf{x}^{i+1}$ durante la construccion de las secuencias $\mathcal{S}_n^K$ sobre las cuales se realiza la maximización.
 Formalemente, si se define $\mathcal{N}_k(\mathbf{x})$ como el conjunto de $k$ vecinos más cercercanos ($k$-NN) de $\mathbf{x}$, entonces la distancia de Fermat se define analogamente a la @eq-def-fermat pero siendo $\mathcal{S}_n^K$, $K \geq 2$ todas las sequencias posibles de puntos compuestos de $K$ elementos tomados de $\mathcal{S}_n$ tal que $\mathbf{x}^{i+1} \in \mathcal{N}_k(\mathbf{x}^i) \forall i$.
 
-Con esta modificación, el cómputo de la distancia de fermat para todos los pares de un conjunto de $N$ puntos tiene una complejidad asintótica de $\mathcal{O}(N^2 \log N)$
+Con esta modificación, el cómputo de la distancia de fermat para todos los pares de un conjunto de $N$ puntos tiene una complejidad temporal asintótica de $\mathcal{O}(N^2 \log N)$, sumado a esto, es posible almacenar la matriz de distancia de forma mucho mas eficiente, ya que la misma pasa de ser densa, con $N^2$ elementos distinto de cero, a ser rala contando con $N*k$ elementos no nulos, pudiendose esto almacenar de forma mucho mas eficiente.
 
 ### Aproximación por *Landmarks*
 
+Otra mecanismo de aproximación para la distancia de fermat se obtiene a partir de la utilización de *landmarks* en el cálculo del camino más corto entre nodos dentro de un grafo. Teniendo en cuenta que el problema de encontrar la distancia de Fermat entre dos puntos puede verse como el problema análogo de encontrar el camino más corto entre dos nodos en el grafo en el que cada punto del conjunto representa un nodo y sus aristas están dadas por las distancias entre los respectivos puntos elevadas al factor $\alpha$, es decir, un grafo completo. A continuación se describe la técnica de *Landmarks* para el cálculo eficiente del camino mas corto entre nodos de un grafo:
+
+Sea un grafo $G(V,E)$ con $n$ vértices y $m$ aristas. Dados dos vértices $s, t \in V$, se define $d_G(s,t)$ como la longitud del camino más corto entre dos vértices $s, t \in V$.
+Sea además un conjunto ordenado de $d$ vértices $D = \{u_1, u_2, . . . , u_d\}$ del grafo $G$, que llamamos *landmarks*. La idea principal es representar cada otro vértice en el grafo como un vector de distancias de camino más corto al conjunto de landmarks. En particular, cada vértice $v \in V$ se representa como un vector $\phi(v)$ en $\mathbb{R}^d$:
+
+$$
+\phi(v) = [ d_G(v, u_1), d_G(v, u_2), ..., d_G(v, u_d) ]^T = [ \phi_1(v), \phi_2(v), ..., \phi_d(v) ]^T
+$$
+
+
+Teniendo en cuenta que a distancia de camino más corto en grafos es una métrica y, por lo tanto, satisface la desigualdad triangular. Es decir, dados tres nodos $s, u$ y $t$, se cumplen las siguientes desigualdades:
+
+$$d_G(s, t) \leq d_G(s, u) + d_G(u, t)$$
+$$d_G(s, t) \geq |d_G(s, u) - d_G(u, t)|$$
+
+Resulta una observación importante que utilizaremos que si $u$ pertenece al camino más corto de $s$ a $t$, entonces la primera relacióßn se cumple con igualdad, es decir $d_G(s, t) = d_G(s, u) + d_G(u, t)$
+
+**Usando landmarks**
+Dado un grafo $G$ con $n$ vértices y $m$ aristas, y un conjunto de $d$ landmarks $D$, precalculamos las distancias entre cada vértice en $G$ y cada landmark. El costo de esta computación fuera de línea es de $d$ recorridos BFS del grafo: $O(md)$.
+
+Recordemos que nuestra tarea es calcular $d_G(s,t)$ para cualquier par de vértices $s, t \in V$. Debido a las desigualdades (2) y (3), tenemos
+
+$$\max|s_i - t_i| \leq d_G(s,t) \leq \min\{s_j + t_j\}$$
+
+En otras palabras, la verdadera distancia $d_G(s,t)$ se encuentra en el rango $[L,U]$, donde $L = \max_i |t_i - s_i|$ y $U = \min_j\{s_j + t_j\}$.
+
+Usando el landmark $u$, estimamos la distancia entre $s$ y $t$ como:
+
+- La estimación superior $\tilde{d}_u(s,t) = U$
+- La estimación del punto medio $\tilde{d}_m(s,t) = \frac{L+U}{2}$
+- La estimación de la media geométrica $\tilde{d}_g(s, t) = \sqrt{L \cdot U}$.
+
+Nótese que en todos los casos, la estimación es muy rápida, ya que solo se necesitan $O(d)$ operaciones, y $d$ puede considerarse como una constante, o una función logarítmica del tamaño del grafo.
+
+Nuestros experimentos indican que las estimaciones de "cota superior" $\tilde{d}_u(s,t) = U$ funcionan mucho mejor que los otros tipos de estimaciones, por lo que, en el resto del documento, nos enfocamos en las estimaciones de cota superior. Comentamos brevemente sobre las estimaciones de cota inferior más adelante en la Se
 
 
 ### Implementación
 
-La distancia de Fermat, tanto en su versión tradicional como en la aproximación por $k$ vecinos más cercanos, se encuentra implementada en GitHub para [*Python*](https://github.com/facusapienza21/Fermat-distance) y [*R*](https://github.com/diegobatt/fermat-distance), habiendo sido la librería para este último lenguaje construida especialmente para el desarrollo de esta Tesis.
+La distancia de Fermat, tanto en su versión tradicional como en la aproximación por $k$ vecinos más cercanos y por *landmarks*, se encuentra implementada en GitHub para [*Python*](https://github.com/facusapienza21/Fermat-distance) y [*R*](https://github.com/diegobatt/fermat-distance), habiendo sido la librería para este último lenguaje construida especialmente para el desarrollo de esta Tesis.

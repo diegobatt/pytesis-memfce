@@ -2,6 +2,16 @@
 
 El análisis de Datos Topológicos o TDA es una área recientemente surgida de la ciencia de datos cuya principal motivación es la idea de que la topología y geometría proveen un acercamiento poderoso para inferir información robusta, cualitativa y a veces cuantitativa sobre la estructura de los datos [@IntroductionTDA]. El objetivo de esta sección es brindar una introducción a las herramientas y conceptos del TDA que utilizaremos para el desarrollo de esta Tesis.
 
+
+### Homología
+
+La homología es un concepto fundamental en diversas ramas de las matemáticas, particularmente en la topología algebraica y la geometría algebraica. Esta área de estudio se centra en comprender y clasificar las formas y estructuras espaciales de manera abstracta, permitiendo así la comparación y el análisis de diferentes espacios geométricos.
+
+La idea central de la homología se basa en la noción de ciclos y bordes en espacios topológicos. En términos simples, un ciclo es una combinación lineal de símplexes *(simplicial complex)* cuyos bordes se anulan, es decir, no tienen "agujeros". Por otro lado, un borde es una combinación lineal de símplexes cuyos lados forman los bordes de un ciclo. En esencia, los ciclos representan estructuras "cerradas", mientras que los bordes representan estructuras "abiertas".
+
+La homología permite detectar y cuantificar estas estructuras en diversos tipos de espacios topológicos, lo que proporciona información invaluable sobre su forma y conectividad. Por ejemplo, en la topología de superficies, la homología puede utilizarse para distinguir diferentes tipos de superficies (como esféricas, toroidales o de género superior) en función de las características topológicas de sus ciclos y bordes.
+
+
 ### Espacios métricos {#sec-espacios-metricos}
 
 Las cualidades topológicas y geométricas de un espacio estan usualmente asociadas a espacios continuos, por lo que los datos representados como un conjunto finito de observaciones no revelan directamente ninguna información topológica por si mismos. Una forma natural de destacar la estructura topológica de los datos es "conectar" los puntos que estan "cerca" con el objectivo de exibir una estructura global subyacente de los datos. La "cercanía" entre puntos se mide mediante una función de distancia, por lo que resulta conveniente considerar a los conjuntos de datos como muestras de un espacio métrico.
@@ -28,7 +38,7 @@ $$
 Puede probarse que la distance de Hausdorff entre $A$ y $B$ esta definida mediante cualquiera de las siguientes igualdades
 
 $$
-d_H(A, B) = \max\{ \sup_{\mathbf{b} \in B} d(\mathbf{b}, A), sup_{\mathbf{a} \in A} d(\mathbf{a}, B)\}
+d_H(A, B) = \max\{ \sup_{\mathbf{b} \in B} d(\mathbf{b}, A), \sup_{\mathbf{a} \in A} d(\mathbf{a}, B)\}
 $$
 
 $$
@@ -37,9 +47,10 @@ $$
 
 La distancia de Hausdorff provee una forma conveniente de cuantificar la proximidad entre diferentes conjuntos de datos provenientes del mismo espacio métrico.
 
+
 ### Homología persistente
 
-Resta entonces la pregunta de como calcular la homología de un *manifold* $\mathcal{M}$ a partir de una muestra $\mathcal{S}_N$ obtenida mediante una función de densidad $f$ con soporte en $\mathcal{M}$. \textcolor{red}{ACA DIRIA QUE ME FALTA HACER OTRA SECCION QUE HABLE UN POCO DE QUE ES HOMOLOGIA, AGUJEROS, TOPOLOGIA, SIENTO QUE NO ESTA BIEN EXPLICADO} Como se menciono brevemente en la @sec-espacios-metricos, esto se realiza mediante la elección de una medida de distancia. Concretamente, se define el espacio generado por una unión de bolas de radio $\epsilon$ centradas en las muestran de $\mathcal{S}_N$, es decir
+Resta entonces la pregunta de como calcular la homología de un *manifold* $\mathcal{M}$ a partir de una muestra $\mathcal{S}_N$ obtenida mediante una función de densidad $f$ con soporte en $\mathcal{M}$. Como se menciono brevemente en la @sec-espacios-metricos, esto se realiza mediante la elección de una medida de distancia. Concretamente, se define el espacio generado por una unión de bolas de radio $\epsilon$ centradas en las muestran de $\mathcal{S}_N$, es decir
 
 $$ \mathcal{S}_N^{\epsilon} = \cup_{\mathbf{x} \in \mathcal{S}_N} B(\mathbf{x}, \epsilon)$$
 
@@ -119,6 +130,7 @@ $$
 Por lo que si se evalua para un rango de valores de $\epsilon$, las conclusiones a las que se llegará en cuanto a la homología de  $\mathcal{S}_N$ serán equivalentes. En particular, el diagrama de persistencia será análogo. En la @fig-cech-vs-rips se ilustra la diferencia entre estos dos complejos simpliciales.
 
 ![Describir Imagen y decir que es extraida de [@IntroductionTDA]](imagenes/cech-vs-rips.png){#fig-cech-vs-rips width=80%}
+
 
 #### Diagramas de persistencia de conjuntos de nivel
 

@@ -61,22 +61,35 @@ def run_all_intervals(
     robust_quantile: float | None = None,
     B: int = 300,
     grid_n: int = 100,
+    log: bool = True,
     plot: bool = True,
+    cache_prefix: str | None = None,
     ncores: int = DEFAULT_CORES,
 ) -> Intervals:
-    print("Starting run...")
+    cache_key = f"{cache_prefix}_{h}_{B}_{grid_n}_{robust_quantile}_only_intervals"
+    cache = dc.Cache(CACHE_NAME)
+    if log:
+        print("Starting run...")
+    if cache_key in cache:
+        if log:
+            print("Intervals found in cache")
+        return cache[cache_key]  # type: ignore
     result_euclid = hausd_interval(X, B=B, robust_quantile=robust_quantile, ncores=ncores)
-    print("Finished running euclidean")
+    if log:
+        print("Finished running euclidean")
     result_kde = bootstrap_function_interval(
         X, B=B, value_function=partial(kde_grid, h=h), grid_n=grid_n, ncores=ncores
     )
-    print("Finished running KDE")
+    if log:
+        print("Finished running KDE")
     fermat_matrix = fermat_dist(X, alpha=2)
-    print("Computed fermat distance matrix")
+    if log:
+        print("Computed fermat distance matrix")
     result_fermat = hausd_interval(
         fermat_matrix, B=B, pairwise_dist=True, robust_quantile=robust_quantile, ncores=ncores
     )
-    print("Finished running Fermat")
+    if log:
+        print("Finished running Fermat")
     intervals = Intervals(X=X, euclidean=result_euclid, fermat=result_fermat, kde=result_kde)
     if plot:
         plot_all_intervals(intervals)

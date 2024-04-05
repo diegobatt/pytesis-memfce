@@ -89,6 +89,11 @@ ggplot_dataset(X_eyeglasses_outliers, title = "Datos Atípicos")
 ### Círculo con densidad dependiente del radio
 
 
+## Conjuntos de datos reales  {#sec-methods-data-real}
+
+
+
+
 ## Intervalos de confianza {#sec-methods-intervals}
 
 Haciendo uso de los conjuntos de datos descriptos, junto con sus variaciones, en la @sec-methods-data-synth, calcularemos los intervalos de confianza para los diagramas de persistencia resultantes haciendo uso de cuatro métodos. Tres de ellos propuestos por la literatura, en particular analizados extensivamente en [@ConfidenceSetsForPersistenceDiagrams] y un método adicional, que consiste en reemplazar la distancia euclidea utlizada por la distancia de Fermat, con el objetivo de observar las dieferencias obtenidas en los intervalos de confianza y las cualidades topológicas detectadas. A continuación se describen los métodos a utilizar para calcular estos intervalos de confianza
