@@ -50,30 +50,21 @@ $$
 
 Teniendo en cuenta que a distancia de camino más corto en grafos es una métrica y, por lo tanto, satisface la desigualdad triangular. Es decir, dados tres nodos $s, u$ y $t$, se cumplen las siguientes desigualdades:
 
-$$d_G(s, t) \leq d_G(s, u) + d_G(u, t)$$
-$$d_G(s, t) \geq |d_G(s, u) - d_G(u, t)|$$
+$$|d_G(s, u) - d_G(u, t)| \leq d_G(s, t) \leq d_G(s, u) + d_G(u, t) $$ {#eq-landmark-bounds}
 
-Resulta una observación importante que utilizaremos que si $u$ pertenece al camino más corto de $s$ a $t$, entonces la primera relacióßn se cumple con igualdad, es decir $d_G(s, t) = d_G(s, u) + d_G(u, t)$
+Resulta una observación importante que si $u$ pertenece al camino más corto de $s$ a $t$, entonces la cota superior se cumple con igualdad, es decir $d_G(s, t) = d_G(s, u) + d_G(u, t)$
 
-**Usando landmarks**
-Dado un grafo $G$ con $n$ vértices y $m$ aristas, y un conjunto de $d$ landmarks $D$, precalculamos las distancias entre cada vértice en $G$ y cada landmark. El costo de esta computación fuera de línea es de $d$ recorridos BFS del grafo: $O(md)$.
+Haciendo uso entocnes de las representaciones $\phi(v)$ y $\phi(t)$ y mediante las desigualdades de la @eq-landmark-bounds podemos acotar $d_G(s,t)$ como
 
-Recordemos que nuestra tarea es calcular $d_G(s,t)$ para cualquier par de vértices $s, t \in V$. Debido a las desigualdades (2) y (3), tenemos
+$$\max_i|\phi_i(s) - \phi_i(t)| \leq d_G(s,t) \leq \min_j\{\phi_j(s) + \phi_j(t)\}$$
 
-$$\max|s_i - t_i| \leq d_G(s,t) \leq \min\{s_j + t_j\}$$
+Si se definen $L = \max_i|\phi_i(s) - \phi_i(t)|$ y $\min_j\{\phi_j(s) + \phi_j(t)\} = U$ podemos entonces estimar $d_G(s,t)$ como
 
-En otras palabras, la verdadera distancia $d_G(s,t)$ se encuentra en el rango $[L,U]$, donde $L = \max_i |t_i - s_i|$ y $U = \min_j\{s_j + t_j\}$.
+- La estimación superior $\tilde{d}_G(s,t) = U$
+- La estimación del punto medio $\tilde{d}_G(s,t) = \frac{L+U}{2}$
+- La estimación de la media geométrica $\tilde{d}_G(s, t) = \sqrt{L \cdot U}$.
 
-Usando el landmark $u$, estimamos la distancia entre $s$ y $t$ como:
-
-- La estimación superior $\tilde{d}_u(s,t) = U$
-- La estimación del punto medio $\tilde{d}_m(s,t) = \frac{L+U}{2}$
-- La estimación de la media geométrica $\tilde{d}_g(s, t) = \sqrt{L \cdot U}$.
-
-Nótese que en todos los casos, la estimación es muy rápida, ya que solo se necesitan $O(d)$ operaciones, y $d$ puede considerarse como una constante, o una función logarítmica del tamaño del grafo.
-
-Nuestros experimentos indican que las estimaciones de "cota superior" $\tilde{d}_u(s,t) = U$ funcionan mucho mejor que los otros tipos de estimaciones, por lo que, en el resto del documento, nos enfocamos en las estimaciones de cota superior. Comentamos brevemente sobre las estimaciones de cota inferior más adelante en la Se
-
+Nótese que en todos los casos, la estimación es muy rápida, ya que solo se necesitan $O(d)$. La cota superior $\tilde{d}_G(s,t) = U$ resulta la mejor estimación según la experimentación realizada en @FermatLandmarks. Adicionalmente, en @FermatLandmarks se muestra que la elección aleatoria de *landmarks* cuenta con buenas garantias frente a la elección óptima, siendo esta última un problema computacionalmente demasiado costoso.
 
 ### Implementación
 

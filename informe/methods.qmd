@@ -1,46 +1,69 @@
 ## Conjuntos de datos sintéticos  {#sec-methods-data-synth}
 
-Es común en la literatura de topología computacional enfocarse en unos conjuntos de datos sintéticos simples, sobre los cuales se corren los métodos de interés. Al ser estos utilizados por diferentes trabajos los resultados pueden ser facilmente constrastados [@ConfidenceSetsForPersistenceDiagrams]. A continuación se muestran los conjuntos de datos sintéticos que se utilizarán durante la @sec-results. En cada caso se agregarán tambien muestras atípicas o ruido para lograr una mayor variabilidad en los conjuntos que puedan dificultarle la tarea a las técnicas desarrolladas.
+Es común en la literatura de topología computacional enfocarse en unos conjuntos de datos sintéticos simples, sobre los cuales se corren los métodos de interés. Al ser estos utilizados por diferentes trabajos los resultados pueden ser facilmente constrastados [@ConfidenceSetsForPersistenceDiagrams, @FootballRobustDataset]. A continuación se muestran los conjuntos de datos sintéticos que se utilizarán durante la @sec-results. En cada caso, se generarán dos nuevos conjuntos de datos por medio de agregar muestras atípicas y ruido, respectivamente, para lograr una mayor variabilidad en los conjuntos que puedan dificultarle la tarea a las técnicas desarrolladas.
 
 
-<!-- ```{r}
-box::use(cowplot[plot_grid])
-box::use(rtesis/datasets[ggplot_dataset, eyeglasses, arc, add_noise, add_outliers])
+```{python}
+import warnings
+import random
+import matplotlib.pyplot as plt
+import numpy as np
 
-set.seed(20)
+warnings.simplefilter(action="ignore", category=FutureWarning)
+warnings.simplefilter(action="ignore", category=UserWarning)
 
-n <- 250
-``` -->
+from pytesis.datasets import (
+    arc,
+    eyeglasses,
+    filled_circle,
+    football_sensor,
+    add_noise,
+    add_outliers,
+    plot_dataset,
+    rectangle
+)
+
+random.seed(1)
+
+n = 500
+sd = 0.075
+iqr_factor = 0.3
+outliers_frac = 0.02
+
+n_eyeglasses = 750
+bridge_height = 0.5
+sd_eyeglasses = 0.04
+```
 
 
 ### Circunferencia uniforme
 
-El más sencillo de los conjuntos de datos a utilizar es el círculo uniforme, en donde la distancia al centro de los puntos es fija mientras que el ángulo proviene de una distribución uniforme en el intervalo $(-\pi, \pi)$, es decir
+El más sencillo de los conjuntos de datos a utilizar es la circunferencia uniforme, en donde la distancia al centro de los puntos es fija mientras que el ángulo proviene de una distribución uniforme en el intervalo $(-\pi, \pi)$, es decir
 
 $$\angle \mathbf{x} \sim \mathcal{U}(-\pi, \pi), \qquad |\mathbf{x}| = r$$
 
-En la @fig-circle-uniform se observa una muestra de `r n` elementos provenientes de esta distribución, junto con su versión con ruido agregado y datos atípicos.
+En la @fig-circle-uniform se observa una muestra de `r n` elementos provenientes de esta distribución, junto con sus versiones con ruido agregado y datos atípicos, respectivamente.
 
-<!-- ```{r}
+```{python}
 #| label: fig-circle-uniform
-#| fig-cap: Conjunto de datos sintéticos correspondientes al circulo uniforme
+#| fig-cap: Conjunto de datos sintéticos correspondientes a la circunferencia uniforme
 #| fig-subcap:
 #|   - "Muestre uniforme"
 #|   - "Ruido agregado"
 #|   - "Datos atípicos"
 #| layout: [[-4, 10, -4], [1, 1]]
-X_circle <- arc(n = n)
-X_circle_noise <- add_noise(X_circle, sd = 0.1)
-X_circle_outliers <- add_outliers(X_circle, iqr_factor = 0.3)
-ggplot_dataset(X_circle, title = "Uniforme")
-ggplot_dataset(X_circle_noise, title = "Ruido")
-ggplot_dataset(X_circle_outliers, title = "Datos Atípicos")
-``` -->
+X_circle = arc(n = n)
+X_circle_noise = add_noise(X_circle, sd=sd)
+X_circle_outliers = add_outliers(X_circle, iqr_factor=iqr_factor)
+plot_dataset(X_circle, title="Base"); plt.show()
+plot_dataset(X_circle_noise, title="Ruido"); plt.show()
+plot_dataset(X_circle_outliers, title="Datos Atípicos"); plt.show()
+```
 
 
 ### Circunferencia gaussiana
 
-Una variación utilizada del círculo uniforme que busca enfatizar regiones con menor densidad de muestras, aunque manteniendo el soporte del cual se obtienen las muestras, es el círculo gaussiano. La definición de este conjunto de datos es análoga a la del caso uniforme, pero en este caso el ángulo $\angle \mathbf{x}$ se obtiene de una distribución normal truncada entre $-\pi$ y $\pi$, es decir
+Una variación utilizada del circunferencia uniforme que busca enfatizar regiones con menor densidad de muestras, aunque manteniendo el soporte del cual se obtienen las muestras, es la circunferencia gaussiano. La definición de este conjunto de datos es análoga a la del caso uniforme, pero en este caso el ángulo $\angle \mathbf{x}$ se obtiene de una distribución normal truncada entre $-\pi$ y $\pi$, es decir
 
 $$
 \angle \mathbf{x} \sim \mathrm{TruncNormal}(-\pi, \pi, \mu, \sigma)
@@ -48,29 +71,29 @@ $$
 
 Donde la media $\mu$ será igual a 0, mientras que la desviación estandar $\sigma$ se elije de tal forma que el $95\%$ de las muestras de una gaussiana tradicional esten comprendidas dentro del intervalo $(-\pi, \pi)$. En la @fig-circle-gaussian se observa el conjunto de datos provenientes de esta distribución junto con sus análogos con ruido y datos atípicos.
 
-<!-- ```{r}
+```{python}
 #| label: fig-circle-gaussian
-#| fig-cap: Conjunto de datos sintéticos correspondientes al circulo gaussiano
+#| fig-cap: Conjunto de datos sintéticos correspondientes a la circunferencia gaussiana
 #| fig-subcap:
 #|   - "Muestre uniforme"
 #|   - "Ruido agregado"
 #|   - "Datos atípicos"
 #| layout: [[-4, 10, -4], [1, 1]]
-X_circle_gauss <- arc(n = n, sampling = "normal")
-X_circle_gauss_noise <- add_noise(X_circle_gauss, sd = 0.1)
-X_circle_gauss_outliers <- add_outliers(X_circle_gauss, iqr_factor = 0.3)
-ggplot_dataset(X_circle_gauss, title = "Uniforme")
-ggplot_dataset(X_circle_gauss_noise, title = "Ruido")
-ggplot_dataset(X_circle_gauss_outliers, title = "Datos Atípicos")
-``` -->
+X_circle_gauss = arc(n=n, sampling="normal")
+X_circle_gauss_noise = add_noise(X_circle_gauss, sd=sd)
+X_circle_gauss_outliers = add_outliers(X_circle_gauss, iqr_factor=iqr_factor)
+plot_dataset(X_circle_gauss, title="Base"); plt.show()
+plot_dataset(X_circle_gauss_noise, title="Ruido"); plt.show()
+plot_dataset(X_circle_gauss_outliers, title="Datos Atípicos"); plt.show()
+```
 
 
-### Eyeglasses
+### Anteojos
 
-El conjunto de datos que llamaremos *eyeglasses* se ilustra a continuación en la @fig-eyeglasses, junto con sus análogos con ruido gaussiana y datos atípicos.
-Esta topología resulta similar a un óvalo de Cassini y debe su nombre en inglés a su parecido con unos anteojos. La misma presenta dos circulos conectados mediante una apertura en ellos. Se utiliza extensivamente durante el cálculo de intervalos de confianza para datos sintéticos ya que la topología en realidad posee un único agujero de grado 1, pero resulta sencillo para los algoritmos confundirse y detectar dos agujeros significativos dependiendo del grado de apertura [@ConfidenceSetsForPersistenceDiagrams].
+El conjunto de datos que llamaremos Anteojos (*eyeglasses* en inglés) se ilustra a continuación en la @fig-eyeglasses, junto con sus análogos con ruido gaussiana y datos atípicos.
+Esta topología resulta similar a un óvalo de Cassini y debe su nombre a su parecido con unos anteojos. La misma presenta dos circulos conectados mediante una apertura en ellos. Se utiliza extensivamente durante el cálculo de intervalos de confianza para datos sintéticos ya que la topología en realidad posee un único agujero de grado 1, pero resulta sencillo para los algoritmos confundirse y detectar dos agujeros significativos dependiendo del grado de apertura [@ConfidenceSetsForPersistenceDiagrams].
 
-<!-- ```{r}
+```{python}
 #| label: fig-eyeglasses
 #| fig-cap: Conjunto de datos sintéticos correspondientes a los eyeglasses
 #| fig-subcap:
@@ -78,20 +101,66 @@ Esta topología resulta similar a un óvalo de Cassini y debe su nombre en ingl�
 #|   - "Ruido agregado"
 #|   - "Datos atípicos"
 #| layout: [[-4, 10, -4], [1, 1]]
-X_eyeglasses <- eyeglasses(n = n, bridge_height = 0.5)
-X_eyeglasses_noise <- add_noise(X_eyeglasses, sd = 0.1)
-X_eyeglasses_outliers <- add_outliers(X_eyeglasses, iqr_factor = 0.3)
-ggplot_dataset(X_eyeglasses, title = "Uniforme")
-ggplot_dataset(X_eyeglasses_noise, title = "Ruido")
-ggplot_dataset(X_eyeglasses_outliers, title = "Datos Atípicos")
-``` -->
+
+X_eyeglasses = eyeglasses(n=n_eyeglasses, bridge_height=bridge_height)
+X_eyeglasses_noise = add_noise(X_eyeglasses, sd=sd_eyeglasses)
+X_eyeglasses_outliers = add_outliers(X_eyeglasses, iqr_factor=iqr_factor)
+plot_dataset(X_eyeglasses, title="Base"); plt.show()
+plot_dataset(X_eyeglasses_noise, title="Ruido"); plt.show()
+plot_dataset(X_eyeglasses_outliers, title="Datos Atípicos"); plt.show()
+```
 
 ### Círculo con densidad dependiente del radio
+
+Hasta el momento todos los conjuntos de datos presentados poseen un agujero, pero resulta de interés analizar como se comportan los diagramas de persistencia y los respectivos intervalos de confianza calculados sobre los mismos para un conjunto de datos que no posee agujeros de grado 1. El objetivo será entonces utilizar este *dataset* para validad la capacidad de los intervalos de confianza obtenidos mediante cada uno de los métodos para rechazar la hipótesis de existencia de agujeros, verificando así la tasa de errores tipo I o nivél estadistico.
+
+```{python}
+n_filled_circle = 750
+r_power = 2.6
+max_r = 1.5
+```
+
+El conjunto de datos que sumaremos a nuestras simulaciones para realizar esta tarea sera un círculo en donde la densidad de los puntos que lo rellenan es dependiente del radio. A continuación se muestra el conjunto de datos para un rádio {{< var max_r >}}
+
+```{python}
+#| label: fig-filled-circle
+#| fig-cap: Conjunto de datos sintéticos correspondientes al círculo con densidad dependiente del radio
+X_filled = filled_circle(n=n_filled_circle, r_power=r_power, max_r=max_r)
+plot_dataset(X_filled, title="Conjunto de datos"); plt.show()
+```
 
 
 ## Conjuntos de datos reales  {#sec-methods-data-real}
 
+Adicionalmente al uso de los conjuntos de datos sínteticos descriptos en la @sec-methods-data-synth se buscará tambien validar los resultados obtenidos en cuanto a la detección de agujeros de primer grado un conjunto de datos reales utilizado en @FootballRobustDataset cuya estructura se describe en @FootballRobustDatasetExplanation. El *dataset* consiste en mediciones correspondientes a la posición de jugadores de football dentro de la cancha a lo largo de un partido, en el que se obtiene un punto cada un intervalo de tiempo determinado. En la figura
 
+```{python}
+#| label: fig-football-X
+#| fig-cap: Conjunto de datos reales correspondientes a la posición medida de distintos jugadores a lo largo de un partido de football. Los diferentes jugadores ocupan diferentes roles en el equipo para mostrar diferentes patrones de posiciones
+#| fig-subcap:
+#|   - "Jugador 2: Defensor"
+#|   - "Jugador 5: Mediocampista"
+#|   - "Jugador 8: Lateral"
+#|   - "Jugador 14: Mediocampista"
+length_x, length_y = 105, 68
+borders = rectangle(n=100, length_x=length_x, length_y=length_y, random=False)
+
+n_football = 1000
+football_tag_2 = football_sensor(n=n_football, tag_id=2, second_half=False)
+football_tag_5 = football_sensor(n=n_football, tag_id=5, second_half=False)
+football_tag_8 = football_sensor(n=n_football, tag_id=8, second_half=False)
+football_tag_14 = football_sensor(n=n_football, tag_id=14, second_half=False)
+
+football_X_tag_2 = np.vstack([football_tag_2, borders])
+football_X_tag_5 = np.vstack([football_tag_5, borders])
+football_X_tag_8 = np.vstack([football_tag_8, borders])
+football_X_tag_14 = np.vstack([football_tag_14, borders])
+
+plot_dataset(football_X_tag_2, title="Jugador 2"); plt.show()
+plot_dataset(football_X_tag_5, title="Jugador 5"); plt.show()
+plot_dataset(football_X_tag_8, title="Jugador 8"); plt.show()
+plot_dataset(football_X_tag_14, title="Jugador 14"); plt.show()
+```
 
 
 ## Intervalos de confianza {#sec-methods-intervals}

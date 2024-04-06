@@ -1,5 +1,4 @@
 import pathlib
-from typing import Literal
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -181,14 +180,15 @@ def add_noise(X, sd=1):
 
 
 def add_outliers(X, frac=0.05, iqr_factor=1.5):
-    n, d = X.shape
+    n, _ = X.shape
     amount = int(round(frac * n))
     qs = np.percentile(X, [25, 75], axis=0)
     iqr = qs[1] - qs[0]
     iqr_sign = np.random.choice([-1, 1], amount)
     ixs = np.random.choice(n, amount, replace=True)
-    X[ixs, :] = X[ixs, :] + iqr_factor * iqr_sign[:, np.newaxis] * np.tile(iqr, (amount, 1))
-    return X
+    X_new = X.copy()
+    X_new[ixs, :] = X[ixs, :] + iqr_factor * iqr_sign[:, np.newaxis] * np.tile(iqr, (amount, 1))
+    return X_new
 
 
 def add_dummy_dimensions(X, d=1):
