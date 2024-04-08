@@ -73,27 +73,29 @@ def run_all_intervals(
     if cache_key in cache:
         if log:
             print("Intervals found in cache")
-        return cache[cache_key]  # type: ignore
-    result_euclid = hausd_interval(X, B=B, robust_quantile=robust_quantile, ncores=ncores)
-    if log:
-        print("Finished running euclidean")
-    result_kde = bootstrap_function_interval(
-        X, B=B, value_function=partial(kde_grid, h=h), grid_n=grid_n, ncores=ncores
-    )
-    if log:
-        print("Finished running KDE")
-    fermat_matrix = fermat_dist(X, alpha=2)
-    if log:
-        print("Computed fermat distance matrix")
-    result_fermat = hausd_interval(
-        fermat_matrix, B=B, pairwise_dist=True, robust_quantile=robust_quantile, ncores=ncores
-    )
-    if log:
-        print("Finished running Fermat")
-    intervals = Intervals(X=X, euclidean=result_euclid, fermat=result_fermat, kde=result_kde)
+        intervals = cache[cache_key]
+    else:
+        result_euclid = hausd_interval(X, B=B, robust_quantile=robust_quantile, ncores=ncores)
+        if log:
+            print("Finished running euclidean")
+        result_kde = bootstrap_function_interval(
+            X, B=B, value_function=partial(kde_grid, h=h), grid_n=grid_n, ncores=ncores
+        )
+        if log:
+            print("Finished running KDE")
+        fermat_matrix = fermat_dist(X, alpha=2)
+        if log:
+            print("Computed fermat distance matrix")
+        result_fermat = hausd_interval(
+            fermat_matrix, B=B, pairwise_dist=True, robust_quantile=robust_quantile, ncores=ncores
+        )
+        if log:
+            print("Finished running Fermat")
+        intervals = Intervals(X=X, euclidean=result_euclid, fermat=result_fermat, kde=result_kde)
+        cache[cache_key] = intervals
     if plot:
-        plot_all_intervals(intervals)
-    return intervals
+        plot_all_intervals(intervals)  # type: ignore
+    return intervals  # type: ignore
 
 
 def run_all(

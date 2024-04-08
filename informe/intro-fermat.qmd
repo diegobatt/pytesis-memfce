@@ -10,7 +10,7 @@ Donde $\mathcal{M} \subseteq \mathbb{R}^D$ es un manifold de dimension $d \geq 1
 Se define entonces la distancia de fermat para el par de puntos $\mathbf{p}, \mathbf{q} \in \mathcal{M}$ como:
 
 $$
-\mathcal{D}_{\mathcal{S}_n}(\mathbf{p}, \mathbf{q}) = \min_{\mathcal{S}_n^K} \sum_{i = 1}^{K-1} l\left( \mathbf{x}^i, \mathbf{x}^{i+1} \right) ^\alpha
+d_F(\mathbf{p}, \mathbf{q}) = \mathcal{D}_{\mathcal{S}_n}(\mathbf{p}, \mathbf{q}) = \min_{\mathcal{S}_n^K} \sum_{i = 1}^{K-1} l\left( \mathbf{x}^i, \mathbf{x}^{i+1} \right) ^\alpha
 $$ {#eq-def-fermat}
 
 Donde $\mathcal{S}_n^K$, $K \geq 2$, representa todas las secuencias de puntos compuestas por $K$ elementos tomados de $\mathcal{S}_n$ con

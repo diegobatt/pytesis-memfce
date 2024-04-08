@@ -132,16 +132,17 @@ plot_dataset(X_filled, title="Conjunto de datos"); plt.show()
 
 ## Conjuntos de datos reales  {#sec-methods-data-real}
 
-Adicionalmente al uso de los conjuntos de datos sínteticos descriptos en la @sec-methods-data-synth se buscará tambien validar los resultados obtenidos en cuanto a la detección de agujeros de primer grado un conjunto de datos reales utilizado en @FootballRobustDataset cuya estructura se describe en @FootballRobustDatasetExplanation. El *dataset* consiste en mediciones correspondientes a la posición de jugadores de football dentro de la cancha a lo largo de un partido, en el que se obtiene un punto cada un intervalo de tiempo determinado. En la figura
+Adicionalmente al uso de los conjuntos de datos sínteticos descriptos en la @sec-methods-data-synth se buscará tambien validar los resultados obtenidos en cuanto a la detección de agujeros de primer grado un conjunto de datos reales utilizado en @FootballRobustDataset cuya estructura se describe en @FootballRobustDatasetExplanation. El *dataset* consiste en mediciones correspondientes a la posición de jugadores de football dentro de la cancha a lo largo de un partido, en el que se obtiene un punto cada un intervalo de tiempo determinado. A este conjunto de datos, siguiendo lo realizado en @FootballRobustDataset, se le agrega un borde artificial demarcando los limites de la cancha con el objetivo de que los espacios en donde el jugador no tuvo incidencia sean agujeros con bordes en los limites de la cancha y las posibles ubicaciones del jugador en conjunto.
 
 ```{python}
-#| label: fig-football-X
+#| label: fig-football-data
 #| fig-cap: Conjunto de datos reales correspondientes a la posición medida de distintos jugadores a lo largo de un partido de football. Los diferentes jugadores ocupan diferentes roles en el equipo para mostrar diferentes patrones de posiciones
 #| fig-subcap:
-#|   - "Jugador 2: Defensor"
+#|   - "Jugador 2: Defensor Ofensivo"
 #|   - "Jugador 5: Mediocampista"
-#|   - "Jugador 8: Lateral"
+#|   - "Jugador 8: Lateral Defensivo"
 #|   - "Jugador 14: Mediocampista"
+#| layout: [[1, 1], [1, 1]]
 length_x, length_y = 105, 68
 borders = rectangle(n=100, length_x=length_x, length_y=length_y, random=False)
 
@@ -162,14 +163,16 @@ plot_dataset(football_X_tag_8, title="Jugador 8"); plt.show()
 plot_dataset(football_X_tag_14, title="Jugador 14"); plt.show()
 ```
 
+En la figura @fig-football-data se observan los datos para cuatro jugadores correspondientes a diferentes posiciones de juego en los que se evidencian espacios donde el jugador no tuvo incidencia, o al menos de forma recurrente.
+
 
 ## Intervalos de confianza {#sec-methods-intervals}
 
-Haciendo uso de los conjuntos de datos descriptos, junto con sus variaciones, en la @sec-methods-data-synth, calcularemos los intervalos de confianza para los diagramas de persistencia resultantes haciendo uso de cuatro métodos. Tres de ellos propuestos por la literatura, en particular analizados extensivamente en [@ConfidenceSetsForPersistenceDiagrams] y un método adicional, que consiste en reemplazar la distancia euclidea utlizada por la distancia de Fermat, con el objetivo de observar las dieferencias obtenidas en los intervalos de confianza y las cualidades topológicas detectadas. A continuación se describen los métodos a utilizar para calcular estos intervalos de confianza
+Haciendo uso de los conjuntos de datos descriptos en la @sec-methods-data-synth, calcularemos los intervalos de confianza para los diagramas de persistencia resultantes haciendo uso de tres métodos, dos de ellos propuestos por la literatura, en particular analizados extensivamente en [@ConfidenceSetsForPersistenceDiagrams] y un método adicional, que consiste en reemplazar la distancia euclidea utlizada en uno de ellos por la distancia de Fermat, con el objetivo de observar las diferencias obtenidas en los intervalos de confianza y las cualidades topológicas detectadas. A continuación se describen los métodos a utilizar para calcular estos intervalos de confianza
 
 ### Sub-muestreo con distancia euclidea {#sec-methods-subsampling}
 
-El primer método de cálculo de intervalos de confianza para diagramas de persistencia será mediante el sub-muestreo con distancia euclidea, desarrollado en [@ConfidenceSetsForPersistenceDiagrams]. Este método consiste en usar la técnica de submuestreo, introducida en la @sec-intro-subsampling para obtener sub-muestras $\mathcal{S}_{N, b}^j$ mediante las cuales calcular directamente la distancia de Hausdorff basada en una distancia euclidea. Es decir, sea $\mathcal{S}_{N, b}^j$ una sub-muestra sin reposición de tamaño $b$ sobre $\mathcal{S}_N$ y sea $\theta_j = d_H(\mathcal{S}_{N}, \mathcal{S}_{N, b}^j)$ la distancia de Hausdorff entre $\mathcal{S}_N$ y $\mathcal{S}_{N, b}^j$, definimos
+El primer método de cálculo de intervalos de confianza para diagramas de persistencia será mediante el sub-muestreo con distancia euclidea, desarrollado en [@ConfidenceSetsForPersistenceDiagrams]. Este método consiste en usar la técnica de submuestreo, introducida de forma teórica en la @sec-intro-subsampling, para obtener sub-muestras $\mathcal{S}_{N, b}^k$ del conjunto original mediante las cuales calcular directamente la distancia de Hausdorff basada en una distancia euclidea. Es decir, sea $\mathcal{S}_{N, b}^k$ una sub-muestra sin reposición de tamaño $b$ sobre $\mathcal{S}_N$ y sea $\theta_j = d_H(\mathcal{S}_{N}, \mathcal{S}_{N, b}^k)$ la distancia de Hausdorff entre $\mathcal{S}_N$ y $\mathcal{S}_{N, b}^k$, definimos
 
 $$
 L_b(t) = \frac{1}{M}\sum_{j=1}^M I(\theta_j > t)
@@ -183,93 +186,36 @@ $$
 
 es decir, $c_b$ es un intervalo de confianza de nivel $1-\alpha$ para las cualidades topológicas de nuestro diagrama de persistencia $\hat{\mathcal{P}}$.
 
-De esta forma haremos uso del siguiente algoritmo para obtener nuestro primer intervalo de confianza para los diagramas de persistencia calculados:
-
+De esta forma haremos uso del siguiente algoritmo (descripto en *pseudo*-código) para obtener nuestro primer intervalo de confianza para los diagramas de persistencia calculados:
 
 \begin{algorithm}[H]
+    \label{alg-subsampling-euclid}
     \KwIn{$\mathcal{S}_N, \ b, \ \alpha, \ M$}
-    $j \leftarrow 1$ \;
+    $k \leftarrow 1$ \;
     $\theta \leftarrow array(M)$ \;
-    \While{$j \leq  M$}{
-        $\mathcal{S}_{N, b}^j$ : Submuestro sin reposición de $\mathcal{S}_N$\;
-        $\theta[j] \leftarrow d_H(\mathcal{S}_{N}, \mathcal{S}_{N, b}^j)$;
+    \While{$k \leq  M$}{
+        $\mathcal{S}_{N, b}^k$ : Submuestro sin reposición de $\mathcal{S}_N$\;
+        $\theta[k] \leftarrow d_H(\mathcal{S}_{N}, \mathcal{S}_{N, b}^k)$;
     }
     \Return 2 * quantile($\theta$, $1-\alpha$)
 \end{algorithm}
 
 ### Sub-muestreo con distancia de Fermat {#sec-methods-subsampling}
 
-<!-- ### Bootstrap con distancia euclidea {#sec-metodos-bootstrap-euclidea}
-
-El método de sub-muestro con distancia euclidea presenta la ventaja computacional de que no es necesario calcular el diagrama de persistencia para obtener el intervalo de confianza estimado, reduciendo fuertemente el tiempo de cómputo. Sin enbargo, si se busca hallar intervalos de confianza para diagramas de persistencia construidos mediante funciones más complejas que la distancia euclidea, se debe recurrir al *bootstrap* tradicional. De esta forma, basandonos en la técnica de *bootstrap* introducida en la @sec-intro-bootstrap, realizaremos el siguiente procedimiento: Sea $\mathcal{S}_N^j$ una muestra de $N$ elementos tomados con reposición sobre $\mathcal{S}_N$, se definen sendos diagramas de persistencia
+El método descripto en la @sec-methods-subsampling hace uso de la distancia de Hausdorff para conseguir una cota superior de $\mathbb{P}(W_{\infty}(\hat{\mathcal{P}}, \mathcal{P}) > c_b)$, pero resulta importante destacar que esta distancia se define a partir de una medida de distancia subyacente, que se evidencia en la definicion de la distancia de Hausdorff para nubes de puntos
 
 $$
-\begin{split}
-\hat{\mathcal{P}} = \mathrm{PersistenceDiagram}(\mathcal{S}_N) \\
-\hat{\mathcal{P}}^j = \mathrm{PersistenceDiagram}(\mathcal{S}_N^j)
-\end{split}
-$$
+d_H(\mathcal{S}_{N}, \mathcal{S}_{N, b}^k) = \max(\max_{\mathbf{x_i} \in \mathcal{S}_{N}}{\min_{\mathbf{x_j} \in \mathcal{S}_{N, b}^k}}{d(\mathbf{x_i}, \mathbf{x_j})}, \max_{\mathbf{x_i} \in \mathcal{S}_{N, b}^k}{\min_{\mathbf{x_j} \in \mathcal{S}_{N}}}{d(\mathbf{x_i}, \mathbf{x_j})})
+$$ {#eq-cloud-hausdorff-distance-full}
 
-A partir de los cuales se obtiene la distancia entre los mismos haciendo uso de las distancias definidas en la @sec-distancia-diagramas. En particular, si por ejemplo usamos la distancia _bottleneck_, obtenemos para cada muestra bootstrap un valor de distancia
+Esta expresion puede reducirse teniendo en cuenta que, al ser $\mathcal{S}_{N, b}^k$ un subconjunto de $\mathcal{S}_{N}$, para todo $\mathbf{x_i} \in \mathcal{S}_{N, b}^k$ se tiene que $\min_{\mathbf{x_j} \in \mathcal{S}_{N}}{d(\mathbf{x_i}, \mathbf{x_j})} = 0$, ya que el mínimo se obtiene en exactamente la misma muestra, por lo que la @eq-cloud-hausdorff-distance-full se reduce a
 
 $$
-\theta_j = W_{\infty}(\hat{\mathcal{P}}, \hat{\mathcal{P}}^j)
+d_H(\mathcal{S}_{N}, \mathcal{S}_{N, b}^k) = \max_{\mathbf{x_i} \in \mathcal{S}_{N}}{\min_{\mathbf{x_j} \in \mathcal{S}_{N, b}^k}}{d(\mathbf{x_i}, \mathbf{x_j})}
 $$
 
-Este procedimiento se repite $M$ veces para obtener la distribución del estadístico distancia $\theta^j$, a partir de la cual podemos obtener su cuantil $1 - \alpha$ definiendo
+Donde la maximización se alcanzará en alguno de aquellos puntos que no hayan sido sub-muestreados. A partir de esta descripción de la distancia de Hausdorff resulta evidente que si se reemplaza la función de distancia euclídea $d$, utilizada en la @sec-methods-subsampling por la distancia de Fermat, todas las garantias teóricas obtenidas en @ConfidenceSetsForPersistenceDiagrams seguirán siendo validas ya que las mismas no dependen de la función elegida para este computo. De esta forma, el algoritmo desarrollado para el método de la @sec-methods-subsampling no debe ser modificado mas allá del cambio en la medida de distancia.
 
-$$
-L(t) = \frac{1}{M}\sum_{j=1}^M I(\theta_j > t)
-$$
-
-y obteniendo
-
-$$
-c = \inf{t : L(t) \leq \alpha}
-$$
-
-para estimar el intervalo de confianza
-
-$$
-\mathbb{P}(W_{\infty}(\hat{\mathcal{P}}, \mathcal{P}) > c) \leq \alpha
-$$
-
-A continuación se ilustra a modo de resumen el algoritmo a utilizar para calcular intervalos de confianza mediante bootstrap con distancia euclidea
-
-\begin{algorithm}[H]
-    \KwIn{$\mathcal{S}_N, \ \alpha, \ M$}
-    $j \leftarrow 1$ \;
-    $\theta \leftarrow array(M)$ \;
-    $\hat{\mathcal{P}}$ : Diagrama de persistencia de $\mathcal{S}_{N}$;
-    \While{$j \leq  M$}{
-        $\mathcal{S}_{N}^j$ : Submuestro de tamaño $N$ con reposición de $\mathcal{S}_N$\;
-        $\hat{\mathcal{P}}^j$ : Diagrama de persistencia de $\mathcal{S}_{N}^j$;
-        $\theta[j] \leftarrow W_{\infty}(\hat{\mathcal{P}}, \hat{\mathcal{P}}^j)$;
-    }
-    \Return 2 * quantile($\theta$, $1-\alpha$)
-\end{algorithm}
-
-
-### Bootstrap con distancia de fermat {#sec-methods-bootstrap-fermat}
-
-Análogamente a lo realizado en la @sec-metodos-bootstrap-euclidea utilizaremos este mismo mecanismo para estimar el intervalo de confianza pero haciendo uso de una función de distancia más compleja, en particular, la distancia de fermat. El algoritmo se mantiene similar, aunque previo a calcular el diagrama de persistencia, computaremos la matriz de distancias de fermat entre sí de los puntos de $\mathcal{S}_{N}$ y $\mathcal{S}_{N}^j$ respectivamente para poder construir el diagrama de persistencia a partir de esta función. El algoritmo modificado se ilustra a continuación
-
-\begin{algorithm}[H]
-    \KwIn{$\mathcal{S}_N, \ \alpha, \ M$}
-    $j \leftarrow 1$\;
-    $\theta \leftarrow array(M)$\;
-    $FermatDistance_{S_{N}}$: Matriz de distancias de fermat entre los pares de puntos de $\mathcal{S}_{N}$\;
-    $\hat{\mathcal{P}}$ : Diagrama de persistencia de $FermatDistance_{S_{N}}$\;
-    \While{$j \leq  M$}{
-        $\mathcal{S}_{N}^j$ : Submuestro de tamaño $N$ con reposición de $\mathcal{S}_N$\;
-        $FermatDistance_{S_{N}^j}$: Matriz de distancias de fermat entre los pares de puntos de $\mathcal{S}_{N}^j$\;
-        $\hat{\mathcal{P}}^j$ : Diagrama de persistencia de $FermatDistance_{S_{N}^j}$\;
-        $\theta[j] \leftarrow W_{\infty}(\hat{\mathcal{P}}, \hat{\mathcal{P}}^j)$;
-    }
-    \Return 2 * quantile($\theta$, $1-\alpha$)
-\end{algorithm}
-
-Se espera que este intervalo de confianza de lugar a una prueba más potente que las efectuadas a partir de los intervalos obtenidos en base a la distancia euclídea. -->
 
 ### Bootstrap con estimación por densidad {#sec-methods-bootstrap-density}
 
