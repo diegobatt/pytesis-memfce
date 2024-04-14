@@ -36,7 +36,7 @@ sd_eyeglasses = 0.04
 ```
 
 
-### Circunferencia uniforme
+### Circunferencia uniforme {#sec-methods-data-synth-circle-base}
 
 El más sencillo de los conjuntos de datos a utilizar es la circunferencia uniforme, en donde la distancia al centro de los puntos es fija mientras que el ángulo proviene de una distribución uniforme en el intervalo $(-\pi, \pi)$, es decir
 
@@ -61,7 +61,7 @@ plot_dataset(X_circle_outliers, title="Datos Atípicos"); plt.show()
 ```
 
 
-### Circunferencia gaussiana
+### Circunferencia gaussiana {#sec-methods-data-synth-circle-gauss}
 
 Una variación utilizada del circunferencia uniforme que busca enfatizar regiones con menor densidad de muestras, aunque manteniendo el soporte del cual se obtienen las muestras, es la circunferencia gaussiano. La definición de este conjunto de datos es análoga a la del caso uniforme, pero en este caso el ángulo $\angle \mathbf{x}$ se obtiene de una distribución normal truncada entre $-\pi$ y $\pi$, es decir
 
@@ -88,7 +88,7 @@ plot_dataset(X_circle_gauss_outliers, title="Datos Atípicos"); plt.show()
 ```
 
 
-### Anteojos
+### Anteojos {#sec-methods-data-synth-eyeglasses}
 
 El conjunto de datos que llamaremos Anteojos (*eyeglasses* en inglés) se ilustra a continuación en la @fig-eyeglasses, junto con sus análogos con ruido gaussiana y datos atípicos.
 Esta topología resulta similar a un óvalo de Cassini y debe su nombre a su parecido con unos anteojos. La misma presenta dos circulos conectados mediante una apertura en ellos. Se utiliza extensivamente durante el cálculo de intervalos de confianza para datos sintéticos ya que la topología en realidad posee un único agujero de grado 1, pero resulta sencillo para los algoritmos confundirse y detectar dos agujeros significativos dependiendo del grado de apertura [@ConfidenceSetsForPersistenceDiagrams].
@@ -110,7 +110,7 @@ plot_dataset(X_eyeglasses_noise, title="Ruido"); plt.show()
 plot_dataset(X_eyeglasses_outliers, title="Datos Atípicos"); plt.show()
 ```
 
-### Círculo con densidad dependiente del radio
+### Círculo con densidad dependiente del radio {#sec-methods-data-synth-filled-circle}
 
 Hasta el momento todos los conjuntos de datos presentados poseen un agujero, pero resulta de interés analizar como se comportan los diagramas de persistencia y los respectivos intervalos de confianza calculados sobre los mismos para un conjunto de datos que no posee agujeros de grado 1. El objetivo será entonces utilizar este *dataset* para validad la capacidad de los intervalos de confianza obtenidos mediante cada uno de los métodos para rechazar la hipótesis de existencia de agujeros, verificando así la tasa de errores tipo I o nivél estadistico.
 

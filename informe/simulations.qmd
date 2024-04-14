@@ -19,7 +19,7 @@ from functools import partial
 
 import random
 
-random.seed(2)
+random.seed(4)
 
 # Multiprocessing stuff
 if __name__ == '__main__':
@@ -39,8 +39,8 @@ B_power = 30
 robust_quantile = 0.97
 # Eyeglasses
 n_eyeglasses = 750
-bridge_height = 0.5
-sd_eyeglasses = 0.04
+bridge_height = 0.6
+sd_eyeglasses = 0.05
 h_eyeglasses = 0.20
 # Filled circle
 n_filled = 750
@@ -91,27 +91,171 @@ X_filled = filled_circle_factory()
 
 ### Diagramas de persistencia e intervalos {#sec-results-diagrams-plus-intervals}
 
-
 A continuación se presentan, individualmente para cada uno de los conjuntos de datos, los diagramas de persistencia e intervalos de confianza computados sobre los mismos para cada uno de los métodos
 
-#### Círculo uniforme
+#### Circunferencía uniforme {#sec-results-diagrams-plus-intervals-circle}
 
 ```{python}
 #| label: fig-sim-intervals-circle-base
 #| fig-cap: Conjunto de datos e intervalos de confianza obtenidos para la circunferencia uniforme
-intervals = run_all_intervals(
-    X_circle, h=h, robust_quantile=robust_quantile, log=False, plot=True, B=B_intervals
+intervals_circle_base = run_all_intervals(
+    X_circle,
+    h=h,
+    robust_quantile=robust_quantile,
+    log=False,
+    plot=True,
+    B=B_intervals,
+    cache_prefix="circle_base"
 )
 ```
 
 ```{python}
 #| label: fig-sim-intervals-circle-noise
 #| fig-cap: Conjunto de datos e intervalos de confianza obtenidos para la circunferencia uniforme con ruido agregado.
-intervals = run_all_intervals(
-    X_circle_noise, h=h, robust_quantile=robust_quantile, log=False, plot=True, B=B_intervals
+intervals_circle_noise = run_all_intervals(
+    X_circle_noise,
+    h=h,
+    robust_quantile=robust_quantile,
+    log=False,
+    plot=True,
+    B=B_intervals,
+    cache_prefix="circle_noise"
 )
 ```
 
+```{python}
+#| label: fig-sim-intervals-circle-outliers
+#| fig-cap: Conjunto de datos e intervalos de confianza obtenidos para la circunferencia uniforme con muetras atípicas agregadas.
+intervals_circle_outliers = run_all_intervals(
+    X_circle_outliers,
+    h=h,
+    robust_quantile=robust_quantile,
+    log=False,
+    plot=True,
+    B=B_intervals,
+    cache_prefix="circle_outliers"
+)
+```
+
+
+En las Figuras [-@fig-sim-intervals-circle-base], [-@fig-sim-intervals-circle-noise] y [-@fig-sim-intervals-circle-outliers] se oservan, respectivamente, los resultados obtenidos para el dataset original, ruido agregado y datos atípicos. En cada figura se observa el conjunto de datos muestreado sobre su densidad empírica, junto con los tres diagramas de persistencia obtenidos, correspondientes a cada uno de los métodos desarrollados, sobre los cuales se indica el intervalo de confianza resultante.
+Se observa que para este conjunto de datos, todos los métodos logran detectar correctamente la existencia de un agujero, no viendose este resultado afectado por la presencia de ruido ni de datos atípicos.
+<span style="color:red;">Vale la pena destacar que fermat muestra tambien una componente de grado 0 para cada uno de los datos atipicos, esto resulta interesante ya que podriamos detectar estos *outliers* mirando en diagrama de persistencia, y tiene mucho sentido siendo el unico metodo que logro detectar que estos datos podrian ser parte de una componente no conectada con los datos saludables.</span>
+
+#### Circunferencia Gaussiana {#sec-results-diagrams-plus-intervals-circle-gauss}
+
+```{python}
+#| label: fig-sim-intervals-circle-gauss-base
+#| fig-cap: Conjunto de datos e intervalos de confianza obtenidos para la circunferencia gaussiana
+intervals_circle_gauss_base = run_all_intervals(
+    X_circle_gauss,
+    h=h,
+    robust_quantile=robust_quantile,
+    log=False,
+    plot=True,
+    B=B_intervals,
+    cache_prefix="circle_gauss_base"
+)
+```
+
+```{python}
+#| label: fig-sim-intervals-circle-gauss-noise
+#| fig-cap: Conjunto de datos e intervalos de confianza obtenidos para la circunferencia gaussiana con ruido agregado.
+intervals_circle_gauss_noise = run_all_intervals(
+    X_circle_gauss_noise,
+    h=h,
+    robust_quantile=robust_quantile,
+    log=False,
+    plot=True,
+    B=B_intervals,
+    cache_prefix="circle_gauss_noise"
+)
+```
+
+```{python}
+#| label: fig-sim-intervals-circle-gauss-outliers
+#| fig-cap: Conjunto de datos e intervalos de confianza obtenidos para la circunferencia gaussiana con muetras atípicas agregadas.
+intervals_circle_gauss_outliers = run_all_intervals(
+    X_circle_gauss_outliers,
+    h=h,
+    robust_quantile=robust_quantile,
+    log=False,
+    plot=True,
+    B=B_intervals,
+    cache_prefix="circle_gauss_outliers"
+)
+```
+
+
+Analogamente a los resultados de obtenidos para el muestreo uniforme sobre la circuferencia (@sec-results-diagrams-plus-intervals-circle), en las Figuras [-@fig-sim-intervals-circle-gauss], [-@fig-sim-intervals-circle-gauss-noise] y [-@fig-sim-intervals-circle-gauss-outliers] se observan los resultados para el caso del muestro gaussiano sobre la circunferencia. Se observa que los resultados son tambien análogos a los obtenidos en el caso uniforme, ya que en todos los casos se logra detectar de forma apropiada los agujeros de la topologia subyacente. Esto demuestra que ninguno de los métodos se ve notoriamente afectado por la diferencia de densidad de las diferentes zonas. KDE podría ser el método más afectado dada las hipotesis con las cuales este método se desarrolla, pero para los hiperparámetros y cantidad de muestras probados el mismo no muestra dificultades para descartar correctamente la hipótesis nula en este caso.
+Resulta destacable que, nuevamente, Fermat es el único método que evidencia los datos atípicos como conjuntos conexos por encima del intervalo de confianza.
+
+
+#### Anteojos {#sec-results-diagrams-plus-intervals-eyeglasses}
+
+```{python}
+#| label: fig-sim-intervals-eyeglasses
+#| fig-cap: Conjunto de datos e intervalos de confianza obtenidos para los anteojos
+intervals_eyeglasses = run_all_intervals(
+    X_eyeglasses,
+    h=h_eyeglasses,
+    robust_quantile=robust_quantile,
+    log=False,
+    plot=True,
+    B=B_intervals,
+    cache_prefix="eyeglasses"
+)
+```
+
+```{python}
+#| label: fig-sim-intervals-eyeglasses-noise
+#| fig-cap: Conjunto de datos e intervalos de confianza obtenidos para los anteojos con ruido agregado
+intervals_eyeglasses_noise = run_all_intervals(
+    X_eyeglasses_noise,
+    h=h_eyeglasses,
+    robust_quantile=robust_quantile,
+    log=False,
+    plot=True,
+    B=B_intervals,
+    cache_prefix="eyeglasses_noise",
+    force_run=False
+)
+```
+
+```{python}
+#| label: fig-sim-intervals-eyeglasses-outliers
+#| fig-cap: Conjunto de datos e intervalos de confianza obtenidos para los anteojos con datos atípicos agregados
+intervals_eyeglasses_outliers = run_all_intervals(
+    X_eyeglasses_outliers,
+    h=h_eyeglasses,
+    robust_quantile=robust_quantile,
+    log=False,
+    plot=True,
+    B=B_intervals,
+    cache_prefix="eyeglasses_outliers",
+    force_run=False
+)
+```
+
+
+#### Círculo con densidad dependiente del radio {#sec-results-diagrams-plus-intervals-filled-circle}
+
+
+```{python}
+#| label: fig-sim-intervals-filled-circle
+#| fig-cap: Conjunto de datos e intervalos de confianza obtenidos para el círculo relleno
+intervals_filled_circle = run_all_intervals(
+    X_filled,
+    h=h_filled,
+    robust_quantile=robust_quantile,
+    log=False,
+    plot=True,
+    B=B_intervals,
+    cache_prefix="filled_circle",
+)
+```
+
+En la @fig-sim-intervals-filled-circle se observan los resultados obtenidos, según cada uno de los métodos, para el círculo relleno con densidad dependiente del radio. Recordemos que, como fue introducido en la @sec-methods-data-synth-filled-circle, en el mismo se espera que los distintos métodos logren aceptar la hipótesis nula, es decir, que no se detecte un agujero de grado 1 en la topología subyacente. Se observa en la @fig-sim-intervals-filled-circle que el método de densidad (KDE) es el único que no logra rechazar la hipotesis nula, mostrando un agujero de grado uno significativo. Este resultado resulta muy relevante ya que nos da a entender que las cualidades de robustes a la hora de calcular los diagramas de persistencia en los casos anteriores, especialmente en presencia de ruido o datos atipicos, pueden estar resultando a expensas de una distorsión en la topologia subyacente que hace que se pierda la significancia a la hora de evaluar topologias sin estos agujeros, perdiendose la nocion de lo que es el nivel de un *test*
 
 
 ### Potencia {#sec-results-power}

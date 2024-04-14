@@ -69,7 +69,7 @@ def build_distance_diagram(
 def build_function_diagram(
     X: Xtype,
     value_function: Callable,
-    dimensions: tuple[int, int] | None = None,
+    dimensions: tuple[int, ...] | None = None,
     positions: Xtype | None = None,
     grid_n: int = 100,
 ) -> Dgm:

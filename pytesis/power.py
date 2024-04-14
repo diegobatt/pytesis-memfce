@@ -84,7 +84,7 @@ def function_power(
     band: float,
     value_function: Callable,
     positions: NDArray[np.float64],
-    dimensions: tuple[int, int],
+    dimensions: tuple[int, ...],
     B: int = 100,
     ncores: Optional[int] = None,
 ) -> PowerResult:

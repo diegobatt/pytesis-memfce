@@ -3,7 +3,7 @@ import multiprocessing as mp
 from dataclasses import dataclass
 from functools import partial
 from multiprocessing import Pool
-from typing import Callable
+from typing import Callable, Optional
 
 import gudhi as gd
 import numpy as np
@@ -35,8 +35,16 @@ class IntervalResult:
         return np.sqrt(2) * self.width
 
 
-def plot_result(result: IntervalResult, title="Diagrama de Persistencia", ax=None):
-    ax = gd.plot_persistence_diagram(result.dgm, axes=ax)
+def plot_result(
+    result: IntervalResult,
+    title="Diagrama de Persistencia",
+    ax=None,
+    degrees: Optional[list[int]] = None,
+):
+    dgm = result.dgm
+    if degrees is not None:
+        dgm = [(p, (b, d)) for p, (b, d) in dgm if p in degrees]
+    ax = gd.plot_persistence_diagram(dgm, axes=ax)
     max_lim = max(ax.get_xlim()[1], ax.get_ylim()[1])
     min_lim = min(ax.get_xlim()[0], ax.get_ylim()[0])
     base_line = np.array([min_lim, max_lim])
@@ -110,7 +118,7 @@ def _parallel_function_dgm(
     n: int,
     value_function: Callable,
     positions: np.ndarray,
-    dimensions: tuple[int, int],
+    dimensions: tuple[int, ...],
     ix,
 ):
     LOGGER.info("Iteration: %s", ix)

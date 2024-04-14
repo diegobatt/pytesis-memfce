@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from functools import partial
-from typing import Callable
+from typing import Callable, Optional
 
 import diskcache as dc
 import matplotlib.pyplot as plt
@@ -36,7 +36,7 @@ class Results:
     powers: pd.DataFrame
 
 
-def plot_all_intervals(intervals: Intervals):
+def plot_all_intervals(intervals: Intervals, degrees: Optional[list[int]] = None):
     fig = plt.figure(figsize=(14, 10))
     d = intervals.X.shape[1]
     if d == 2:
@@ -49,9 +49,9 @@ def plot_all_intervals(intervals: Intervals):
     ax3 = fig.add_subplot(2, 2, 3)
     ax4 = fig.add_subplot(2, 2, 4)
     plot_dataset(intervals.X, ax=ax1)
-    plot_result(intervals.euclidean, ax=ax2, title="Euclideo")
-    plot_result(intervals.fermat, ax=ax3, title="Fermat")
-    plot_result(intervals.kde, ax=ax4, title="Densidad")
+    plot_result(intervals.euclidean, ax=ax2, title="Euclideo", degrees=degrees)
+    plot_result(intervals.fermat, ax=ax3, title="Fermat", degrees=degrees)
+    plot_result(intervals.kde, ax=ax4, title="Densidad", degrees=degrees)
     fig.show()
 
 
@@ -64,13 +64,15 @@ def run_all_intervals(
     log: bool = True,
     plot: bool = True,
     cache_prefix: str | None = None,
+    force_run: bool = False,
     ncores: int = DEFAULT_CORES,
+    plot_kwargs: dict = {},
 ) -> Intervals:
     cache_key = f"{cache_prefix}_{h}_{B}_{grid_n}_{robust_quantile}_only_intervals"
     cache = dc.Cache(CACHE_NAME)
     if log:
         print("Starting run...")
-    if cache_key in cache:
+    if cache_key in cache and not force_run:
         if log:
             print("Intervals found in cache")
         intervals = cache[cache_key]
@@ -94,7 +96,7 @@ def run_all_intervals(
         intervals = Intervals(X=X, euclidean=result_euclid, fermat=result_fermat, kde=result_kde)
         cache[cache_key] = intervals
     if plot:
-        plot_all_intervals(intervals)  # type: ignore
+        plot_all_intervals(intervals, **plot_kwargs)  # type: ignore
     return intervals  # type: ignore
 
 
