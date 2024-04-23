@@ -41,7 +41,8 @@ robust_quantile = 0.97
 n_eyeglasses = 750
 bridge_height = 0.6
 sd_eyeglasses = 0.05
-h_eyeglasses = 0.20
+h_eyeglasses = 0.25
+# h_eyeglasses = 0.20
 # Filled circle
 n_filled = 750
 r_power = 2.6
@@ -187,7 +188,7 @@ intervals_circle_gauss_outliers = run_all_intervals(
 ```
 
 
-Analogamente a los resultados de obtenidos para el muestreo uniforme sobre la circuferencia (@sec-results-diagrams-plus-intervals-circle), en las Figuras [-@fig-sim-intervals-circle-gauss], [-@fig-sim-intervals-circle-gauss-noise] y [-@fig-sim-intervals-circle-gauss-outliers] se observan los resultados para el caso del muestro gaussiano sobre la circunferencia. Se observa que los resultados son tambien análogos a los obtenidos en el caso uniforme, ya que en todos los casos se logra detectar de forma apropiada los agujeros de la topologia subyacente. Esto demuestra que ninguno de los métodos se ve notoriamente afectado por la diferencia de densidad de las diferentes zonas. KDE podría ser el método más afectado dada las hipotesis con las cuales este método se desarrolla, pero para los hiperparámetros y cantidad de muestras probados el mismo no muestra dificultades para descartar correctamente la hipótesis nula en este caso.
+Analogamente a los resultados de obtenidos para el muestreo uniforme sobre la circuferencia (@sec-results-diagrams-plus-intervals-circle), en las Figuras [-@fig-sim-intervals-circle-gauss], [-@fig-sim-intervals-circle-gauss-noise] y [-@fig-sim-intervals-circle-gauss-outliers] se observan los resultados para el caso del muestro gaussiano sobre la circunferencia. Se observa que los resultados son tambien análogos a los obtenidos en el caso uniforme, ya que en todos los casos se logra detectar de forma apropiada los agujeros de la topologia subyacente. Esto demuestra que ninguno de los métodos se ve notoriamente afectado por la diferencia de densidad en el muestreo de las diferentes zonas. KDE podría ser el método más afectado dada las hipotesis con las cuales este método se desarrolla, pero para los hiperparámetros y cantidad de muestras probados el mismo no muestra dificultades para descartar correctamente la hipótesis nula en este caso.
 Resulta destacable que, nuevamente, Fermat es el único método que evidencia los datos atípicos como conjuntos conexos por encima del intervalo de confianza.
 
 
@@ -237,6 +238,10 @@ intervals_eyeglasses_outliers = run_all_intervals(
 )
 ```
 
+Para el conjunto de datos de anteojo, que se observa en las Figuras [-@fig-sim-intervals-eyeglasses], [-@fig-sim-intervals-eyeglasses-noise] y [-@fig-sim-intervals-eyeglasses-outliers] para las variantes base, con ruido agregado y datos atípicos, respectivamente, se observa que los resultados son altamenta favorables para Fermat en todos los casos, siendo el único capaz de detectar un único agujero de primer grado en todos los casos. Puntualmente, para el caso base (@fig-sim-intervals-eyeglasses) se observa que tanto el método euclídeo como KDE detectan muy claramente dos agujeros significativos, esto resulta así para distintos valores probados para el hiperparametro $h$ en el caso de KDE, que se varió con el objetivo de obtener mejores resultados para este método. Fermat mantiene su correcta interpretación detectando un único agujero significativo con mucha claridad
+Para el conjunto de datos con ruido agregado (@fig-sim-intervals-eyeglasses-noise) se observa una historia análoga, en la que ninguno de los métodos evaluados cambia el resultado obtenido.
+El caso de datos atípicos añadidos resulta interesante, ya que se observa en la @fig-sim-intervals-eyeglasses-outliers que el método euclideo logra detectar un único agujero significativo de primer grado, aunque esto se debe, lamentablemente, no a una mejora atribuible a el método en cuestion, sino a la distribución de datos atípicos, que logra rellenar el agujero derecho del anteojos, de forma tal que el método euclideo termine solamente detectando como un agujero significativo el izquierdo, que si bien es el resultado esperando nominalmente, se obtiene por las razones equivocadas. Para KDE la historia es análoga a la de los casos anteriores, ya que continúa detectando dos agujeros significativos. Fermat logra nuevamente, no solo detectar un único agujero significativo de primer orden, si no que tambien logra atribuirle una componente conexa significativa a cada uno de los datos atípicos, como sucedio en cada uno de los conjuntos de datos anteriores cuando se le adicionaba esta contaminación. Aunque la detección de outliers como componentes conexas no es nuestro foco en este trabajo, es un resultado interesante que merece ser analizado en más detalle.
+
 
 #### Círculo con densidad dependiente del radio {#sec-results-diagrams-plus-intervals-filled-circle}
 
@@ -255,12 +260,13 @@ intervals_filled_circle = run_all_intervals(
 )
 ```
 
-En la @fig-sim-intervals-filled-circle se observan los resultados obtenidos, según cada uno de los métodos, para el círculo relleno con densidad dependiente del radio. Recordemos que, como fue introducido en la @sec-methods-data-synth-filled-circle, en el mismo se espera que los distintos métodos logren aceptar la hipótesis nula, es decir, que no se detecte un agujero de grado 1 en la topología subyacente. Se observa en la @fig-sim-intervals-filled-circle que el método de densidad (KDE) es el único que no logra rechazar la hipotesis nula, mostrando un agujero de grado uno significativo. Este resultado resulta muy relevante ya que nos da a entender que las cualidades de robustes a la hora de calcular los diagramas de persistencia en los casos anteriores, especialmente en presencia de ruido o datos atipicos, pueden estar resultando a expensas de una distorsión en la topologia subyacente que hace que se pierda la significancia a la hora de evaluar topologias sin estos agujeros, perdiendose la nocion de lo que es el nivel de un *test*
+En la @fig-sim-intervals-filled-circle se observan los resultados obtenidos, según cada uno de los métodos, para el círculo relleno con densidad dependiente del radio. Recordemos que, como fue introducido en la @sec-methods-data-synth-filled-circle, en el mismo se espera que los distintos métodos logren aceptar la hipótesis nula, es decir, que no se detecte un agujero de primer grado en la topología subyacente. Se observa en la @fig-sim-intervals-filled-circle que el método de densidad (KDE) es el único que no logra rechazar la hipotesis nula, mostrando un agujero de grado uno significativo, es decir, por encima del intervalo de confianza. Este resultado resulta muy relevante ya que nos da a entender que las cualidades de robustes a la hora de calcular los diagramas de persistencia en los casos anteriores, especialmente en presencia de ruido o datos atipicos, pueden estar resultando positivamente a expensas de una distorsión en la topologia subyacente que hace que se pierda la significancia a la hora de evaluar topologias sin estos agujeros, perdiendose la nocion de lo que es el nivel de un *test* estadístico.
 
 
 ### Potencia {#sec-results-power}
 
 Si ahora se repite en procedimiento realizado en la @sec-results-diagrams-plus-intervals un cantidad $M$ de veces con el objetivo de analizar la frecuencia en la que el intervalo estimado contiene efectivamente a la cantidad de agujeros reales, siendo en nuestro caso un agujero real para todos los conjuntos de datos analizados, entonces se obtiene la potencia del test, es decir, la probabilidad de rechazar la hipótesis nula dado que esta es falsa, donde la hipótesis nula representa la no existencia de agujeros en la topología
+
 
 
 ## Conjuntos de Datos Reales
