@@ -127,7 +127,13 @@ def run_all(
         print("Intervals found in cache: ", intervals_key in cache)
     if intervals_key not in cache:
         intervals = run_all_intervals(
-            X, h=h, B=B_interval, grid_n=grid_n, plot=False, robust_quantile=robust_quantile
+            X,
+            h=h,
+            B=B_interval,
+            grid_n=grid_n,
+            plot=False,
+            log=log,
+            robust_quantile=robust_quantile,
         )
         cache[intervals_key] = intervals
     intervals: Intervals = cache[intervals_key]  # type: ignore

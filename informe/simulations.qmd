@@ -10,10 +10,14 @@ from pytesis.datasets import (
     eyeglasses,
     filled_circle,
     add_noise,
-    add_outliers
+    add_outliers,
+    football_sensor,
+    rectangle
 )
 from pytesis.results import run_all_intervals, run_all
 from pytesis.utils import compose
+import numpy as np
+import pandas as pd
 
 from functools import partial
 
@@ -34,8 +38,9 @@ sd = 0.075
 iqr_factor = 0.3
 outliers_frac = 0.02
 h = 0.3
-B_intervals = 200
-B_power = 30
+# B_intervals = 200
+B_intervals = 300
+B_power = 50
 robust_quantile = 0.97
 # Eyeglasses
 n_eyeglasses = 750
@@ -85,7 +90,6 @@ X_eyeglasses_outliers = eyeglasses_outliers_factory()
 # Filled
 filled_circle_factory = partial(filled_circle, n=n_filled, r_power=r_power, max_r=max_r)
 X_filled = filled_circle_factory()
-
 ```
 
 ## Conjuntos de Datos Sintéticos
@@ -267,6 +271,173 @@ En la @fig-sim-intervals-filled-circle se observan los resultados obtenidos, seg
 
 Si ahora se repite en procedimiento realizado en la @sec-results-diagrams-plus-intervals un cantidad $M$ de veces con el objetivo de analizar la frecuencia en la que el intervalo estimado contiene efectivamente a la cantidad de agujeros reales, siendo en nuestro caso un agujero real para todos los conjuntos de datos analizados, entonces se obtiene la potencia del test, es decir, la probabilidad de rechazar la hipótesis nula dado que esta es falsa, donde la hipótesis nula representa la no existencia de agujeros en la topología
 
+```{python}
+B_interval_power = 300
+base_results_params = dict(
+    h=h,
+    B_power=B_power,
+    B_interval=B_intervals,
+    robust_quantile=robust_quantile,
+    log=False,
+    plot=False,
+)
+eyeglasses_results_params = base_results_params | dict(h=h_eyeglasses)
+filled_results_params = base_results_params | dict(h=h_filled, B_interval=B_interval_power)
+```
 
+```{python}
+circle_results = run_all(circle_factory, **base_results_params)
+```
+
+```{python}
+circle_noise_results = run_all(circle_noise_factory, **base_results_params)
+```
+
+```{python}
+circle_outliers_results = run_all(circle_outliers_factory, **base_results_params)
+```
+
+
+```{python}
+circle_gauss_results = run_all(circle_gauss_factory, **base_results_params)
+```
+
+```{python}
+circle_gauss_noise_results = run_all(circle_gauss_noise_factory, **base_results_params)
+```
+
+```{python}
+circle_gauss_outliers_results = run_all(circle_gauss_outliers_factory, **base_results_params)
+```
+
+```{python}
+eyeglasses_results = run_all(eyeglasses_factory, **eyeglasses_results_params)
+```
+
+```{python}
+eyeglasses_noise_results = run_all(eyeglasses_noise_factory, **eyeglasses_results_params)
+```
+
+```{python}
+eyeglasses_outliers_results = run_all(eyeglasses_outliers_factory, **eyeglasses_results_params)
+```
+
+```{python}
+filled_circle_results = run_all(filled_circle_factory, **filled_results_params)
+```
+
+
+```{python}
+mega_table = None
+for (result, method) in [
+    (circle_results, "Circunferencia uniforme"),
+    (circle_noise_results, "Circunferencia uniforme con ruido"),
+    (circle_outliers_results, "Circunferencia uniforme con datos atípicos"),
+    (circle_gauss_results, "Circunferencia Gaussiana"),
+    (circle_gauss_noise_results, "Circunferencia Gaussiana con ruido"),
+    (circle_gauss_outliers_results, "Circunferencia Gaussiana con datos atípicos"),
+    (eyeglasses_results, "Anteojos"),
+    (eyeglasses_noise_results, "Anteojos con ruido"),
+    (eyeglasses_outliers_results, "Anteojos con datos atípicos"),
+]:
+    table = result.powers.copy()
+    column_tuples = [(method, c) for c in table.columns]
+    table.columns = pd.MultiIndex.from_tuples(
+        column_tuples, names=["Método", "Resultado"]
+    )
+    if mega_table is None:
+        mega_table = table
+    else:
+       mega_table = mega_table.join(table, how="outer")
+mega_table.fillna(0, inplace=True)
+```
 
 ## Conjuntos de Datos Reales
+
+El trabajar con conjuntos de datos sintéticos nos permite evaluar nuestros resultados a lo largo de diferentes muestras de la misma distribución, como se realizó en la @sec-results-power, pero resulta tambien muy importante analizar como estos métodos se comportan con conjuntos de datos reales, de los cuales interpretaciones relevantes del dominio de aplicacion puedan extraerse a partir de las cualidades significativas del diagrama de persistencia para cada uno de los métodos. En linea con el trabajo realizado en @FootballRobustDataset utilizaremos el conjunto de datos reales allí utilizado, que como se explicó brevemente en la @sec-methods-data-real, consiste en mediciones correspondientes a la posición de jugadores de football dentro de la cancha a lo largo de un partido, en el que se obtiene un punto cada un intervalo de tiempo determinado. Con el objetivo de obtener agujeros en las zonas donde los jugadores no participan activamente, se agregan artificialmente puntos en los bordes del conjunto de datos, correspondientes a los límites de la cancha [@FootballRobustDatasetExplanation]. Los diferentes jugadores ocupan diferentes espacios en la cancha, en función de la posición que ocupan en el juego, por lo que analizaremos por separado los diferentes jugadores elegidos
+
+```{python}
+n_borders = 100
+n_football = 1000
+h_football = 4
+robust_quantile_football = 0.93
+
+length_x, length_y = 105, 68
+borders = rectangle(n=n_borders, length_x=length_x, length_y=length_y, random=False)
+
+football_tag_2 = football_sensor(n=n_football, tag_id=2, second_half=False)
+football_tag_5 = football_sensor(n=n_football, tag_id=5, second_half=False)
+football_tag_8 = football_sensor(n=n_football, tag_id=8, second_half=False)
+football_tag_14 = football_sensor(n=n_football, tag_id=14, second_half=False)
+
+football_X_tag_2 = np.vstack([football_tag_2, borders])
+football_X_tag_5 = np.vstack([football_tag_5, borders])
+football_X_tag_8 = np.vstack([football_tag_8, borders])
+football_X_tag_14 = np.vstack([football_tag_14, borders])
+```
+
+### Jugador 2 (Defensor Ofensivo)
+
+El jugador con identificador número dos corresponde segun una inspeccion visual a un
+
+```{python}
+#| label: fig-real-intervals-player-2
+#| fig-cap: Conjunto de datos e intervalos de confianza obtenidos para el jugador identificado como el número 2, que corresponde al comportamiento de un defensor ofensivo
+intervals_football = run_all_intervals(
+    football_X_tag_2,
+    h=h_football,
+    robust_quantile=robust_quantile_football,
+    log=False,
+    plot=True,
+    B=B_intervals,
+    cache_prefix="football_player_2"
+)
+```
+
+### Jugador 5 (Mediocampista)
+
+```{python}
+#| label: fig-real-intervals-player-5
+#| fig-cap: Conjunto de datos e intervalos de confianza obtenidos para el jugador identificado como el número 5, que corresponde al comportamiento de un mediocampista
+intervals_football = run_all_intervals(
+    football_X_tag_5,
+    h=h_football,
+    robust_quantile=robust_quantile_football,
+    log=False,
+    plot=True,
+    B=B_intervals,
+    cache_prefix="football_player_5"
+)
+```
+
+### Jugador 8 (Lateral Defensivo)
+
+```{python}
+#| label: fig-real-intervals-player-8
+#| fig-cap: Conjunto de datos e intervalos de confianza obtenidos para el jugador identificado como el número 8, que corresponde al comportamiento de un lateral defensivo
+intervals_football = run_all_intervals(
+    football_X_tag_8,
+    h=h_football,
+    robust_quantile=robust_quantile_football,
+    log=False,
+    plot=True,
+    B=B_intervals,
+    cache_prefix="football_player_8"
+)
+```
+
+### Jugador 14 (Mediocampista)
+
+```{python}
+#| label: fig-real-intervals-player-14
+#| fig-cap: Conjunto de datos e intervalos de confianza obtenidos para el jugador identificado como el número 14, que corresponde al comportamiento de un mediocampista
+intervals_football = run_all_intervals(
+    football_X_tag_14,
+    h=h_football,
+    robust_quantile=robust_quantile_football,
+    log=False,
+    plot=True,
+    B=B_intervals,
+    cache_prefix="football_player_14"
+)
+```
