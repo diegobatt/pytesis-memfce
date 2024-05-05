@@ -269,7 +269,7 @@ En la @fig-sim-intervals-filled-circle se observan los resultados obtenidos, seg
 
 ### Potencia {#sec-results-power}
 
-Si ahora se repite en procedimiento realizado en la @sec-results-diagrams-plus-intervals un cantidad $M$ de veces con el objetivo de analizar la frecuencia en la que el intervalo estimado contiene efectivamente a la cantidad de agujeros reales, siendo en nuestro caso un agujero real para todos los conjuntos de datos analizados, entonces se obtiene la potencia del test, es decir, la probabilidad de rechazar la hipótesis nula dado que esta es falsa, donde la hipótesis nula representa la no existencia de agujeros en la topología
+Si ahora se repite en procedimiento realizado en la @sec-results-diagrams-plus-intervals un cantidad $M = `{python} B_power`$  de veces con el objetivo de analizar la frecuencia en la que el intervalo estimado contiene efectivamente a la cantidad de agujeros reales, siendo en nuestro caso un agujero real para todos los conjuntos de datos analizados, entonces se obtiene la potencia del test, es decir, la probabilidad de rechazar la hipótesis nula dado que esta es falsa, donde la hipótesis nula representa la no existencia de agujeros en la topología
 
 ```{python}
 B_interval_power = 300
@@ -326,31 +326,87 @@ eyeglasses_outliers_results = run_all(eyeglasses_outliers_factory, **eyeglasses_
 filled_circle_results = run_all(filled_circle_factory, **filled_results_params)
 ```
 
+```{python}
+from pytesis.results import Results
+
+def get_mega_table(results_methods: list[tuple[Results, str]]) -> pd.DataFrame:
+    mega_table = None
+    for (result, method) in results_methods:
+        table = result.powers.copy()
+        table.drop("# Detecciones", axis=1, inplace=True)
+        column_tuples = [(method, c) for c in table.columns]
+        table.columns = pd.MultiIndex.from_tuples(
+            column_tuples, names=["Método", "Resultado"]
+        )
+        if mega_table is None:
+            mega_table = table
+        else:
+            mega_table = mega_table.join(table, how="outer")
+    mega_table.fillna(0, inplace=True)
+    return mega_table
+```
 
 ```{python}
-mega_table = None
-for (result, method) in [
+results_methods_base = [
     (circle_results, "Circunferencia uniforme"),
-    (circle_noise_results, "Circunferencia uniforme con ruido"),
-    (circle_outliers_results, "Circunferencia uniforme con datos atípicos"),
     (circle_gauss_results, "Circunferencia Gaussiana"),
-    (circle_gauss_noise_results, "Circunferencia Gaussiana con ruido"),
-    (circle_gauss_outliers_results, "Circunferencia Gaussiana con datos atípicos"),
     (eyeglasses_results, "Anteojos"),
-    (eyeglasses_noise_results, "Anteojos con ruido"),
-    (eyeglasses_outliers_results, "Anteojos con datos atípicos"),
-]:
-    table = result.powers.copy()
-    column_tuples = [(method, c) for c in table.columns]
-    table.columns = pd.MultiIndex.from_tuples(
-        column_tuples, names=["Método", "Resultado"]
-    )
-    if mega_table is None:
-        mega_table = table
-    else:
-       mega_table = mega_table.join(table, how="outer")
-mega_table.fillna(0, inplace=True)
+]
+results_methods_noise = [
+    (circle_noise_results, "Circunferencia uniforme"),
+    (circle_gauss_noise_results, "Circunferencia Gaussiana"),
+    (eyeglasses_noise_results, "Anteojos"),
+]
+results_methods_outliers = [
+    (circle_outliers_results, "Circunferencia uniforme"),
+    (circle_gauss_outliers_results, "Circunferencia Gaussiana"),
+    (eyeglasses_outliers_results, "Anteojos"),
+]
+mega_table_base = get_mega_table(results_methods_base)
+mega_table_noise = get_mega_table(results_methods_noise)
+mega_table_outliers = get_mega_table(results_methods_outliers)
+mega_table_filled_circle = get_mega_table([
+    (filled_circle_results, "Círculo con densidad dependiente del radio")
+])
 ```
+
+::: {#tbl-power-table-base}
+
+```{python}
+mega_table_base
+```
+
+Resultados de potencia estimada para los tres métodos sobre los conjuntos de datos originales. Cada fila de la tabla muestra, según el método que se indica a la izquierda, el porcentaje de veces que cada cantidad de agujeros fue detectada en las corridas realizadas.
+
+:::
+
+
+::: {#tbl-power-table-noise}
+
+```{python}
+mega_table_noise
+```
+
+Resultados obtenidos para los conjuntos de datos con ruido agregado, análogamente a lo obtenido en la @tbl-power-table-base para los conjuntos base
+
+:::
+
+ESTO DE ACA ABAJO ROMPE EL FILE
+
+<!-- ```{python}
+#| label: tbl-power-table-outliers
+#| tbl-cap: Resultados de potencia estimada obtenidos para los conjuntos de datos con datos atípicos agregados
+mega_table_outliers
+``` -->
+
+
+```{python}
+#| label: tbl-power-table-filled
+#| tbl-cap: Resultados de potencia estimada obtenidos para el conjunto de datos del círculo relleno con densidad dependiente del radio, en el que el resultado esperado sería la aceptación de la hipótesis nula, es decir, detectar cero agujeros
+#| tbl-colwidths: [50,50]
+mega_table_filled_circle
+```
+
 
 ## Conjuntos de Datos Reales
 
