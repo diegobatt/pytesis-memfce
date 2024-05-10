@@ -38,7 +38,6 @@ sd = 0.075
 iqr_factor = 0.3
 outliers_frac = 0.02
 h = 0.3
-# B_intervals = 200
 B_intervals = 300
 B_power = 50
 robust_quantile = 0.97
@@ -222,8 +221,7 @@ intervals_eyeglasses_noise = run_all_intervals(
     log=False,
     plot=True,
     B=B_intervals,
-    cache_prefix="eyeglasses_noise",
-    force_run=False
+    cache_prefix="eyeglasses_noise"
 )
 ```
 
@@ -237,8 +235,7 @@ intervals_eyeglasses_outliers = run_all_intervals(
     log=False,
     plot=True,
     B=B_intervals,
-    cache_prefix="eyeglasses_outliers",
-    force_run=False
+    cache_prefix="eyeglasses_outliers"
 )
 ```
 
@@ -269,10 +266,9 @@ En la @fig-sim-intervals-filled-circle se observan los resultados obtenidos, seg
 
 ### Potencia {#sec-results-power}
 
-Si ahora se repite en procedimiento realizado en la @sec-results-diagrams-plus-intervals un cantidad $M = `{python} B_power`$  de veces con el objetivo de analizar la frecuencia en la que el intervalo estimado contiene efectivamente a la cantidad de agujeros reales, siendo en nuestro caso un agujero real para todos los conjuntos de datos analizados, entonces se obtiene la potencia del test, es decir, la probabilidad de rechazar la hipótesis nula dado que esta es falsa, donde la hipótesis nula representa la no existencia de agujeros en la topología
+Si ahora se repite en procedimiento realizado en la @sec-results-diagrams-plus-intervals un cantidad $M = `{python} B_power`$  de veces con el objetivo de analizar la frecuencia en la que el intervalo estimado contiene efectivamente a la cantidad de agujeros reales, siendo en nuestro caso un agujero real para todos los conjuntos de datos analizados, entonces se obtiene la potencia estimada del test, es decir, la probabilidad de rechazar la hipótesis nula dado que esta es falsa, donde la hipótesis nula representa la no existencia de agujeros en la topología
 
 ```{python}
-B_interval_power = 300
 base_results_params = dict(
     h=h,
     B_power=B_power,
@@ -282,47 +278,57 @@ base_results_params = dict(
     plot=False,
 )
 eyeglasses_results_params = base_results_params | dict(h=h_eyeglasses)
-filled_results_params = base_results_params | dict(h=h_filled, B_interval=B_interval_power)
+filled_results_params = base_results_params | dict(h=h_filled)
 ```
 
 ```{python}
+#| label: code-run-all-circle
 circle_results = run_all(circle_factory, **base_results_params)
 ```
 
 ```{python}
+#| label: code-run-all-circle-noise
 circle_noise_results = run_all(circle_noise_factory, **base_results_params)
 ```
 
 ```{python}
+#| label: code-run-all-circle-outliers
 circle_outliers_results = run_all(circle_outliers_factory, **base_results_params)
 ```
 
 
 ```{python}
+#| label: code-run-all-circle-gauss
 circle_gauss_results = run_all(circle_gauss_factory, **base_results_params)
 ```
 
 ```{python}
+#| label: code-run-all-circle-gauss-noise
 circle_gauss_noise_results = run_all(circle_gauss_noise_factory, **base_results_params)
 ```
 
 ```{python}
+#| label: code-run-all-circle-gauss-outliers
 circle_gauss_outliers_results = run_all(circle_gauss_outliers_factory, **base_results_params)
 ```
 
 ```{python}
+#| label: code-run-all-eyeglasses
 eyeglasses_results = run_all(eyeglasses_factory, **eyeglasses_results_params)
 ```
 
 ```{python}
+#| label: code-run-all-eyeglasses-noise
 eyeglasses_noise_results = run_all(eyeglasses_noise_factory, **eyeglasses_results_params)
 ```
 
 ```{python}
+#| label: code-run-all-eyeglasses-outliers
 eyeglasses_outliers_results = run_all(eyeglasses_outliers_factory, **eyeglasses_results_params)
 ```
 
 ```{python}
+#| label: code-run-all-filled
 filled_circle_results = run_all(filled_circle_factory, **filled_results_params)
 ```
 
@@ -370,42 +376,75 @@ mega_table_filled_circle = get_mega_table([
 ])
 ```
 
+```{python}
+from IPython.display import Math, Latex, Markdown, HTML
+
+def get_printable_table(mega_table: pd.DataFrame) -> Markdown:
+    new_df = mega_table.reset_index()
+    n_columns = len(new_df.columns)
+    if n_columns == 5:
+        new_df.columns = [
+            "Método",
+            "Agujeros",
+            "Circunferencia Uniforme Detecciones",
+            "Circunferencia Gaussiana Detecciones",
+            "Anteojos Detecciones"
+        ]
+    elif n_columns == 3:
+        new_df.columns = [
+            "Método",
+            "Agujeros",
+            "Detecciones"
+        ]
+    new_df = new_df.to_markdown(index=False)
+    return Markdown(new_df)
+    # new_df = new_df.to_html(index=False)
+    # return HTML(new_df)
+```
+
+
 ::: {#tbl-power-table-base}
 
 ```{python}
-mega_table_base
+get_printable_table(mega_table_base)
 ```
 
 Resultados de potencia estimada para los tres métodos sobre los conjuntos de datos originales. Cada fila de la tabla muestra, según el método que se indica a la izquierda, el porcentaje de veces que cada cantidad de agujeros fue detectada en las corridas realizadas.
 
 :::
 
+En la @tbl-power-table-base se observan los resultados para los conjuntos de datos base, sin precencia de ruido o datos atîpicos agreagados. Se observa que el único método que logra detectar, el 100% de las ocasiones que la topología subyacente consiste en un único agujero es Fermat. Si bien tanto el método Euclídeo como KDE logran acertar para los casos de circuferencias de muestreo uniforme y gaussiana, respectivamente, fracasan para el conjunto de datos con forma de anteojos, en el cual ambos métodos logran encontrar siempre dos agujeros significativos. Esto nos comienza a demostrar que las intuiciones construidas sobre los diagramas de persistencia individuales de la @sec-results-diagrams-plus-intervals generalizan para diferentes muestras de las mismas topologías. Esto no resulta asombroso, ya que las topologías sintéticas estudiadas son bastante estables, es decir, por más que cambien los puntos exactos muestreados es fácil reconstruir la misma topología.
+
 
 ::: {#tbl-power-table-noise}
 
 ```{python}
-mega_table_noise
+get_printable_table(mega_table_noise)
 ```
 
 Resultados obtenidos para los conjuntos de datos con ruido agregado, análogamente a lo obtenido en la @tbl-power-table-base para los conjuntos base
 
 :::
 
-ESTO DE ACA ABAJO ROMPE EL FILE
+Se muestran en la @tbl-power-table-noise los resultados para los conjuntos de datos con ruido agregado. La conclusiones resultan altamente similares a las obtenidas en la @tbl-power-table-base para los conjuntos base, con la única salvedad de que, si bien sigue siendo el único método en correctamente detectar a los anteojos como una topología de un único agujero significativo con alta potencia, el método de Fermat detecta en limitadas ocasiones (2%) dos agujeros sigificativos en los Anteojos. Esto se debe, posiblemente, a que la presencia de ruido en el canal que une a las dos circunferencias principales de los anteojos puede llegar "engañar" al método reduciendo el ancho de este canal. Para los casos de circunferencias ninguno de los tres métodos se ve afectado por la presencia del ruido en la varianza estudiada ($\sigma =`{python}  sd`$).
 
-<!-- ```{python}
+
+```{python}
 #| label: tbl-power-table-outliers
 #| tbl-cap: Resultados de potencia estimada obtenidos para los conjuntos de datos con datos atípicos agregados
-mega_table_outliers
-``` -->
+get_printable_table(mega_table_outliers)
+```
+
+En la @tbl-power-table-outliers se observan los resultados para el caso de datos atípicos agregados. Para este ejercicio, se observa un poco mas de variabilidad en los resultados obtenidos corrida a corrida. Por ejemplo, para el caso del método Euclídeo, se observa que además de seguir detectando apropiadamente un único agujero para las circunferencias de muestro uniforme y gaussiano, ahora tambien logra detectar correctamente, en el 80% de los casos, que los Anteojos presentan un único agujero significativo. Esto se debe seguramente a que los datos atípicos que se encuentran en el espacio de relleno de los dos agujeros principales de la topología logran reducir el area efectiva del agujero llevandola una proporcion similar a la del túnel que los une. La aparición de estos datos atípicos tambien afecta considerablemente al método de Fermat, en el cual aparecen incluso equivocaciones, aunque en un número muy reducido de ocasiones (2%), para la circunferencia de muestreo uniforme. De nuevo, el conjunto de datos más afectados resulta ser el de Anteojos, ya que una cantidad finita de datos atípicos bien ubicados (como puede ser en el medio del tunel), resulta en detecciones espureas de más agujeros significativos.
 
 
 ```{python}
 #| label: tbl-power-table-filled
 #| tbl-cap: Resultados de potencia estimada obtenidos para el conjunto de datos del círculo relleno con densidad dependiente del radio, en el que el resultado esperado sería la aceptación de la hipótesis nula, es decir, detectar cero agujeros
-#| tbl-colwidths: [50,50]
-mega_table_filled_circle
+get_printable_table(mega_table_filled_circle)
 ```
+
+Resulta importante destacar que los resultados obtenidos para el método de ventanas de densidad (KDE) no varían en ningun caso, como se observa en las tablas [-@tbl-power-table], [-@tbl-power-table-noise] y [-@@tbl-power-table-outliers]. Un primer instinto podría indicarnos que esto se debe a una propiedad de robustes del método, como se analiza en el trabajo que introduce este algoritmo (@ConfidenceSetsForPersistenceDiagrams), tal que el ruido y los datos atípicos no afectan las buenas propiedas del mismo. Si bien esto tiene mucho sentido, ya que al usar ventanas de densidad la topología sobre la cual se realiza el test es en realidad una version suavizada de la original, ocultandos las cualidades ruidosas del conjunto y centrándose en las características principales de la topología subyacente, es tambien posible que en ese proceso se escondan o se pierdan cualidades que eran de interés para reconstruir la topología subyacente verdadera del manifold $\mathcal{M}$ bajo estudio
 
 
 ## Conjuntos de Datos Reales

@@ -111,6 +111,7 @@ def run_all(
     log: bool = True,
     plot: bool = True,
     cache_key: str | None = None,
+    force_run: bool = False,
 ) -> Results:
     func_name = get_func_name(dataset_factory)
     cache_prefix = cache_key or f"{func_name}_{h}_{B_power}_{B_interval}_{grid_n}"
@@ -125,7 +126,7 @@ def run_all(
     if log:
         print("Starting computing intervals")
         print("Intervals found in cache: ", intervals_key in cache)
-    if intervals_key not in cache:
+    if force_run or intervals_key not in cache:
         intervals = run_all_intervals(
             X,
             h=h,
@@ -134,6 +135,8 @@ def run_all(
             plot=False,
             log=log,
             robust_quantile=robust_quantile,
+            cache_prefix=func_name,
+            force_run=force_run,
         )
         cache[intervals_key] = intervals
     intervals: Intervals = cache[intervals_key]  # type: ignore
@@ -154,7 +157,7 @@ def run_all(
         print("Fermat in cache: ", fermat_power_key in cache)
         print("KDE in cache: ", kde_power_key in cache)
 
-    if euclid_power_key not in cache:
+    if force_run or euclid_power_key not in cache:
         power_euclid = distance_power(
             dataset_factory,
             band=intervals.euclidean.band,
@@ -167,7 +170,7 @@ def run_all(
             print("Finished euclid power analysis")
     power_euclid = cache[euclid_power_key]
 
-    if fermat_power_key not in cache:
+    if force_run or fermat_power_key not in cache:
         power_fermat = distance_power(
             dataset_factory,
             band=intervals.fermat.band,
@@ -180,7 +183,7 @@ def run_all(
             print("Finished fermat power analysis")
     power_fermat = cache[fermat_power_key]
 
-    if kde_power_key not in cache:
+    if force_run or kde_power_key not in cache:
         dimensions, positions = make_grid(X, grid_n=grid_n)
         power_kde = function_power(
             dataset_factory,
