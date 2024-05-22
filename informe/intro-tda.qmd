@@ -132,7 +132,7 @@ Por lo que si se evalua para un rango de valores de $\epsilon$, las conclusiones
 ![Describir Imagen y decir que es extraida de [@IntroductionTDA]](imagenes/cech-vs-rips.png){#fig-cech-vs-rips width=80%}
 
 
-#### Diagramas de persistencia de conjuntos de nivel
+#### Diagramas de persistencia de conjuntos de nivel  {#sec-intro-dgm-function}
 
 Hasta el momento se discutió como estimar la homología de $\mathcal{M}$ a partir de una muestra $\mathcal{S}_N$ variando un parámetro $\epsilon$ y construyendo las bolas $B(\mathbf{x}_i, \epsilon)$ que puede demostrarse conservan la homología del espacio original para un $\epsilon$ desconocido, por lo que el mismo se varía construyendo el diagrama de persistencia. Teniendo en cuenta que la unión de bolas $B(\mathbf{x}_i, \epsilon)$ puede definirse como los conjuntos de nivel inferiores del mínimo de la función de distancia a los datos de la muestra, es decir:
 $$

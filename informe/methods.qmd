@@ -120,7 +120,15 @@ r_power = 2.6
 max_r = 1.5
 ```
 
-El conjunto de datos que sumaremos a nuestras simulaciones para realizar esta tarea sera un círculo en donde la densidad de los puntos que lo rellenan es dependiente del radio. A continuación se muestra el conjunto de datos para un rádio {{< var max_r >}}
+El conjunto de datos que sumaremos a nuestras simulaciones para realizar esta tarea sera un círculo en donde la densidad de los puntos que lo rellenan es dependiente del radio. Es decir, sea un punto en dos dimensiones parametrizado por su distancia al origen $r$ y su ángulo $\theta$ con respecto al eje $x$, se obtienen muestras bajo la siguiente distribución
+$$
+\theta \sim \mathcal{U}(0, 2\pi), \quad r \sim \mathcal{U}^{\frac{1}{r_{power}}}(0, r_{max})
+$$
+
+Donde $r_{power} = 2$ corresponde al muestreo uniforme dentro de la circunferencia. Para valores mayores ($r_{power} > 2$) se obtiene una concentración más fuerte de puntos en los radios superiores, mientras que para $r_{power} < 2$ se obtienen más muestras cercanas al centro.
+Será de especial interés analizar los casos de $r_{power} > 2$ ya que se espera que los métodos trabajados logren descartar la existencia de agujeros a pesar de la baja en la densidad de muestreo cerca del orígen.
+
+A continuación se muestra el conjunto de datos para un rádio `{python} max_r`
 
 ```{python}
 #| label: fig-filled-circle
