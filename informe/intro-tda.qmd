@@ -3,26 +3,17 @@
 El análisis de Datos Topológicos o TDA es una área recientemente surgida de la ciencia de datos cuya principal motivación es la idea de que la topología y geometría proveen un acercamiento poderoso para inferir información robusta, cualitativa y a veces cuantitativa sobre la estructura de los datos [@IntroductionTDA]. El objetivo de esta sección es brindar una introducción a las herramientas y conceptos del TDA que utilizaremos para el desarrollo de esta Tesis.
 
 
-### Homología
-
-La homología es un concepto fundamental en diversas ramas de las matemáticas, particularmente en la topología algebraica y la geometría algebraica. Esta área de estudio se centra en comprender y clasificar las formas y estructuras espaciales de manera abstracta, permitiendo así la comparación y el análisis de diferentes espacios geométricos.
-
-La idea central de la homología se basa en la noción de ciclos y bordes en espacios topológicos. En términos simples, un ciclo es una combinación lineal de símplexes *(simplicial complex)* cuyos bordes se anulan, es decir, no tienen "agujeros". Por otro lado, un borde es una combinación lineal de símplexes cuyos lados forman los bordes de un ciclo. En esencia, los ciclos representan estructuras "cerradas", mientras que los bordes representan estructuras "abiertas".
-
-La homología permite detectar y cuantificar estas estructuras en diversos tipos de espacios topológicos, lo que proporciona información invaluable sobre su forma y conectividad. Por ejemplo, en la topología de superficies, la homología puede utilizarse para distinguir diferentes tipos de superficies (como esféricas, toroidales o de género superior) en función de las características topológicas de sus ciclos y bordes.
-
-
 ### Espacios métricos {#sec-espacios-metricos}
 
-Las cualidades topológicas y geométricas de un espacio estan usualmente asociadas a espacios continuos, por lo que los datos representados como un conjunto finito de observaciones no revelan directamente ninguna información topológica por si mismos. Una forma natural de destacar la estructura topológica de los datos es "conectar" los puntos que estan "cerca" con el objectivo de exibir una estructura global subyacente de los datos. La "cercanía" entre puntos se mide mediante una función de distancia, por lo que resulta conveniente considerar a los conjuntos de datos como muestras de un espacio métrico.
+Las cualidades topológicas y geométricas de un espacio están usualmente asociadas a espacios continuos, por lo que los datos representados como un conjunto finito de observaciones no revelan directamente ninguna información topológica por si mismos. Una forma natural de destacar la estructura topológica de los datos es "conectar" los puntos que están "cerca" con el objetivo de exhibir una estructura global subyacente de los datos. La "cercanía" entre puntos se mide mediante una función de distancia, por lo que resulta conveniente considerar a los conjuntos de datos como muestras de un espacio métrico.
 
-**Espacio Métrico**. Una espacio métrico $(M, \rho)$ es un conjunto $M$ con una fúncion $\rho: M \times M \longrightarrow \mathbb{R}^{+}$, llamada distancia, tal que para cualquier trío de puntos $\mathbf{x}, \mathbf{y}, \mathbf{z} \in M$ se cumple:
+**Espacio Métrico**. Una espacio métrico $(M, \rho)$ es un conjunto $M$ con una función $\rho: M \times M \longrightarrow \mathbb{R}^{+}$, llamada distancia, tal que para cualquier trío de puntos $\mathbf{x}, \mathbf{y}, \mathbf{z} \in M$ se cumple:
 
 I.  No negatividad: $\rho(\mathbf{x}, \mathbf{y}) \geq 0$ y $\rho(\mathbf{x}, \mathbf{y}) = 0$ solo sí $\mathbf{x} = \mathbf{y}$
 II.  Simetría: $\rho(\mathbf{x}, \mathbf{y}) = \rho(\mathbf{y}, \mathbf{x})$
 III.  Desigualdad triangular: $\rho(\mathbf{x}, \mathbf{z}) \leq \rho(\mathbf{x}, \mathbf{y}) + \rho(\mathbf{y}, \mathbf{z})$
 
-Puede demostrarse que la distancia de Fermat cumple las condiciones para ser una distancia según esta definición.
+Puede demostrarse @PatuFermatDistance que la distancia de Fermat desarrollada en la @sec-intro-fermat cumple las condiciones para ser una distancia según esta definición, por lo que pueden estudiarse las cualidades topológicas de un espacio métrico en base a esta misma.
 
 #### Distancia de Hausdorff
 
@@ -47,10 +38,16 @@ $$
 
 La distancia de Hausdorff provee una forma conveniente de cuantificar la proximidad entre diferentes conjuntos de datos provenientes del mismo espacio métrico.
 
+### Homología
+
+La idea central de la homología se basa en la noción de ciclos y bordes en espacios topológicos. En términos sencillos, un ciclo es una combinación lineal de símplices *(simplicial complex)*, siendo un símplice la generalización a dimensiones mayores de un triángulo, cuyos bordes se anulan, es decir, no tienen "agujeros". Por otro lado, un borde es una combinación lineal de símplices cuyos lados forman los bordes de un ciclo. En esencia, los ciclos representan estructuras "cerradas", mientras que los bordes representan estructuras "abiertas".
+
+La homología permite detectar y cuantificar estas estructuras en diversos tipos de espacios topológicos, lo que proporciona información invaluable sobre su forma y conectividad. Por ejemplo, en la topología de superficies, la homología puede utilizarse para distinguir diferentes tipos de superficies (como esféricas, toroidales o de género superior) en función de las características topológicas de sus ciclos y bordes.
+
 
 ### Homología persistente
 
-Resta entonces la pregunta de como calcular la homología de un *manifold* $\mathcal{M}$ a partir de una muestra $\mathcal{S}_N$ obtenida mediante una función de densidad $f$ con soporte en $\mathcal{M}$. Como se menciono brevemente en la @sec-espacios-metricos, esto se realiza mediante la elección de una medida de distancia. Concretamente, se define el espacio generado por una unión de bolas de radio $\epsilon$ centradas en las muestran de $\mathcal{S}_N$, es decir
+El problema fundamental que se busca abordar con el Análisis Topológico de Datos (TDA) es inferir la homología de un *manifold* $\mathcal{M}$ a partir de una muestra $\mathcal{S}_N$, obtenida mediante una función de densidad $f$ con soporte en $\mathcal{M}$. Como se mencionó brevemente en la @sec-espacios-metricos, esto se realiza mediante la elección de una medida de distancia. Concretamente, se define el espacio generado por una unión de bolas de radio $\epsilon$ centradas en las muestran de $\mathcal{S}_N$, es decir
 
 $$ \mathcal{S}_N^{\epsilon} = \cup_{\mathbf{x} \in \mathcal{S}_N} B(\mathbf{x}, \epsilon)$$
 
@@ -70,6 +67,7 @@ En la práctica, este enfoque resulta en dos problemas fundamentales
 
 2. La elección del $epsilon$ apropiado no resulta obvia. Como se observa en la @fig-topologia-equivalente la homología de $\mathcal{S}_N^{\epsilon}$ varía con la elección de $\epsilon$. La respuesta a este problema viene dada por las técnicas de homología persistente, que esencialmente consisten en evaluar la homología de $\mathcal{S}_N^{\epsilon}$ no solo para un valor de $epsilon$, si no para un rango de valores lo suficientemente grande. La homología persistente busca resumir como las cualidades topológicas de $\mathcal{S}_N^{\epsilon}$ cambian a medida que varía el valor de $\epsilon$, por ejemplo los agujeros pueden aparecer o cerrarse a medida que el radio de las bolas aumenta.
 Este procedimiento da como resultado un gráfico conocido como "diagrama de persistencia" que resume este procedimiento
+
 
 #### Diagrama de persistencia {#sec-intro-diagramas-persistencia}
 
@@ -131,7 +129,6 @@ Por lo que si se evalua para un rango de valores de $\epsilon$, las conclusiones
 
 ![Describir Imagen y decir que es extraida de [@IntroductionTDA]](imagenes/cech-vs-rips.png){#fig-cech-vs-rips width=80%}
 
-
 #### Diagramas de persistencia de conjuntos de nivel  {#sec-intro-dgm-function}
 
 Hasta el momento se discutió como estimar la homología de $\mathcal{M}$ a partir de una muestra $\mathcal{S}_N$ variando un parámetro $\epsilon$ y construyendo las bolas $B(\mathbf{x}_i, \epsilon)$ que puede demostrarse conservan la homología del espacio original para un $\epsilon$ desconocido, por lo que el mismo se varía construyendo el diagrama de persistencia. Teniendo en cuenta que la unión de bolas $B(\mathbf{x}_i, \epsilon)$ puede definirse como los conjuntos de nivel inferiores del mínimo de la función de distancia a los datos de la muestra, es decir:
@@ -141,3 +138,34 @@ $$
 
 Este procedimiento puede expresarse en términos mas generales reemplazando $min_{\mathbf{x}_i \in \mathcal{S}_N}d(\mathbf{x}_i, \mathbf{x})$ por una función arbitraria $g(\mathbf{x})$, cuyos conjuntos de nivel arbitrarios serán utilizados para construir el diagrama de persistencia y así estimar la homología de $\mathcal{M}$.
 Para algunas funciones $g$, como por ejemplo la correspondiente a la estimación de densidad de probabilidad por ventanas [@ConfidenceSetsForPersistenceDiagrams], la homología reproducida conserva las cualidades topológicas del espacio original pero con ventajas adicionales como pueden ser mayor robustes ante datos atípicos o ruido, es por esto que la inferencia de las cualidades topológicas del espacio original $\mathcal{M}$ puede realizarse directamente sobre un diagrama de persistencia construido con los conjuntos de nivel de alguna otra función $g(x)$.
+
+
+
+<!-- ### Complejos simpliciales
+
+A partir de la descripción de un espacio métrico, la topología bajo análisis puede comenzar a ser geométricamente descripta mediante complejos simpliciales. Formalmente, sea un conjunto  $X = {x_1, \dots, x_k} \subset R^d$ de puntos afínmente independientes, el símplex $\sigma = [x_1, \dots, x_k]$ generado por $X$ es el casco convexo de $X$. Los puntos de $X$ se llaman "vértices" de $\sigma$ mientras que los símplices generados por los subconjuntos de $X$ se llaman "caras" de $\sigma$ @IntroductionTDA.
+Estas definiciones cobran especial interés cuando se vuelcan a un conjunto de datos $\mathcal{S}_N$, donde los puntos de la muestra representan nuestros vértices. A partir de este conjunto de datos y la definición de un espacio métrico $(M, \rho)$, existen múltiples formas de construir un complejo simplicial, dos de las más utilizadas son *Čech* y *Vietoris-Rips*. Para un valor $\epsilon > 0$,
+el complejo de *Čech*, denotado como $\mathrm{Cech}_{\epsilon}(\mathcal{S}_N)$, se define como el conjunto de símplices $[x_1, \dots, x_k]$ tales que las $k$ bolas cerradas $B(x_i, \epsilon)$ tienen intersección no nula. Por su parte, El complejo de *Vietoris-Rips*, denotado como $\mathrm{Rips}_{\epsilon}(\mathcal{S}_N)$, es el conjunto de símplices $[x_1, \dots, x_k]$ tales que $d_{\mathcal{S}_N}(x_i, x_j) < \epsilon$ para todo $i, j$. Este complejo resulta de cálculo mucho más eficiente que el de *Čech* ya que solo las distancias de a pares entre los puntos son necesarias, y el mismo cumple la siguiente igualdad [@ConfidenceSetsForPersistenceDiagrams]
+
+$$
+\mathrm{Cech}_{\epsilon}(\mathcal{S}_N) \subset \mathrm{Rips}_{\epsilon}(\mathcal{S}_N) \subset \mathrm{Cech}_{\sqrt{2} \epsilon}(\mathcal{S}_N)
+$$
+
+Por lo que las garantías teóricas que pueda dar el complejo de *Čech* son comunmente aproximadas con el complejo de *Vietoris-Rips*. En la @fig-cech-vs-rips, entraída de @IntroductionTDA se ilustra la diferencia entre estos dos complejos simpliciales.
+
+![Describir Imagen y decir que es extraida de [@IntroductionTDA]](imagenes/cech-vs-rips.png){#fig-cech-vs-rips width=80%}
+ -->
+
+
+<!-- ### Homología
+
+La homología es un concepto fundamental en diversas ramas de las matemáticas, particularmente en la topología y geometría algebraica. Esta área de estudio se centra en comprender y clasificar las formas y estructuras espaciales de manera abstracta, permitiendo así la comparación y el análisis de diferentes espacios geométricos. La homología asocia entonces a cada espacio una serie de grupos, llamados grupos de homología, que reflejan características importantes del mismo, como pueden ser componentes conexas y agujeros de diversas dimensiones. Esta asignación se hace a a partir de la definición de los conceptos de "cadenas", "ciclos" y "bordes":
+Una cadena es una combinación formal de elementos geométricos, como pueden ser puntos, curvas o superficies. Un borde se define como una cadena que actúa de frontera de una cadena de dimensión superior, se define entonces el operador borde $\partial$ que mapea cadenas de dimensión $k$ (o $k$-cadenas) a $(k-1)$-cadenas. A partir de la noción de borde, se define a los ciclos como cadenas $c$ sin frontera, es decir $\partial c = 0$. Estos representan intuitivamente "agujeros". En particular, a lo largo de este trabajo, haremos foco mayoritariamente en la Homología de grado uno, denotada como $H_1$, que representa agujeros
+
+ -->
+
+
+
+<!-- La idea central de la homología se basa en la noción de ciclos y bordes en espacios topológicos. En términos sencillos, un ciclo es una combinación lineal de símplices *(simplicial complex)*, siendo un símplice la generalización a dimensiones mayores de un triángulo, cuyos bordes se anulan, es decir, no tienen "agujeros". Por otro lado, un borde es una combinación lineal de símplices cuyos lados forman los bordes de un ciclo. En esencia, los ciclos representan estructuras "cerradas", mientras que los bordes representan estructuras "abiertas".
+
+La homología permite detectar y cuantificar estas estructuras en diversos tipos de espacios topológicos, lo que proporciona información invaluable sobre su forma y conectividad. Por ejemplo, en la topología de superficies, la homología puede utilizarse para distinguir diferentes tipos de superficies (como esféricas, toroidales o de género superior) en función de las características topológicas de sus ciclos y bordes. -->

@@ -16,17 +16,17 @@ csl: "latex/vancouver-brackets.csl"
 {{< include abstract.qmd >}}
 
 {{< pagebreak >}}
-# Introducción y marco teórico {#sec-intro}
+# Introducción y Marco Teórico {#sec-intro}
+
+{{< include intro-fermat.qmd >}}
+
+{{< pagebreak >}}
 
 {{< include intro-tda.qmd >}}
 
 {{< pagebreak >}}
 
 {{< include intro-intervalos.qmd >}}
-
-{{< pagebreak >}}
-
-{{< include intro-fermat.qmd >}}
 
 {{< pagebreak >}}
 # Métodos y desarrollo {#sec-methods}
@@ -39,10 +39,9 @@ csl: "latex/vancouver-brackets.csl"
 {{< include simulations.qmd >}}
 
 {{< pagebreak >}}
-# Discusión y Proximos pasos {#sec-next-steps}
+# Conclusiones y Proximos pasos {#sec-final-thoughts}
 
-{{< pagebreak >}}
-# Conclusión {#sec-conclution}
+{{< include conclusion.qmd >}}
 
 {{< pagebreak >}}
 # Referencias
