@@ -29,7 +29,7 @@ csl: "latex/vancouver-brackets.csl"
 {{< include intro-intervalos.qmd >}}
 
 {{< pagebreak >}}
-# Métodos y desarrollo {#sec-methods}
+# Métodos y Desarrollo {#sec-methods}
 
 {{< include methods.qmd >}}
 
@@ -39,7 +39,7 @@ csl: "latex/vancouver-brackets.csl"
 {{< include simulations.qmd >}}
 
 {{< pagebreak >}}
-# Conclusiones y Proximos pasos {#sec-final-thoughts}
+# Conclusiones y Próximos pasos {#sec-final-thoughts}
 
 {{< include conclusion.qmd >}}
 

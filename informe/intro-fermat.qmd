@@ -1,13 +1,13 @@
 ## Distancia de Fermat {#sec-intro-fermat}
 
-En una gran cantidad de aplicaciones de aprendizaje automático resulta de crucial importancia la elección de una medida de distancia apropiada para representar el espacio, como por ejemplo, durante la construcción de diagramas de persistencia desarrollados durante esta Tesis. Un enfoque a la hora de elegir esta medida es dejar que la misma se infiera a partir de los datos, en vez de ser elegida arbitrariamente. Este enfoque resulta de particular interés cuando la data proviene de un *manifold* desconocido de dimension menor, siendo esto una situación típica en distintos tipos de aplicaciones [@RepresentationLearningBengio]. Para atacar este problema usaremos la distancia de Fermat, que se define a continuación:
+En una gran cantidad de aplicaciones de aprendizaje automático resulta de crucial importancia la elección de una medida de distancia apropiada para representar el espacio, como por ejemplo, durante la construcción de diagramas de persistencia desarrollados durante esta Tesis. Un enfoque a la hora de elegir esta medida es dejar que la misma se infiera a partir de los datos, en vez de ser elegida arbitrariamente. Este enfoque resulta de particular interés cuando la data proviene de un *manifold* desconocido de dimensión menor, siendo esto una situación típica en distintos tipos de aplicaciones [@RepresentationLearningBengio]. Para atacar este problema usaremos la distancia de Fermat, que se define a continuación:
 
 Sea una muestra de $N$ puntos
 
 $$\mathcal{S}_{N} = \{\mathbf{x}_1, \dots, \mathbf{x}_N \} \subset \mathcal{M}$$
 
-Donde $\mathcal{M} \subseteq \mathbb{R}^D$ es un manifold de dimension $d \geq 1$ y tal que $d \ll D$. Sea además $l(\cdot, \cdot)$ una función de distancia definida en $\mathcal{M} \times \mathcal{M}$ (Siendo una opción típica la distancia euclidea, pero pudiendo ser considerada cualquier otra distancia).
-Se define entonces la distancia de fermat para el par de puntos $\mathbf{p}, \mathbf{q} \in \mathcal{M}$ como:
+Donde $\mathcal{M} \subseteq \mathbb{R}^D$ es un *manifold* de dimensión $d \geq 1$ y tal que $d \ll D$. Sea además $l(\cdot, \cdot)$ una función de distancia definida en $\mathcal{M} \times \mathcal{M}$ (Siendo una opción típica la distancia Euclídea, pero pudiendo ser considerada cualquier otra distancia).
+Se define entonces la distancia de Fermat para el par de puntos $\mathbf{p}, \mathbf{q} \in \mathcal{M}$ como:
 
 $$
 d_F(\mathbf{p}, \mathbf{q}) = \mathcal{D}_{\mathcal{S}_n}(\mathbf{p}, \mathbf{q}) = \min_{\mathcal{S}_n^K} \sum_{i = 1}^{K-1} l\left( \mathbf{x}^i, \mathbf{x}^{i+1} \right) ^\alpha
@@ -32,13 +32,13 @@ Es decir, la distancia de fermat es un estimador consistente de la distancia geo
 ### Aproximación por *k*-NN
 
 Teniendo en cuenta que la carga computacional del cálculo de la distancia de Fermat es altamente elevado, siendo este $\mathcal{O}(N^3)$ para todas las distancias entre pares de un conjunto de $N$ puntos, una heurística sencilla para reducir este tiempo, sin perdida de garantías en cuanto a los resultados asintóticos, es tomar solo los $k$ vecinos más cercanos de $\mathbf{x}^i$ como posibles $\mathbf{x}^{i+1}$ durante la construcción de las secuencias $\mathcal{S}_n^K$ sobre las cuales se realiza la maximización.
-Formalmente, si se define $\mathcal{N}_k(\mathbf{x})$ como el conjunto de $k$ vecinos más cercanos ($k$-NN) de $\mathbf{x}$, entonces la distancia de Fermat se define análogamente a la @eq-def-fermat pero siendo $\mathcal{S}_n^K$, $K \geq 2$ todas las secuencias posibles de puntos compuestos de $K$ elementos tomados de $\mathcal{S}_n$ tal que $\mathbf{x}^{i+1} \in \mathcal{N}_k(\mathbf{x}^i) \forall i$.
+Formalmente, si se define $\mathcal{N}_k(\mathbf{x})$ como el conjunto de $k$ vecinos más cercanos ($k$-NN) de $\mathbf{x}$, entonces la distancia de Fermat se define análogamente a la @eq-def-fermat pero siendo $\mathcal{S}_n^K$, $K \geq 2$ todas las secuencias posibles de puntos compuestos de $K$ elementos tomados de $\mathcal{S}_n$ tal que $\mathbf{x}^{i+1} \in \mathcal{N}_k(\mathbf{x}^i) \ \forall i$.
 
-Con esta modificación, el cómputo de la distancia de fermat para todos los pares de un conjunto de $N$ puntos tiene una complejidad temporal asintótica de $\mathcal{O}(N^2 \log N)$, sumado a esto, es posible almacenar la matriz de distancia de forma mucho mas eficiente, ya que la misma pasa de ser densa, con $N^2$ elementos distinto de cero, a ser rala contando con $N*k$ elementos no nulos, pudiéndose esto almacenar de forma mucho mas eficiente.
+Con esta modificación, el cómputo de la distancia de fermat para todos los pares de un conjunto de $N$ puntos tiene una complejidad temporal asintótica de $\mathcal{O}(N^2 \log N)$, sumado a esto, es posible almacenar la matriz de distancia de forma mucho más eficiente, ya que la misma pasa de ser densa, con $N^2$ elementos distinto de cero, a ser rala contando con $N*k$ elementos no nulos, pudiéndose esto almacenar de forma mucho más eficiente.
 
 ### Aproximación por *Landmarks*
 
-Otra mecanismo de aproximación para la distancia de fermat se obtiene a partir de la utilización de *landmarks* en el cálculo del camino más corto entre nodos dentro de un grafo. Teniendo en cuenta que el problema de encontrar la distancia de Fermat entre dos puntos puede verse como el problema análogo de encontrar el camino más corto entre dos nodos en el grafo en el que cada punto del conjunto representa un nodo y sus aristas están dadas por las distancias entre los respectivos puntos elevadas al factor $\alpha$, es decir, un grafo completo. A continuación se describe la técnica de *Landmarks* para el cálculo eficiente del camino mas corto entre nodos de un grafo:
+Otra mecanismo de aproximación para la distancia de fermat se obtiene a partir de la utilización de *landmarks* en el cálculo del camino más corto entre nodos dentro de un grafo. Teniendo en cuenta que el problema de encontrar la distancia de Fermat entre dos puntos puede verse como el problema análogo de encontrar el camino más corto entre dos nodos en el grafo en el que cada punto del conjunto representa un nodo y sus aristas están dadas por las distancias entre los respectivos puntos elevadas al factor $\alpha$, es decir, un grafo completo. A continuación se describe la técnica de *Landmarks* para el cálculo eficiente del camino más corto entre nodos de un grafo:
 
 Sea un grafo $G(V,E)$ con $n$ vértices y $m$ aristas. Dados dos vértices $s, t \in V$, se define $d_G(s,t)$ como la longitud del camino más corto entre dos vértices $s, t \in V$.
 Sea además un conjunto ordenado de $d$ vértices $D = \{u_1, u_2, . . . , u_d\}$ del grafo $G$, que llamamos *landmarks*. La idea principal es representar cada otro vértice en el grafo como un vector de distancias de camino más corto al conjunto de landmarks. En particular, cada vértice $v \in V$ se representa como un vector $\phi(v)$ en $\mathbb{R}^d$:
@@ -48,7 +48,7 @@ $$
 $$
 
 
-Teniendo en cuenta que a distancia de camino más corto en grafos es una métrica y, por lo tanto, satisface la desigualdad triangular. Es decir, dados tres nodos $s, u$ y $t$, se cumplen las siguientes desigualdades:
+Teniendo en cuenta que la distancia de camino más corto en grafos es una métrica y, por lo tanto, satisface la desigualdad triangular. Es decir, dados tres nodos $s, u$ y $t$, se cumplen las siguientes desigualdades:
 
 $$|d_G(s, u) - d_G(u, t)| \leq d_G(s, t) \leq d_G(s, u) + d_G(u, t) $$ {#eq-landmark-bounds}
 
