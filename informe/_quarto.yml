@@ -1,6 +1,7 @@
 pdf-engine: pdflatex
 format:
   pdf:
+    documentclass: report
     toc: false
     fig-pos: 'h'
 header-includes:
@@ -14,6 +15,9 @@ toc-title: "Tabla de contenidos"
 lang: es
 nocite: '@*'
 number-sections: true
+crossref:
+  chapters: true
+number-depth: 2
 execute:
   echo: false
   message: false
