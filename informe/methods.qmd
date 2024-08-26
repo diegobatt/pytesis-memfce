@@ -231,7 +231,7 @@ Donde la maximización se alcanzará en alguno de aquellos puntos que no hayan s
 
 Este enfoque es distinto a los tratados anteriormente ya que no se basa en una distancia propiamente dicha, el mismo consta de construir un estimador de densidad suave a partir de los datos para posteriormente calcular el diagrama de persistencia a partir de una filtración de las curvas de nivel superior de la función del estimador de densidad [@ConfidenceSetsForPersistenceDiagrams].
 
-Sea $\mathcal{S}_{N}$ un conjunto de muestras *i.i.d* obtenidas mediante una función de densidad $f$ con soporte en un *manifold* $\mathcal{M}$, se define
+Sea $\mathcal{S}_{N}$ un conjunto de muestras *i.i.d* obtenidas mediante una función de densidad $f$ con soporte en una variedad $\mathcal{M}$, se define
 
 $$
 f_h(x) = \int_{\mathcal{M}} \frac{1}{h^D} K \left( \frac{||x - u||_2}{h}\right) df(u)

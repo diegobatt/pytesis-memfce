@@ -1,12 +1,12 @@
 ## Distancia de Fermat {#sec-intro-fermat}
 
-En una gran cantidad de aplicaciones de aprendizaje automático resulta de crucial importancia la elección de una medida de distancia apropiada para representar el espacio, como por ejemplo, durante la construcción de diagramas de persistencia desarrollados durante esta Tesis. Un enfoque a la hora de elegir esta medida es dejar que la misma se infiera a partir de los datos, en vez de ser elegida arbitrariamente. Este enfoque resulta de particular interés cuando la data proviene de un *manifold* desconocido de dimensión menor, siendo esto una situación típica en distintos tipos de aplicaciones [@RepresentationLearningBengio]. Para atacar este problema usaremos la distancia de Fermat, que se define a continuación:
+En una gran cantidad de aplicaciones de aprendizaje automático resulta de crucial importancia la elección de una medida de distancia apropiada para representar el espacio, como por ejemplo, durante la construcción de diagramas de persistencia desarrollados durante esta Tesis. Un enfoque a la hora de elegir esta medida es dejar que la misma se infiera a partir de los datos, en vez de ser elegida arbitrariamente. Este enfoque resulta de particular interés cuando la data proviene de una variedad desconocida de dimensión menor, siendo esto una situación típica en distintos tipos de aplicaciones [@RepresentationLearningBengio]. Para atacar este problema usaremos la distancia de Fermat, que se define a continuación:
 
 Sea una muestra de $N$ puntos
 
 $$\mathcal{S}_{N} = \{\mathbf{x}_1, \dots, \mathbf{x}_N \} \subset \mathcal{M}$$
 
-Donde $\mathcal{M} \subseteq \mathbb{R}^D$ es un *manifold* de dimensión $d \geq 1$ y tal que $d \ll D$. Sea además $l(\cdot, \cdot)$ una función de distancia definida en $\mathcal{M} \times \mathcal{M}$ (Siendo una opción típica la distancia Euclídea, pero pudiendo ser considerada cualquier otra distancia).
+Donde $\mathcal{M} \subseteq \mathbb{R}^D$ es una variedad de dimensión $d \geq 1$ y tal que $d \ll D$. Sea además $l(\cdot, \cdot)$ una función de distancia definida en $\mathcal{M} \times \mathcal{M}$ (Siendo una opción típica la distancia Euclídea, pero pudiendo ser considerada cualquier otra distancia).
 Se define entonces la distancia de Fermat para el par de puntos $\mathbf{p}, \mathbf{q} \in \mathcal{M}$ como:
 
 $$

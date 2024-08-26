@@ -4,10 +4,11 @@ format:
   pdf:
     toc: true
     include-before-body: latex/caratula.tex
+    link-citations: true
 bibliography: "latex/references.bib"
-csl: "latex/vancouver-brackets.csl"
 ---
 
+<!-- csl: "latex/vancouver-brackets.csl" -->
 
 <!-- Entre TOC y Primer Sección -->
 {{< pagebreak >}}
