@@ -27,7 +27,7 @@ from pytesis.datasets import (
 
 random.seed(1)
 
-n = 500
+n = 200
 sd = 0.075
 iqr_factor = 0.3
 outliers_frac = 0.02
@@ -142,11 +142,11 @@ plot_dataset(X_filled, title="Conjunto de datos"); plt.show()
 
 ## Conjuntos de datos reales  {#sec-methods-data-real}
 
-Adicionalmente al uso de los conjuntos de datos sintéticos descritos en la @sec-methods-data-synth se buscará también validar los resultados obtenidos en cuanto a la detección de agujeros de primer grado un conjunto de datos reales utilizado en @FootballRobustDataset cuya estructura se describe en @FootballRobustDatasetExplanation. El *dataset* consiste en mediciones correspondientes a la posición de jugadores de *football* dentro de la cancha a lo largo de un partido, en el que se obtiene un punto cada un intervalo de tiempo determinado. A este conjunto de datos, siguiendo lo realizado en @FootballRobustDataset, se le agrega un borde artificial demarcando los límites de la cancha con el objetivo de que los espacios en donde el jugador no tuvo incidencia sean agujeros con bordes en los límites de la cancha y las posibles ubicaciones del jugador en conjunto.
+Adicionalmente al uso de los conjuntos de datos sintéticos descritos en la @sec-methods-data-synth se buscará también validar los resultados obtenidos en cuanto a la detección de agujeros de primer grado un conjunto de datos reales utilizado en @FootballRobustDataset cuya estructura se describe en @FootballRobustDatasetExplanation. El *dataset* consiste en mediciones correspondientes a la posición de jugadores de fútbol dentro de la cancha a lo largo de un partido, en el que se obtiene un punto cada un intervalo de tiempo determinado. A este conjunto de datos, siguiendo lo realizado en @FootballRobustDataset, se le agrega un borde artificial demarcando los límites de la cancha con el objetivo de que los espacios en donde el jugador no tuvo incidencia sean agujeros con bordes en los límites de la cancha y las posibles ubicaciones del jugador en conjunto.
 
 ```{python}
 #| label: fig-football-data
-#| fig-cap: Conjunto de datos reales correspondientes a la posición medida de distintos jugadores a lo largo de un partido de football. Los diferentes jugadores ocupan diferentes roles en el equipo para mostrar diferentes patrones de posiciones
+#| fig-cap: Conjunto de datos reales correspondientes a la posición medida de distintos jugadores a lo largo de un partido de fútbol. Los diferentes jugadores ocupan diferentes roles en el equipo para mostrar diferentes patrones de posiciones
 #| fig-subcap:
 #|   - "Jugador 2: Defensor Ofensivo"
 #|   - "Jugador 5: Mediocampista"
@@ -231,7 +231,7 @@ Donde la maximización se alcanzará en alguno de aquellos puntos que no hayan s
 
 Este enfoque es distinto a los tratados anteriormente ya que no se basa en una distancia propiamente dicha, el mismo consta de construir un estimador de densidad suave a partir de los datos para posteriormente calcular el diagrama de persistencia a partir de una filtración de las curvas de nivel superior de la función del estimador de densidad [@ConfidenceSetsForPersistenceDiagrams].
 
-Sea $\mathcal{S}_{N}$ un conjunto de muestras *i.i.d* obtenidas mediante una función de densidad $f$ con soporte en una variedad $\mathcal{M}$, se define
+Sea $\mathcal{S}_{N}$ un conjunto de muestras i.i.d obtenidas mediante una función de densidad $f$ con soporte en una variedad $\mathcal{M}$, se define
 
 $$
 f_h(x) = \int_{\mathcal{M}} \frac{1}{h^D} K \left( \frac{||x - u||_2}{h}\right) df(u)
