@@ -8,8 +8,6 @@ format:
 bibliography: "latex/references.bib"
 ---
 
-<!-- csl: "latex/vancouver-brackets.csl" -->
-
 <!-- Entre TOC y Primer Sección -->
 {{< pagebreak >}}
 # Resumen {#sec-abstract}
