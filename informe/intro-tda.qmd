@@ -42,6 +42,8 @@ La distancia de Hausdorff provee una forma conveniente de cuantificar la proximi
 La homología es un concepto fundamental en diversas ramas de las matemáticas, particularmente en la topología y geometría algebraica. Esta área de estudio se centra en comprender y clasificar las formas y estructuras espaciales de manera abstracta, permitiendo así la comparación y el análisis de diferentes espacios geométricos. La homología asocia entonces a cada espacio una serie de grupos, llamados grupos de homología, que reflejan características importantes del mismo, como pueden ser componentes conexos y agujeros de diversas dimensiones. Esta asignación se hace a a partir de la definición de los conceptos de "cadenas", "ciclos" y "bordes":
 Una cadena es una combinación formal de elementos geométricos, como pueden ser puntos, curvas o superficies. Un borde se define como una cadena que actúa de frontera de una cadena de dimensión superior, se define entonces el operador borde $\partial$ que mapea cadenas de dimensión $k$ (o $k$-cadenas) a $(k-1)$-cadenas. A partir de la noción de borde, se define a los ciclos como cadenas $c$ sin frontera, es decir $\partial c = 0$. Estos representan intuitivamente "agujeros" en diversas dimensiones. En particular, a lo largo de este trabajo, haremos foco mayoritariamente en la Homología de grado uno, denotada como $H_1$, que puede ser interpretada, de la forma más intuitiva posible, como la cantidad de ciclos unidimensionales diferentes, donde por "diferentes" nos referimos a que no pueden ser deformados dentro de la variedad hasta ser iguales entre sí. Otro grado de homología que mencionaremos brevemente será el de las componentes conexos, denotado como $H_0$, que intuitivamente representa todos los puntos que pueden ser unidos mediante una curva sin salirse de la variedad
 
+![Se ilustra la homología de primer grado de un toro, marcando en azul las dos curvas del mismo que no pueden ser continuamente deformadas la una en la otra. Cualquier otra curva cerrada que elijamos sobre el toro, podrá ser deformada en alguna de estas dos. Crédito de la imagen: [@IntroductionTDA]](imagenes/homology-torus.png){#fig-torus-homology  width=50%}
+
 
 ### Homología persistente {#sec-intro-persistent-homology}
 
@@ -55,9 +57,9 @@ B(\mathbf{x}_i, \epsilon) = \{ \mathbf{x} \mid d(\mathbf{x}_i, \mathbf{x}) < \ep
 $$
 
 con $d(\cdot, \cdot)$ una función de distancia.
-Se demuestra en @ConfidenceSetsForPersistenceDiagrams que cuando $\mathcal{M}$ es una variedad compacta y suave, bajo condiciones poco restrictivas sobre la distancia de Hausdorff, definida en la @sec-hausdorff-distance, entre la muestra y la variedad de la que proviene $d_{H}(\mathcal{S}_N, \mathcal{M})$, y una elección apropiada del valor $\epsilon$, entonces el espacio $\mathcal{S}_N^{\epsilon}$ es topológicamente equivalente a $\mathcal{M}$ [@Niyogi2008]. Esto significa que podemos inferir la topología de $\mathcal{M}$ a partir de $\mathcal{S}_N^{\epsilon}$.
+Se demuestra en @ConfidenceSetsForPersistenceDiagrams que cuando $\mathcal{M}$ es una variedad compacta y suave, bajo condiciones poco restrictivas sobre la distancia de Hausdorff (definida en la @sec-hausdorff-distance) entre la muestra y la variedad de la que proviene $d_{H}(\mathcal{S}_N, \mathcal{M})$, y una elección apropiada del valor $\epsilon$, entonces el espacio $\mathcal{S}_N^{\epsilon}$ es topológicamente equivalente a $\mathcal{M}$ [@Niyogi2008]. Esto significa que podemos inferir la topología de $\mathcal{M}$ a partir de $\mathcal{S}_N^{\epsilon}$.
 
-![Describir Imagen y decir que es extraida de [@IntroductionTDA]](imagenes/topologia-equivalente-epsilon.png){#fig-topologia-equivalente width=60%}
+![Se ilustra en la imagen el conjunto de datos $\mathcal{S}_N$ (esquina superior izquierda, denotado como $\mathbb{X}_n$) y los espacios $\mathcal{S}_N^{\epsilon}$ (denotados en la imagen como $\mathbb{X}_n^{r_i}$) para tres diferentes valores de $\epsilon$. Se observa como el conjunto de datos parece provenir de una variedad que presenta un agujero en su interior, pero esto deja de ser apreciable para el valor de $\epsilon$ más grande en la esquina inferior derecha. Crédito de la imagen: [@IntroductionTDA]](imagenes/topologia-equivalente-epsilon.png){#fig-topologia-equivalente width=60%}
 
 En la práctica, este enfoque resulta en dos problemas fundamentales
 
@@ -65,7 +67,7 @@ En la práctica, este enfoque resulta en dos problemas fundamentales
 
 2. La elección del $epsilon$ apropiado no resulta obvia. Como se observa en la @fig-topologia-equivalente la homología de $\mathcal{S}_N^{\epsilon}$ varía con la elección de $\epsilon$. La respuesta a este problema viene dada por las técnicas de homología persistente, que esencialmente consisten en evaluar la homología de $\mathcal{S}_N^{\epsilon}$ no solo para un valor de $epsilon$, si no para un rango de valores lo suficientemente grande. La homología persistente busca resumir como las cualidades topológicas de $\mathcal{S}_N^{\epsilon}$ cambian a medida que varía el valor de $\epsilon$, por ejemplo los agujeros pueden aparecer o cerrarse a medida que el radio de las bolas aumenta.
 
-Este procedimiento da como resultado un gráfico conocido como "diagrama de persistencia" que resume este procedimiento, descrito a continuación en la @sec-intro-diagramas-persistencia.
+Este procedimiento da como resultado un gráfico conocido como "diagrama de persistencia" que resume este procedimiento, descrito a continuación.
 
 
 #### Diagrama de persistencia {#sec-intro-diagramas-persistencia}
