@@ -1,12 +1,14 @@
 ## Intervalos de confianza {#sec-intro-intervalos}
 
-En estadística frecuentista, un intervalo de confianza es un rango estimado para un parámetro desconocido. El intervalo de confianza se calcula a un nivel designado, siendo el nivel de confianza de $95\%$ el más utilizado. El nivel de confianza representa la proporción teórica de intervalos de confianza que contiene al verdadero valor del parámetro. Por ejemplo, de todos los intervalos computados al nivel $95\%$, el $95\%$ de ellos deberían contener al verdadero valor @IntroductoryStats
+En estadística frecuentista, un intervalo de confianza es un rango estimado para un parámetro desconocido. El intervalo de confianza se calcula a un nivel designado, siendo el nivel de confianza de $95\%$ el más utilizado. El nivel de confianza representa la proporción teórica de intervalos de confianza que contiene al verdadero valor del parámetro. Por ejemplo, de todos los intervalos computados al nivel $95\%$ para diferentes conjuntos de datos del mismo tamaño obtenidos a partir de la misma distribución, el $95\%$ de ellos deberían contener al verdadero valor [@IntroductoryStats]
 
-Formalmente, sea $X$ una muestra aleatoria proveniente de una distribución de probabilidad $p$ de parámetro $\theta$, siendo $\theta$ la cantidad a estimar. Un intervalo de confianza de nivel $1 - \alpha$ para el parámetro $\theta$ es el intervalo $(u(X), v(X))$ determinado por las variables aleatorias $u(X)$ y $v(X)$ tales que la siguiente igualdad se cumple para todo $\theta$
+Formalmente, sea $X$ una muestra aleatoria proveniente de una distribución de probabilidad $p$ de parámetro unidimensional $\theta$, siendo $\theta$ la cantidad a estimar. Un intervalo de confianza de nivel $1 - \alpha$ para el parámetro $\theta$ es el intervalo $(u(X), v(X))$ determinado por las variables aleatorias $u(X)$ y $v(X)$ tales que la siguiente igualdad se cumple para todo $\theta$
 
 $$
 \mathbb{P}\{ u(X) \leq \theta \leq v(X) \} = 1 - \alpha
 $$ {#eq-definicion-ci}
+
+Para el caso de parámetros de dimensionalidad mayor, es decir $\boldsymbol{\theta} = \left[\theta_1, \dots, \theta_K \right]$, se habla de "regiones de confianza", siendo la intuición de estas equivalente a la del caso unidimensional, pero admitiendo regiones $A(X)$ de cualquier forma, es decir $\mathbb{P}\{ \boldsymbol{\theta} \in A(X) \} = 1 - \alpha$.
 
 
 ### Relación entre intervalos de confianza y pruebas de hipótesis
