@@ -40,7 +40,22 @@ La distancia de Hausdorff provee una forma conveniente de cuantificar la proximi
 ### Homología {#sec-intro-homology}
 
 La homología es un concepto fundamental en diversas ramas de las matemáticas, particularmente en la topología y geometría algebraica. Esta área de estudio se centra en comprender y clasificar las formas y estructuras espaciales de manera abstracta, permitiendo así la comparación y el análisis de diferentes espacios geométricos. La homología asocia entonces a cada espacio una serie de grupos, llamados grupos de homología, que reflejan características importantes del mismo, como pueden ser componentes conexos y agujeros de diversas dimensiones. Esta asignación se hace a a partir de la definición de los conceptos de "cadenas", "ciclos" y "bordes":
-Una cadena es una combinación formal de elementos geométricos, como pueden ser puntos, curvas o superficies. Un borde se define como una cadena que actúa de frontera de una cadena de dimensión superior, se define entonces el operador borde $\partial$ que mapea cadenas de dimensión $k$ (o $k$-cadenas) a $(k-1)$-cadenas. A partir de la noción de borde, se define a los ciclos como cadenas $c$ sin frontera, es decir $\partial c = 0$. Estos representan intuitivamente "agujeros" en diversas dimensiones. En particular, a lo largo de este trabajo, haremos foco mayoritariamente en la Homología de grado uno, denotada como $H_1$, que puede ser interpretada, de la forma más intuitiva posible, como la cantidad de ciclos unidimensionales diferentes, donde por "diferentes" nos referimos a que no pueden ser deformados dentro de la variedad hasta ser iguales entre sí. Otro grado de homología que mencionaremos brevemente será el de las componentes conexos, denotado como $H_0$, que intuitivamente representa todos los puntos que pueden ser unidos mediante una curva sin salirse de la variedad
+Una cadena es una combinación formal de elementos geométricos, como pueden ser puntos, curvas o superficies. Un borde se define como una cadena que actúa de frontera de una cadena de dimensión superior, se define entonces el operador borde $\partial$ que mapea cadenas de dimensión $k$ (o $k$-cadenas) a $(k-1)$-cadenas. A partir de la noción de borde, se define a los ciclos como cadenas $c$ sin frontera, es decir $\partial c = 0$. Estos representan intuitivamente "agujeros" en diversas dimensiones. En particular, a lo largo de este trabajo, haremos foco mayoritariamente en la homología de grado uno, denotada como $\Pi_1$, que puede ser interpretada, de la forma más intuitiva posible, como la cantidad de ciclos unidimensionales diferentes, donde por "diferentes" nos referimos a que no pueden ser deformados dentro de la variedad hasta ser iguales entre sí. Si la variedad $\mathcal{M}$ presenta entonces un único agujero de estas características, esto se denota como:
+
+$$
+\Pi_1(\mathcal{M}) = \mathbb{Z}
+$$
+
+Siendo uno la dimensión del espacio que representa la homología de la variedad, es decir
+$$
+\mathrm{dim}(\Pi_1(\mathcal{M})) = \beta_1(\mathcal{M}) = 1
+$$
+
+A la cantidad $\beta_1$, o en general, $\beta_k$ para homologías de grado superior, se la conoce como el $k$-ésimo número de *Betti*.
+
+Otro grado de homología que mencionaremos brevemente será el de las componentes conexos, denotado como $\Pi_0$, que intuitivamente representa todos los puntos que pueden ser unidos mediante una curva sin salirse de la variedad.
+
+<!-- ACA CAMBIE H por PI, hay que ver como funciona -->
 
 ![Se ilustra la homología de primer grado de un toro, marcando en azul las dos curvas del mismo que no pueden ser continuamente deformadas la una en la otra. Cualquier otra curva cerrada que elijamos sobre el toro, podrá ser deformada en alguna de estas dos. Crédito de la imagen: [@IntroductionTDA]](imagenes/homology-torus.png){#fig-torus-homology  width=50%}
 
