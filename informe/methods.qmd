@@ -93,7 +93,7 @@ plot_dataset(X_circle_gauss_outliers, title="Datos Atípicos"); plt.show()
 ### Anteojos {#sec-methods-data-synth-eyeglasses}
 
 El conjunto de datos que llamaremos Anteojos (*eyeglasses* en inglés) se ilustra a continuación en la @fig-eyeglasses, junto con sus análogos con ruido gaussiano y datos atípicos.
-Esta topología resulta similar a un óvalo de Cassini y debe su nombre a su parecido con unos anteojos. La misma presenta dos círculos conectados mediante una apertura en ellos. Se utiliza extensivamente durante el cálculo de intervalos de confianza para datos sintéticos ya que la topología en realidad posee un único agujero de grado 1, pero resulta sencillo para los algoritmos confundirse y detectar dos agujeros significativos dependiendo del grado de apertura [@ConfidenceSetsForPersistenceDiagrams].
+Esta topología resulta similar a un óvalo de Cassini y debe su nombre a su parecido con unos anteojos. La misma presenta dos círculos conectados mediante una apertura en ellos. Se utiliza extensivamente durante el cálculo de intervalos de confianza para datos sintéticos [@ConfidenceSetsForPersistenceDiagrams] ya que la topología en realidad posee un único agujero de grado uno, pero resulta complejo para los algoritmos detectar esta topología, usualmente resultando en dos agujeros significativos, dependiendo de la cantidad de datos y el grado de apertura.
 
 ```{python}
 #| label: fig-eyeglasses
@@ -128,9 +128,9 @@ $$
 $$
 
 Donde $r_{power} = 2$ corresponde al muestreo uniforme dentro de la circunferencia. Para valores mayores ($r_{power} > 2$) se obtiene una concentración más fuerte de puntos en los radios superiores, mientras que para $r_{power} < 2$ se obtienen más muestras cercanas al centro.
-Será de especial interés analizar los casos de $r_{power} > 2$ ya que se espera que los métodos trabajados logren descartar la existencia de agujeros a pesar de la baja en la densidad de muestreo cerca del orígen.
+Será de especial interés analizar los casos de $r_{power} > 2$ ya que se espera que los métodos trabajados logren descartar la existencia de agujeros a pesar de la baja en la densidad de muestreo cerca del origen.
 
-A continuación se muestra el conjunto de datos para un rádio `{python} max_r`
+A continuación se muestra el conjunto de datos para un radio `{python} max_r`
 
 ```{python}
 #| label: fig-filled-circle
@@ -231,14 +231,14 @@ Donde la maximización se alcanzará en alguno de aquellos puntos que no hayan s
 
 Este enfoque es distinto a los tratados anteriormente ya que no se basa en una distancia propiamente dicha, el mismo consta de construir un estimador de densidad suave a partir de los datos para posteriormente calcular el diagrama de persistencia a partir de una filtración de las curvas de nivel superior de la función del estimador de densidad [@ConfidenceSetsForPersistenceDiagrams].
 
-Sea $\mathcal{S}_{N}$ un conjunto de muestras i.i.d obtenidas mediante una función de densidad $f$ con soporte en una variedad $\mathcal{M}$, se define
+Sea $\mathcal{S}_{N}$ un conjunto de muestras i.i.d obtenidas a partir de la medida de probabilidad $F$ con soporte en una variedad $\mathcal{M}$, se define
 
 $$
-f_h(x) = \int_{\mathcal{M}} \frac{1}{h^D} K \left( \frac{||x - u||_2}{h}\right) df(u)
+f_h(x) = \int_{\mathcal{M}} \frac{1}{h^D} K \left( \frac{||x - u||_2}{h}\right) dF(u)
 $$
 
-$f_h$ representa entonces la densidad de la medida de probabilidad $f_h$ que es la convolución $f_h =  f \star \mathbb{K}_h$ con $\mathbb{K}_h(A) = h^{-D} \mathbb{K}(h^{-1}A)$ y $\mathbb{K}(A) = \int_{A}K(t)dt$. Esto básicamente significa que $f_h$ es una versión suavizada de $f$.
-Nuestro objetivo será entonces el de computar el diagrama de persistencia de los conjuntos de nivel superiores de $f_h$, $\mathcal{P}_h$.
+$f_h$ representa entonces la densidad de la ßmedida de probabilidad $F_h$, que es la convolución $F_h =  F \star \mathbb{K}_h$ con $\mathbb{K}_h(A) = h^{-D} \mathbb{K}(h^{-1}A)$ y $\mathbb{K}(A) = \int_{A}K(t)dt$. Esto básicamente significa que la medida de probabilidad $F_h$ es una versión suavizada de $F$.
+Nuestro objetivo será entonces el de computar el diagrama de persistencia de los conjuntos de nivel superiores de $f_h$, el cual denotaremos $\mathcal{P}_h$.
 
 Estos conjuntos de nivel son relevantes ya que se demuestra que conservan la información topológica de $\mathcal{M}$ y que son más estables, al costo de  omitir detalles más sutiles de la topología del espacio original [@ConfidenceSetsForPersistenceDiagrams]. Esto resulta de especial importancia en los casos en los que la muestra $\mathcal{S}_{N}$ se obtiene, no directamente de la densidad $f$ sobre $\mathcal{M}$, sino con un agregado de ruido o posiblemente de datos atípicos. Este método podría ser capaz de ignorar los detalles ruidosos y concentrarse mejor en las características topológicas relevantes del espacio subyacente.
 
