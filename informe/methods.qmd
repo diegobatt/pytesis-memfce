@@ -240,15 +240,15 @@ $$
 $f_h$ representa entonces la densidad de la ßmedida de probabilidad $F_h$, que es la convolución $F_h =  F \star \mathbb{K}_h$ con $\mathbb{K}_h(A) = h^{-D} \mathbb{K}(h^{-1}A)$ y $\mathbb{K}(A) = \int_{A}K(t)dt$. Esto básicamente significa que la medida de probabilidad $F_h$ es una versión suavizada de $F$.
 Nuestro objetivo será entonces el de computar el diagrama de persistencia de los conjuntos de nivel superiores de $f_h$, el cual denotaremos $\mathcal{P}_h$.
 
-Estos conjuntos de nivel son relevantes ya que se demuestra que conservan la información topológica de $\mathcal{M}$ y que son más estables, al costo de  omitir detalles más sutiles de la topología del espacio original [@ConfidenceSetsForPersistenceDiagrams]. Esto resulta de especial importancia en los casos en los que la muestra $\mathcal{S}_{N}$ se obtiene, no directamente de la densidad $f$ sobre $\mathcal{M}$, sino con un agregado de ruido o posiblemente de datos atípicos. Este método podría ser capaz de ignorar los detalles ruidosos y concentrarse mejor en las características topológicas relevantes del espacio subyacente.
+Estos conjuntos de nivel son relevantes ya que se demuestra que conservan la información topológica de $\mathcal{M}$ y que son más estables al costo de omitir detalles más sutiles de la topología del espacio original [@ConfidenceSetsForPersistenceDiagrams]. Esto resulta de especial importancia en los casos en los que la muestra $\mathcal{S}_{N}$ se obtiene, no directamente de la densidad $f$ sobre $\mathcal{M}$, sino con un agregado de ruido o posiblemente de datos atípicos. Este método podría ser capaz de ignorar los detalles ruidosos y concentrarse mejor en las características topológicas relevantes del espacio subyacente.
 
-Dado que $f_h$ es desconocido, utilizaremos su estimador usual
+Dado que $f_h$ es desconocido, utilizaremos su estimador usual:
 
 $$
 \hat{f}_h(x) = \frac{1}{n} \sum_{i=1}^N \frac{1}{h^D} K \left( \frac{||x - x_i||_2}{h} \right)
 $$
 
-Que será evaluado en una grilla de puntos, a partir del cual construiremos el diagrama de persistencia.
+que será evaluado en una grilla de puntos, a partir del cual construiremos el diagrama de persistencia.
 
 Para obtener el intervalo de confianza, repetiremos el procedimiento realizado en las secciones precedentes para utilizar *bootstrap*. El algoritmo se muestra a continuación
 
