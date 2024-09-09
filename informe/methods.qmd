@@ -2,7 +2,7 @@ En esta sección abordaremos los distintos métodos computacionales y estadísti
 
 ## Conjuntos de datos sintéticos  {#sec-methods-data-synth}
 
-Es común en la literatura de topología computacional enfocarse en unos conjuntos de datos sintéticos simples, sobre los cuales se corren los métodos de interés. Al ser estos utilizados por diferentes trabajos los resultados pueden ser fácilmente contrastados [@ConfidenceSetsForPersistenceDiagrams, @FootballRobustDataset]. A continuación se muestran los conjuntos de datos sintéticos que se utilizarán durante la @sec-results. En cada caso, se generarán dos nuevos conjuntos de datos por medio de agregar muestras atípicas y ruido, respectivamente, para lograr una mayor variabilidad en los conjuntos que puedan dificultar la tarea a las técnicas desarrolladas.
+Es común en la literatura de topología computacional enfocarse en unos conjuntos de datos sintéticos simples, sobre los cuales se corren los métodos de interés. Al ser estos utilizados por diferentes trabajos los resultados pueden ser fácilmente contrastados [@ConfidenceSetsForPersistenceDiagrams; @FootballRobustDataset]. A continuación se muestran los conjuntos de datos sintéticos que se utilizarán durante la @sec-results. En cada caso, se generarán dos nuevos conjuntos de datos por medio de agregar muestras atípicas y ruido, respectivamente, para lograr una mayor variabilidad en los conjuntos que puedan dificultar la tarea a las técnicas desarrolladas.
 
 
 ```{python}
@@ -27,7 +27,7 @@ from pytesis.datasets import (
 
 random.seed(1)
 
-n = 200
+n = 300
 sd = 0.075
 iqr_factor = 0.3
 outliers_frac = 0.02
@@ -44,7 +44,7 @@ El más sencillo de los conjuntos de datos a utilizar es la circunferencia unifo
 
 $$\angle \mathbf{x} \sim \mathcal{U}(-\pi, \pi), \qquad |\mathbf{x}| = r$$
 
-En la @fig-circle-uniform se observa una muestra de `r n` elementos provenientes de esta distribución, junto con sus versiones con ruido agregado y datos atípicos, respectivamente.
+En la @fig-circle-uniform se observa una muestra de `{python} n` elementos provenientes de esta distribución, junto con sus versiones con ruido agregado y datos atípicos, respectivamente.
 
 ```{python}
 #| label: fig-circle-uniform
@@ -54,7 +54,7 @@ En la @fig-circle-uniform se observa una muestra de `r n` elementos provenientes
 #|   - "Ruido agregado"
 #|   - "Datos atípicos"
 #| layout: [[-4, 10, -4], [1, 1]]
-X_circle = arc(n = n)
+X_circle = arc(n=n)
 X_circle_noise = add_noise(X_circle, sd=sd)
 X_circle_outliers = add_outliers(X_circle, iqr_factor=iqr_factor)
 plot_dataset(X_circle, title="Base"); plt.show()
