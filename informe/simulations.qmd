@@ -1,4 +1,4 @@
-A continuación se disponen los resultados obtenidos de los intervalos de confianza para los conjuntos de datos introducidos en la @sec-methods-data-synth. Se observa en primera instancia un ejemplo de resultado de diagrama de persistencia junto con su intervalo de confianza para cada método desarrollado en la @sec-methods-intervals y posteriormente se procede a repetir el experimento una cantidad $M$ de veces para analizar la potencia, estimada como la tasa de aciertos a la hora de rechazar la hipótesis de no existencia de agujeros en el conjunto de datos, para cada uno de los métodos utilizados sobre los distintos espacios topológicos sintéticos presentados
+A continuación se disponen los resultados obtenidos de los intervalos de confianza para los conjuntos de datos introducidos en la @sec-methods-data-synth. Se observa en primera instancia un ejemplo de resultado de diagrama de persistencia junto con su intervalo de confianza para cada método desarrollado en la @sec-methods-intervals y posteriormente se procede a repetir el experimento una cantidad $M$ de veces para analizar la potencia, estimada como la tasa de aciertos a la hora de rechazar la hipótesis nula $H_0$ dado que la misma es falsa. Dicho en otras palabras, decidir que hay cualidades topológicas de primer grado (agujeros) en el conjunto de datos, dado que efectivamente las hay. Este análisis se realiza para cada uno de los métodos utilizados sobre los distintos espacios topológicos sintéticos presentados, disponiendo los resultados en forma de tablas.
 
 ```{python}
 import warnings
@@ -11,13 +11,17 @@ from pytesis.datasets import (
     filled_circle,
     add_noise,
     add_outliers,
+    add_dummy_dimensions,
     football_sensor,
-    rectangle
+    rectangle,
+    plot_dataset,
+    plot_dataset_3d,
 )
 from pytesis.results import run_all_intervals, run_all
 from pytesis.utils import compose
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 
 from functools import partial
 
@@ -266,7 +270,13 @@ En la @fig-sim-intervals-filled-circle se observan los resultados obtenidos, seg
 
 ### Potencia {#sec-results-power}
 
-Si ahora se repite en procedimiento realizado en la @sec-results-diagrams-plus-intervals un cantidad $M = `{python} B_power`$  de veces con el objetivo de analizar la frecuencia en la que el intervalo estimado contiene efectivamente a la cantidad de agujeros reales, siendo en nuestro caso un agujero real para todos los conjuntos de datos analizados, entonces se obtiene la potencia estimada del test, es decir, la probabilidad de rechazar la hipótesis nula dado que esta es falsa, donde la hipótesis nula representa la no existencia de agujeros en la topología
+Si ahora se repite en procedimiento realizado en la @sec-results-diagrams-plus-intervals un cantidad $M = `{python} B_power`$  de veces con el objetivo de analizar la frecuencia en la que el intervalo estimado contiene efectivamente a la cantidad de agujeros reales, siendo en nuestro caso un agujero real para todos los conjuntos de datos analizados, entonces se obtiene la potencia estimada de la prueba de hipótesis, es decir, la probabilidad de rechazar la hipótesis nula $H_0$ dado que esta es falsa. Como se detalló en la @sec-homologia-intervalos, se define una hipótesis nula $H^{i}_0$ para cada una de las cualidades topológicas que resultan del diagrama de persistencia, manifestándose estas como un punto $p_i$ con tiempo de vida $l_i = d_i - b_i$ en dicho gráfico. Estas hipótesis se expresan entonces como:
+
+$$
+H^{i}_0: l_i = d_i - b_i = 0
+$$
+
+Donde las mismas se evaluan en simultáneo con nivel $1 - \alpha$. Como se mencionó en la @sec-homologia-intervalos y en @ConfidenceSetsForPersistenceDiagrams, esta interpretación del intervalo de confianza construido sobre el diagrama de persistencia que consiste en caracterizar de forma dicotómica, como "ruido" o "señal", a las cualidad topológicas individuales no es la única interpretación posible. El intervalo de confianza construido da un conjunto posible de variedades $\mathcal{M}$ de las cuales nuestro conjunto de datos finito de $n$ elementos podría haberse muestreado, por lo que resulta interesante ver, para casos más desafiantes, como puede ser el conjunto de datos de anteojos, cómo las distintas técnicas utilizadas para construir el diagrama logran modificar este conjunto de variedades $\mathcal{M}$ posibles para el número de muestras utilizado.
 
 ```{python}
 base_results_params = dict(
@@ -409,7 +419,7 @@ def get_printable_table(mega_table: pd.DataFrame) -> Markdown:
 get_printable_table(mega_table_base)
 ```
 
-Resultados de potencia estimada para los tres métodos sobre los conjuntos de datos originales. Cada fila de la tabla muestra, según el método que se indica a la izquierda, el porcentaje de veces que cada cantidad de agujeros fue detectada en las corridas realizadas.
+Resultados de potencia estimada para los tres métodos sobre los conjuntos de datos originales. Cada fila de la tabla muestra, según el método que se indica a la izquierda, el porcentaje de veces que cada cantidad de agujeros fue detectada de forma significativa en las corridas realizadas.
 
 :::
 
@@ -426,7 +436,7 @@ Resultados obtenidos para los conjuntos de datos con ruido agregado, análogamen
 
 :::
 
-Se muestran en la @tbl-power-table-noise los resultados para los conjuntos de datos con ruido agregado. La conclusiones resultan altamente similares a las obtenidas en la @tbl-power-table-base para los conjuntos base, con la única salvedad de que, si bien sigue siendo el único método en correctamente detectar a los anteojos como una topología de un único agujero significativo con alta potencia, el método de Fermat detecta en limitadas ocasiones (2%) dos agujeros significativos en los Anteojos. Esto se debe, posiblemente, a que la presencia de ruido en el canal que une a las dos circunferencias principales de los anteojos puede llegar "engañar" al método reduciendo el ancho de este canal. Para los casos de circunferencias ninguno de los tres métodos se ve afectado por la presencia del ruido en la varianza estudiada ($\sigma =`{python}  sd`$).
+Se muestran en la @tbl-power-table-noise los resultados para los conjuntos de datos con ruido agregado. La conclusiones resultan altamente similares a las obtenidas en la @tbl-power-table-base para los conjuntos base, con la única salvedad de que, si bien sigue siendo el único método en correctamente detectar a los anteojos como una topología de un único agujero significativo con alta potencia, el método de Fermat detecta en limitadas ocasiones (2%) dos agujeros significativos en los Anteojos. Esto se debe, posiblemente, a que la presencia de ruido en el canal que une a las dos circunferencias principales de los anteojos puede llegar "engañar" al método reduciendo el ancho de este canal. Para los casos de circunferencias ninguno de los tres métodos se ve afectado por la presencia del ruido en la varianza estudiada ($\sigma = `{python} sd`$).
 
 
 ```{python}
@@ -450,6 +460,17 @@ Resulta importante destacar que los resultados obtenidos para el método de vent
 
 Una observación importante es que en ningún momento del trabajo se discutió analizar conjuntos de datos, sintéticos o no, cuya dimensión de origen sea superior a dos, es decir $D > 2$. Esto se debe a que una parte fundamental de la presente Tesis es contrastar el comportamiento del método de Fermat con el de KDE, y este último presenta un grave problema a la hora de ser evaluado en conjuntos de datos provenientes de dimensiones superiores. Esto se debe a que para obtener el diagrama de persistencia mediante KDE, o cualquier otro conjunto de nivel de una función, como se introdujo en la @sec-intro-dgm-function, se requiere trazar una grilla de $M_h$ puntos por dimensión, sobre la cual evaluar la función cuyos conjuntos de nivel son de interés. Teniendo en cuenta que la cantidad de estos puntos condiciona la sensibilidad que se tiene sobre el espacio, resulta importante que $M_h$ sea lo más alto posible, por ejemplo para los casos discutidos en las secciones precedentes, se utilizó $M_h = 100$. Teniendo en cuenta que la cantidad de puntos a evaluar y que serán posteriormente utilizados en la construcción del diagrama de persistencia crecen de forma exponencial con la dimensión del espacio ($k = M_h^D$), y que la complejidad algorítmica de la construcción del diagrama de persistencia escala también de forma exponencial con la cantidad de dimensiones ($\mathcal{O}(k^D) = \mathcal{O}(M_h^{D^2})$) @CubicalPersistentDiagrams, Para los recursos computacionales trabajados una dimensión $D = 3$ ya se torna computacionalmente muy costosa. Resulta importante destacar que esto no sucede para los métodos que se basan en distancias, ya que para estos la complejidad computacional en la construcción del diagrama de persistencia solo depende de la cantidad de puntos, que no depende entonces de la dimensionalidad del espacio.
 
+
+ACAAAA ESTABAS AGREGANDO LO DE LA DIMENSION
+
+<!-- A modo de ejemplo, podemos ilustrar esta ventaja de los métodos basados en distancia para un conjunto de datos de mayor diemnsionalidad construido de forma sencilla: Si tomamos el conjunto de datos de la circunferencia y agregamos dimensiones con valores constantes, es decir, si tenemos dos puntos de la circunferencia $x_1 = [0, 1]$ y $x_2 = [1, 0]$, obtenemos muestras en mayores dimensiones como $\hat{x}_1 = [0, 1, \sigma_D^{1}, \dots, \sigma_D^{L}]$ y $\hat{x}_2 = [1, 0, \sigma_D^{1}, \dots, \sigma_D^{L}]$, lo que se obtiene es la misma circunferencia pero embebida en un espacio de dimensión mayor.
+
+```{python}
+
+circle_dims_factory = compose(partial(add_dummy_dimensions, d=1), partial(arc, n=n))
+plot_dataset(circle_dims_factory(), title="Circunferencia con D = 3"); plt.show()
+```
+ -->
 
 ## Conjuntos de Datos Reales {#sec-results-real-data}
 
@@ -492,7 +513,7 @@ intervals_football = run_all_intervals(
 )
 ```
 
-El jugador con identificador número dos corresponde según una inspección visual a un defensor ofensivo, ya que se observa en el gráfico de dispersión en la @fig-real-intervals-player-2 que el mismo ocupa mayoritariamente posiciones del cuadrante superior izquierdo, correspondiente al lado del arco de su equipo, aunque realiza algunas maniobras ofensivas por el centro al arco rival. En esta muestra, el método euclídeo detecta un único agujero significativo, seguido por un agujero que por poco no logra ser significativo, mientras que Fermat detecta dos bien marcados. Una interpretación es que en ambos casos esos dos puntos del diagrama de persistencia para ambos métodos corresponde a las partes inferior y superior de la zona ofensiva del campo de juego, aunque solo Fermat determina que ambas son significativas. Por su parte, KDE no logra detectar ninguna componente significativa, a pesar de que se varió ampliamente los hiperparámetros con los que se obtiene este diagrama no se logró que KDE obtuviera ningún resultado relevante.
+El jugador con identificador número dos corresponde según una inspección visual a un defensor central, ya que se observa en el gráfico de dispersión en la @fig-real-intervals-player-2 que el mismo ocupa mayoritariamente posiciones en el centro del sector correspondiente al lado del arco de su equipo, aunque realiza algunas maniobras ofensivas por el centro al arco rival, posiblemente para cabecear ofensivamente en los tiros de esquina. En esta muestra, el método euclídeo detecta un único agujero significativo, seguido por un agujero que por poco no logra ser significativo, mientras que Fermat detecta dos bien marcados. Una interpretación es que en ambos casos esos dos puntos del diagrama de persistencia para ambos métodos corresponde a las partes inferior y superior de la zona ofensiva del campo de juego, aunque solo Fermat determina que ambas son significativas. Por su parte, KDE no logra detectar ninguna componente significativa, a pesar de que se varió ampliamente los hiperparámetros con los que se obtiene este diagrama no se logró que KDE obtuviera ningún resultado relevante.
 
 
 ### Jugador 5 (Mediocampista)
@@ -514,7 +535,7 @@ intervals_football = run_all_intervals(
 Para el caso del jugador número 5, puede observarse mediante inspección visual de la @fig-real-intervals-player-5 que el comportamiento del jugador corresponde al de un mediocampista. Se observa que el lateral inferior del campo carece de puntos y que también existen zonas de baja densidad en las esquinas superiores derecha e izquierda, aunque esta última presenta una zona desocupada más reducida. Los distintos métodos obtienen distintos resultados: Como ya se mencionó para el caso del jugador número 2, KDE no logra hacer ningún tipo de detección relevante, sin importar cómo se ajusten los hiperparámetros. El método euclídeo detecta dos agujeros significativos, que no resulta obvio a qué agujeros visuales se corresponden, mientras que Fermat detecta cuatro de estos, que muy posiblemente se correspondan con las cuatro esquinas del campo de juego.
 
 
-### Jugador 8 (Lateral Defensivo)
+### Jugador 8 (Lateral Izquierdo)
 
 ```{python}
 #| label: fig-real-intervals-player-8
@@ -530,7 +551,7 @@ intervals_football = run_all_intervals(
 )
 ```
 
-El caso del jugador número 8 resulta el más sencillo de todos, ya que en la inspección visual del diagrama de dispersión en la @fig-real-intervals-player-8 se evidencia de forma clara que el jugador solo ocupa, aunque con buena densidad, la esquina superior izquierda, adentrándose hasta no mucho más que la mitad del campo rival. Esto significa que el comportamiento del jugador se corresponde con el de un lateral defensivo, y se espera que los distintos algoritmos detecten con facilidad la existencia de un único agujero significativo. Los métodos de Fermat y Euclídeo no presentan problemas en detectar esta topología subyacente, descartando del intervalo significativo todo salvo un agujero de primer orden. Análogamente a lo obtenido en los jugadores anteriores, KDE no logra resultados satisfactorios
+El caso del jugador número 8 resulta el más sencillo de todos, ya que en la inspección visual del diagrama de dispersión en la @fig-real-intervals-player-8 se evidencia de forma clara que el jugador solo ocupa, aunque con buena densidad, la esquina superior izquierda, adentrándose hasta no mucho más que la mitad del campo rival. Esto significa que el comportamiento del jugador se corresponde con el de un lateral izquierdo de corte defensivo, y se espera que los distintos algoritmos detecten con facilidad la existencia de un único agujero significativo. Los métodos de Fermat y Euclídeo no presentan problemas en detectar esta topología subyacente, descartando del intervalo significativo todo salvo un agujero de primer orden. Análogamente a lo obtenido en los jugadores anteriores, KDE no logra resultados satisfactorios.
 
 
 ### Jugador 14 (Mediocampista)

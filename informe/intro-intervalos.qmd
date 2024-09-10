@@ -62,5 +62,12 @@ Continuando el razonamiento ilustrado en la @fig-interval-persistence-diagram, s
 
 Resulta importante destacar que el intervalo de confianza resultante de la @eq-ci-persistence-diagram es asintótico, por lo que en términos prácticos los resultados obtenidos mantendrán este nivel estadístico sólo para muestras $n$ suficientemente grandes. El valor de $n$ necesario dependerá de la homología subyacente y de la función de distancia utilizada, ya que se espera que al utilizar la distancia de Fermat, se obtengan resultados más consistentes con la verdadera homología de la variedad $\mathcal{M}$ para menores $n$.
 
+Una observación relevante que se realiza en @ConfidenceSetsForPersistenceDiagrams sobre este procedimiento es que esta forma dicotómica de clasificar las componentes topológicas en "señal" o "ruido" no es la única posible, ya que en realidad el intervalo de confianza construido da lugar, para un tamaño de muestra $n$, a un conjunto de variedades con diagramas de persistencia dados por:
+
+$$
+\mathcal{C}_n = \{\tilde{\mathcal{P}} : W_\infty(\tilde{\mathcal{P}}, \hat{\mathcal{P}}) < \theta_n \}
+$$
+
+Esta definición de $\mathcal{C}_n$ da lugar a formas mucho más elaboradas de cuantificar la incertidumbre del diagrama de persistencia $\hat{\mathcal{P}}$ construido.
 
 ![A la izquierda se observan los puntos del diagrama de persistencia en donde una caja de lado $2 \theta_n$ se centra en cada uno de ellos, representando la región de confianza para la cualidad topológica representada por ese punto. En color gris, se observan aquellas cualidades cuya región de confianza se interseca con la diagonal, ilustrando que estos puntos no son distinguibles de ruido, por otro lado, en color rojo se ilustran las regiones que no tienen contacto con la diagonal, siendo estas cualidades topológicas significativas. A la derecha se ilustra otra forma de interpretar estos intervalos, posando una banda de tamaño $\sqrt{2} \theta_n$ sobre la diagonal que cubre toda la región del diagrama de persistencia en la que un punto presente en ella tendría su región de confianza intersec ando la diagonal. Se observa que todos los puntos con caja gris en la figura de la izquierda aparecen dentro de la banda roja en la figura derecha. Créditos de la imagen: [@ConfidenceSetsForPersistenceDiagrams]](imagenes/intervalo-diagrama-persistencia.png){#fig-interval-persistence-diagram width=80%}
