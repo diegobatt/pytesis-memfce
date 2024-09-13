@@ -148,9 +148,9 @@ Adicionalmente al uso de los conjuntos de datos sintéticos descritos en la @sec
 #| label: fig-football-data
 #| fig-cap: Conjunto de datos reales correspondientes a la posición medida de distintos jugadores a lo largo de un partido de fútbol. Los diferentes jugadores ocupan diferentes roles en el equipo para mostrar diferentes patrones de posiciones
 #| fig-subcap:
-#|   - "Jugador 2: Defensor Ofensivo"
+#|   - "Jugador 2: Defensor Central"
 #|   - "Jugador 5: Mediocampista"
-#|   - "Jugador 8: Lateral Defensivo"
+#|   - "Jugador 8: Lateral Izquierdo"
 #|   - "Jugador 14: Mediocampista"
 #| layout: [[1, 1], [1, 1]]
 length_x, length_y = 105, 68
