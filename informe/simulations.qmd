@@ -554,12 +554,12 @@ football_X_tag_8 = np.vstack([football_tag_8, borders])
 football_X_tag_14 = np.vstack([football_tag_14, borders])
 ```
 
-### Jugador 2 (Defensor Ofensivo)
+### Jugador 2 (Defensor Central)
 
 
 ```{python}
 #| label: fig-real-intervals-player-2
-#| fig-cap: Conjunto de datos e intervalos de confianza obtenidos para el jugador identificado como el número 2, que corresponde al comportamiento de un defensor ofensivo
+#| fig-cap: Conjunto de datos e intervalos de confianza obtenidos para el jugador identificado como el número 2, que corresponde al comportamiento de un defensor central
 intervals_football = run_all_intervals(
     football_X_tag_2,
     h=h_football,
@@ -597,7 +597,7 @@ Para el caso del jugador número 5, puede observarse mediante inspección visual
 
 ```{python}
 #| label: fig-real-intervals-player-8
-#| fig-cap: Conjunto de datos e intervalos de confianza obtenidos para el jugador identificado como el número 8, que corresponde al comportamiento de un lateral defensivo
+#| fig-cap: Conjunto de datos e intervalos de confianza obtenidos para el jugador identificado como el número 8, que corresponde al comportamiento de un lateral izquierdo
 intervals_football = run_all_intervals(
     football_X_tag_8,
     h=h_football,
