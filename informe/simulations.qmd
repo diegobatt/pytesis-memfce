@@ -17,7 +17,7 @@ from pytesis.datasets import (
     plot_dataset,
     plot_dataset_3d,
 )
-from pytesis.results import run_all_intervals, run_all
+from pytesis.results import run_all_intervals, run_all, get_intervals_times_table
 from pytesis.utils import compose
 import numpy as np
 import pandas as pd
@@ -460,17 +460,75 @@ Resulta importante destacar que los resultados obtenidos para el método de vent
 
 Una observación importante es que en ningún momento del trabajo se discutió analizar conjuntos de datos, sintéticos o no, cuya dimensión de origen sea superior a dos, es decir $D > 2$. Esto se debe a que una parte fundamental de la presente Tesis es contrastar el comportamiento del método de Fermat con el de KDE, y este último presenta un grave problema a la hora de ser evaluado en conjuntos de datos provenientes de dimensiones superiores. Esto se debe a que para obtener el diagrama de persistencia mediante KDE, o cualquier otro conjunto de nivel de una función, como se introdujo en la @sec-intro-dgm-function, se requiere trazar una grilla de $M_h$ puntos por dimensión, sobre la cual evaluar la función cuyos conjuntos de nivel son de interés. Teniendo en cuenta que la cantidad de estos puntos condiciona la sensibilidad que se tiene sobre el espacio, resulta importante que $M_h$ sea lo más alto posible, por ejemplo para los casos discutidos en las secciones precedentes, se utilizó $M_h = 100$. Teniendo en cuenta que la cantidad de puntos a evaluar y que serán posteriormente utilizados en la construcción del diagrama de persistencia crecen de forma exponencial con la dimensión del espacio ($k = M_h^D$), y que la complejidad algorítmica de la construcción del diagrama de persistencia escala también de forma exponencial con la cantidad de dimensiones ($\mathcal{O}(k^D) = \mathcal{O}(M_h^{D^2})$) @CubicalPersistentDiagrams, Para los recursos computacionales trabajados una dimensión $D = 3$ ya se torna computacionalmente muy costosa. Resulta importante destacar que esto no sucede para los métodos que se basan en distancias, ya que para estos la complejidad computacional en la construcción del diagrama de persistencia solo depende de la cantidad de puntos, que no depende entonces de la dimensionalidad del espacio.
 
-
-ACAAAA ESTABAS AGREGANDO LO DE LA DIMENSION
-
-<!-- A modo de ejemplo, podemos ilustrar esta ventaja de los métodos basados en distancia para un conjunto de datos de mayor diemnsionalidad construido de forma sencilla: Si tomamos el conjunto de datos de la circunferencia y agregamos dimensiones con valores constantes, es decir, si tenemos dos puntos de la circunferencia $x_1 = [0, 1]$ y $x_2 = [1, 0]$, obtenemos muestras en mayores dimensiones como $\hat{x}_1 = [0, 1, \sigma_D^{1}, \dots, \sigma_D^{L}]$ y $\hat{x}_2 = [1, 0, \sigma_D^{1}, \dots, \sigma_D^{L}]$, lo que se obtiene es la misma circunferencia pero embebida en un espacio de dimensión mayor.
+A modo de ejemplo, podemos ilustrar esta ventaja de los métodos basados en distancia para un conjunto de datos de mayor dimensionalidad construido de forma sencilla: Tomamos el conjunto de datos de la circunferencia uniforme, introducido en la @sec-methods-data-synth, y agregamos dimensiones con valores constantes a cada muestra. Para un ejemplo de dos puntos, este procedimiento se vería de la siguiente forma: si tenemos dos puntos muestreados de la circunferencia $x_1 = [0, 1]$ y $x_2 = [1, 0]$, obtenemos muestras en mayores dimensiones como $\hat{x}_1 = [0, 1, \sigma_D^{1}, \dots, \sigma_D^{L}]$ y $\hat{x}_2 = [1, 0, \sigma_D^{1}, \dots, \sigma_D^{L}]$. Lo que se obtiene es la misma circunferencia pero embebida en un espacio de dimensión mayor, en donde la muestra se encuentra ahora viviendo en un plano distinto. En la @fig-circle-more-dims se ilustra este procedimiento para $L = 1$, dando lugar a una circunferencia suspendida en un plano del tercer eje de $\mathbb{R}^3$.
 
 ```{python}
+#| label: fig-circle-more-dims
+#| fig-cap: Conjunto de datos correspondientes a la circunferencia uniforme con un agregado de una variable adicional que toma un valor constante para todas las muestras, con el objetivo de suspender el conjunto de datos en un plano diferente de un espacio de dimensionalidad superior
+timing_grid_n = 30
+X_circle_dims_3 = add_dummy_dimensions(X_circle, d=1)
+X_circle_dims_4 = add_dummy_dimensions(X_circle, d=2)
 
-circle_dims_factory = compose(partial(add_dummy_dimensions, d=1), partial(arc, n=n))
-plot_dataset(circle_dims_factory(), title="Circunferencia con D = 3"); plt.show()
+dims_3_ax = plot_dataset(X_circle_dims_3, title="Circunferencia con D = 3")
+dims_3_ax.set_facecolor("white")
+plt.show()
 ```
- -->
+
+A partir de este nuevo conjunto de datos, podemos realizar el cálculo del diagrama de persistencia y su respectivo intervalo de confianza variando la dimensión $D$ y observando como este procedimiento se vuelve más computacionalmente costoso. En la @tbl-timing-dims-results se ilustra este fenómeno, donde se muestra el tiempo demorado, medido en segundos, para cada método en obtener el intervalo de confianza al tomar las dimensiones $D = 2, 3, 4$. Se observa claramente que los métodos Euclídeo y Fermat no varían en el tiempo demorado, pero KDE crece exponencialmente en el mismo. Para realizar estas pruebas se utilizó $M_h = `{python} timing_grid_n`$, siendo este valor menor al que se utilizó en el resto de los experimentos para conjuntos de datos en dimensión dos ($M_h = 100$), esto se debe a que de otra forma el tiempo requerido para el cómputo con $D = 4$ hubiese sido innecesariamente excesivo.
+
+```{python}
+intervals_circle_timed = run_all_intervals(
+    X_circle,
+    h=h_eyeglasses,
+    robust_quantile=robust_quantile,
+    grid_n=timing_grid_n,
+    log=False,
+    plot=False,
+    B=B_intervals,
+    cache_prefix=f"circle_dims_original"
+)
+intervals_dummy_dims_3 = run_all_intervals(
+    X_circle_dims_3,
+    h=h,
+    robust_quantile=robust_quantile,
+    grid_n=timing_grid_n,
+    log=False,
+    plot=False,
+    B=B_intervals,
+    cache_prefix=f"circle_dims_3"
+)
+intervals_dummy_dims_4 = run_all_intervals(
+    X_circle_dims_4,
+    h=h,
+    robust_quantile=robust_quantile,
+    grid_n=timing_grid_n,
+    log=False,
+    plot=False,
+    B=B_intervals,
+    cache_prefix=f"circle_dims_4"
+)
+
+timing_dims_results = get_intervals_times_table(intervals_circle_timed)
+timing_dims_results["Dimensiones"] = "2"
+timing_dims_results_3 = get_intervals_times_table(intervals_dummy_dims_3)
+timing_dims_results_3["Dimensiones"] = "3"
+timing_dims_results_4 = get_intervals_times_table(intervals_dummy_dims_4)
+timing_dims_results_4["Dimensiones"] = "4"
+timing_dims_results = pd.concat(
+    [timing_dims_results, timing_dims_results_3, timing_dims_results_4]
+)
+```
+
+```{python}
+#| label: tbl-timing-dims-results
+#| tbl-cap: Costo computacional, representado en segundos que demoró la construcción del diagerama de pesistencia y su correspondiente intervalo de confianza para los distintos métodos estudiados y tres dimensionalidades diferentes. Se observa como los métodos basados en distancia (Euclídeo y Fermat) no varían en el tiempo demandando, mientras que KDE escala exponencialmente.
+from IPython.display import Markdown
+
+timing_dims_results = timing_dims_results.reset_index(drop=True).set_index("Dimensiones")
+timing_dims_results = timing_dims_results.map("{:.2f}".format)
+# Markdown(timing_dims_results.to_markdown(tablefmt="github"))
+timing_dims_results
+```
 
 ## Conjuntos de Datos Reales {#sec-results-real-data}
 
