@@ -180,7 +180,7 @@ En la figura @fig-football-data se observan los datos para cuatro jugadores corr
 
 Haciendo uso de los conjuntos de datos descritos en la @sec-methods-data-synth, calcularemos los intervalos de confianza para los diagramas de persistencia resultantes haciendo uso de tres métodos, dos de ellos propuestos por la literatura, en particular analizados extensivamente en [@ConfidenceSetsForPersistenceDiagrams] y un método adicional, que consiste en reemplazar la distancia euclídea utilizada en uno de ellos por la distancia de Fermat, con el objetivo de observar las diferencias obtenidas en los intervalos de confianza y las cualidades topológicas detectadas. A continuación se describen los métodos a utilizar para calcular estos intervalos de confianza
 
-### Sub-muestreo con distancia euclídea {#sec-methods-subsampling}
+### Sub-muestreo con distancia euclídea {#sec-methods-subsampling-euclid}
 
 El primer método de cálculo de intervalos de confianza para diagramas de persistencia será mediante el sub-muestreo con distancia euclídea, desarrollado en [@ConfidenceSetsForPersistenceDiagrams]. Este método consiste en usar la técnica de submuestreo, introducida de forma teórica en la @sec-intro-subsampling, para obtener sub-muestras $\mathcal{S}_{N, b}^k$ del conjunto original mediante las cuales calcular directamente la distancia de Hausdorff basada en una distancia euclídea. Es decir, sea $\mathcal{S}_{N, b}^k$ una sub-muestra sin reposición de tamaño $b$ sobre $\mathcal{S}_N$ y sea $\theta_j = d_H(\mathcal{S}_{N}, \mathcal{S}_{N, b}^k)$ la distancia de Hausdorff entre $\mathcal{S}_N$ y $\mathcal{S}_{N, b}^k$, definimos
 
@@ -210,9 +210,9 @@ De esta forma haremos uso del siguiente algoritmo (descrito en *pseudo*-código)
     \Return 2 * quantile($\theta$, $1-\alpha$)
 \end{algorithm}
 
-### Sub-muestreo con distancia de Fermat {#sec-methods-subsampling}
+### Sub-muestreo con distancia de Fermat {#sec-methods-subsampling-fermat}
 
-El método descrito en la @sec-methods-subsampling hace uso de la distancia de Hausdorff para conseguir una cota superior de $\mathbb{P}(W_{\infty}(\hat{\mathcal{P}}, \mathcal{P}) > c_b)$, pero resulta importante destacar que esta distancia se define a partir de una medida de distancia subyacente, que se evidencia en la definición de la distancia de Hausdorff para nubes de puntos
+El método descrito en la @sec-methods-subsampling-euclid hace uso de la distancia de Hausdorff para conseguir una cota superior de $\mathbb{P}(W_{\infty}(\hat{\mathcal{P}}, \mathcal{P}) > c_b)$, pero resulta importante destacar que esta distancia se define a partir de una medida de distancia subyacente, que se evidencia en la definición de la distancia de Hausdorff para nubes de puntos
 
 $$
 d_H(\mathcal{S}_{N}, \mathcal{S}_{N, b}^k) = \max(\max_{\mathbf{x_i} \in \mathcal{S}_{N}}{\min_{\mathbf{x_j} \in \mathcal{S}_{N, b}^k}}{d(\mathbf{x_i}, \mathbf{x_j})}, \max_{\mathbf{x_i} \in \mathcal{S}_{N, b}^k}{\min_{\mathbf{x_j} \in \mathcal{S}_{N}}}{d(\mathbf{x_i}, \mathbf{x_j})})
@@ -224,9 +224,9 @@ $$
 d_H(\mathcal{S}_{N}, \mathcal{S}_{N, b}^k) = \max_{\mathbf{x_i} \in \mathcal{S}_{N}}{\min_{\mathbf{x_j} \in \mathcal{S}_{N, b}^k}}{d(\mathbf{x_i}, \mathbf{x_j})}
 $$
 
-Donde la maximización se alcanzará en alguno de aquellos puntos que no hayan sido sub-muestreados. A partir de esta descripción de la distancia de Hausdorff resulta evidente que si se reemplaza la función de distancia euclídea $d$, utilizada en la @sec-methods-subsampling por la distancia de Fermat, todas las garantías teóricas obtenidas en @ConfidenceSetsForPersistenceDiagrams seguirán siendo válidas ya que las mismas no dependen de la función elegida para este cómputo. De esta forma, el algoritmo desarrollado para el método de la @sec-methods-subsampling no debe ser modificado más allá del cambio en la medida de distancia.
+Donde la maximización se alcanzará en alguno de aquellos puntos que no hayan sido sub-muestreados. A partir de esta descripción de la distancia de Hausdorff resulta evidente que si se reemplaza la función de distancia euclídea $d$, utilizada en la @sec-methods-subsampling-euclid, por la distancia de Fermat, todas las garantías teóricas obtenidas en @ConfidenceSetsForPersistenceDiagrams seguirán siendo válidas ya que las mismas no dependen de la función elegida para este cómputo. De esta forma, el algoritmo desarrollado para el método de la @sec-methods-subsampling-euclid no debe ser modificado más allá del cambio en la medida de distancia.
 
-En la práctica, tanto para la distancia de Fermat como para la distancia Euclídea de la sección precedente, la distancia de Hausdorff definida en la @eq-cloud-hausdorff-distance-full se modifica con el objetivo de hacerla más robusta a conjuntos reales y posibles muestras atípicas. Siguiendo el mecanismo propuesto en @RobustHausdorffDistanceRobustHausdorffDistance, se reemplazan los "máximos" del cómputo por una versión podada de los mismos, es decir, un percentil apropiado que en la práctica se busca como el máximo percentil que logra que los resultados no cambien abruptamente al variar el parámetro. Es decir, si al modificar un $1\%$ este percentil el resultado obtenido cambia drásticamente, significa que el método está siendo efectivo en eliminar distancias atípicas, por lo que debemos seguir buscando el valor apropiado. A partir de esta observación, la distancia de Hausdorff que utilizaremos para nubes de puntos resulta:
+En la práctica, tanto para la distancia de Fermat como para la distancia Euclídea de la sección precedente, la distancia de Hausdorff definida en la @eq-cloud-hausdorff-distance-full se modifica con el objetivo de hacerla más robusta a conjuntos reales y posibles muestras atípicas. Siguiendo el mecanismo propuesto en @RobustHausdorffDistance, se reemplazan los "máximos" del cómputo por una versión podada de los mismos, es decir, un percentil apropiado que en la práctica se busca como el máximo percentil que logra que los resultados no cambien abruptamente al variar el parámetro. Es decir, si al modificar un $1\%$ este percentil el resultado obtenido cambia drásticamente, significa que el método está siendo efectivo en eliminar distancias atípicas, por lo que debemos seguir buscando el valor apropiado. A partir de esta observación, la distancia de Hausdorff que utilizaremos para nubes de puntos resulta:
 
 $$
 d_H(\mathcal{S}_{N}, \mathcal{S}_{N, b}^k) = \mathrm{Percentil}^{\gamma}_{\mathbf{x_i} \in \mathcal{S}_{N}}{\min_{\mathbf{x_j} \in \mathcal{S}_{N, b}^k}}{d(\mathbf{x_i}, \mathbf{x_j})}
