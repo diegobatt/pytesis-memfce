@@ -1,5 +1,6 @@
 import logging
 import multiprocessing as mp
+import time
 from dataclasses import dataclass
 from functools import partial
 from multiprocessing import Pool
@@ -29,6 +30,7 @@ class IntervalResult:
     dgm: Dgm
     distances: list[np.float64]
     width: np.float64
+    elapsed: Optional[float] = None
 
     @property
     def band(self):
@@ -70,6 +72,8 @@ def hausd_interval(
     robust_quantile: float | None = None,
     ncores=None,
 ) -> IntervalResult:
+    start_time = time.time()
+
     n = np.size(X, 0)
     m = m or int(n / np.log(n))
 
@@ -83,7 +87,8 @@ def hausd_interval(
     dgm = build_distance_diagram(X, pairwise_dist=pairwise_dist)
     width = 2 * np.quantile(dist_vec, 1 - alpha)
 
-    return IntervalResult(width=width, dgm=dgm, distances=dist_vec)
+    elapsed = time.time() - start_time
+    return IntervalResult(width=width, dgm=dgm, distances=dist_vec, elapsed=elapsed)
 
 
 def _parallel_distance_dgm(
@@ -99,6 +104,7 @@ def _parallel_distance_dgm(
 def bootstrap_distance_interval(
     X, alpha=0.05, dist_function=None, B=100, ncores=DEFAULT_CORES
 ) -> IntervalResult:
+    start_time = time.time()
     n = np.size(X, 0)
     dgm = build_distance_diagram(X, dist_function)
     dgm_birth_deaths = get_birth_death(dgm)
@@ -109,7 +115,8 @@ def bootstrap_distance_interval(
     p.close()
 
     width = np.quantile(dist_vec, 1 - alpha)
-    return IntervalResult(width=width, dgm=dgm, distances=dist_vec)
+    elapsed = time.time() - start_time
+    return IntervalResult(width=width, dgm=dgm, distances=dist_vec, elapsed=elapsed)
 
 
 def _parallel_function_dgm(
@@ -138,6 +145,8 @@ def bootstrap_function_interval(
     ncores=DEFAULT_CORES,
     grid_n=100,
 ) -> IntervalResult:
+    start_time = time.time()
+
     n = np.size(X, 0)
     dimensions, positions = make_grid(X, grid_n)
     dgm = build_function_diagram(
@@ -153,4 +162,6 @@ def bootstrap_function_interval(
         dist_vec = p.map(parallel_distance, np.arange(B))
     p.close()
     width = np.quantile(dist_vec, 1 - alpha)
-    return IntervalResult(width=width, dgm=dgm, distances=dist_vec)
+
+    elapsed = time.time() - start_time
+    return IntervalResult(width=width, dgm=dgm, distances=dist_vec, elapsed=elapsed)
