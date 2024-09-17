@@ -2,7 +2,7 @@ En esta sección abordaremos los distintos métodos computacionales y estadísti
 
 ## Conjuntos de datos sintéticos  {#sec-methods-data-synth}
 
-Es común en la literatura de topología computacional enfocarse en unos conjuntos de datos sintéticos simples, sobre los cuales se corren los métodos de interés. Al ser estos utilizados por diferentes trabajos los resultados pueden ser fácilmente contrastados [@ConfidenceSetsForPersistenceDiagrams, @FootballRobustDataset]. A continuación se muestran los conjuntos de datos sintéticos que se utilizarán durante la @sec-results. En cada caso, se generarán dos nuevos conjuntos de datos por medio de agregar muestras atípicas y ruido, respectivamente, para lograr una mayor variabilidad en los conjuntos que puedan dificultar la tarea a las técnicas desarrolladas.
+Es común en la literatura de topología computacional enfocarse en unos conjuntos de datos sintéticos simples, sobre los cuales se corren los métodos de interés. Al ser estos utilizados por diferentes trabajos los resultados pueden ser fácilmente contrastados [@ConfidenceSetsForPersistenceDiagrams; @FootballRobustDataset]. A continuación se muestran los conjuntos de datos sintéticos que se utilizarán durante la @sec-results. En cada caso, se generarán dos nuevos conjuntos de datos por medio de agregar muestras atípicas y ruido, respectivamente, para lograr una mayor variabilidad en los conjuntos que puedan dificultar la tarea a las técnicas desarrolladas.
 
 
 ```{python}
@@ -27,7 +27,7 @@ from pytesis.datasets import (
 
 random.seed(1)
 
-n = 500
+n = 300
 sd = 0.075
 iqr_factor = 0.3
 outliers_frac = 0.02
@@ -44,7 +44,7 @@ El más sencillo de los conjuntos de datos a utilizar es la circunferencia unifo
 
 $$\angle \mathbf{x} \sim \mathcal{U}(-\pi, \pi), \qquad |\mathbf{x}| = r$$
 
-En la @fig-circle-uniform se observa una muestra de `r n` elementos provenientes de esta distribución, junto con sus versiones con ruido agregado y datos atípicos, respectivamente.
+En la @fig-circle-uniform se observa una muestra de `{python} n` elementos provenientes de esta distribución, junto con sus versiones con ruido agregado y datos atípicos, respectivamente.
 
 ```{python}
 #| label: fig-circle-uniform
@@ -54,7 +54,7 @@ En la @fig-circle-uniform se observa una muestra de `r n` elementos provenientes
 #|   - "Ruido agregado"
 #|   - "Datos atípicos"
 #| layout: [[-4, 10, -4], [1, 1]]
-X_circle = arc(n = n)
+X_circle = arc(n=n)
 X_circle_noise = add_noise(X_circle, sd=sd)
 X_circle_outliers = add_outliers(X_circle, iqr_factor=iqr_factor)
 plot_dataset(X_circle, title="Base"); plt.show()
@@ -93,7 +93,7 @@ plot_dataset(X_circle_gauss_outliers, title="Datos Atípicos"); plt.show()
 ### Anteojos {#sec-methods-data-synth-eyeglasses}
 
 El conjunto de datos que llamaremos Anteojos (*eyeglasses* en inglés) se ilustra a continuación en la @fig-eyeglasses, junto con sus análogos con ruido gaussiano y datos atípicos.
-Esta topología resulta similar a un óvalo de Cassini y debe su nombre a su parecido con unos anteojos. La misma presenta dos círculos conectados mediante una apertura en ellos. Se utiliza extensivamente durante el cálculo de intervalos de confianza para datos sintéticos ya que la topología en realidad posee un único agujero de grado 1, pero resulta sencillo para los algoritmos confundirse y detectar dos agujeros significativos dependiendo del grado de apertura [@ConfidenceSetsForPersistenceDiagrams].
+Esta topología resulta similar a un óvalo de Cassini y debe su nombre a su parecido con unos anteojos. La misma presenta dos círculos conectados mediante una apertura en ellos. Se utiliza extensivamente durante el cálculo de intervalos de confianza para datos sintéticos [@ConfidenceSetsForPersistenceDiagrams] ya que la topología en realidad posee un único agujero de grado uno, pero resulta complejo para los algoritmos detectar esta topología, usualmente resultando en dos agujeros significativos, dependiendo de la cantidad de datos y el grado de apertura.
 
 ```{python}
 #| label: fig-eyeglasses
@@ -124,13 +124,13 @@ max_r = 1.5
 
 El conjunto de datos que sumaremos a nuestras simulaciones para realizar esta tarea será un círculo en donde la densidad de los puntos que lo rellenan es dependiente del radio. Es decir, sea un punto en dos dimensiones parametrizado por su distancia al origen $r$ y su ángulo $\theta$ con respecto al eje $x$, se obtienen muestras bajo la siguiente distribución
 $$
-\theta \sim \mathcal{U}(0, 2\pi), \quad r \sim \mathcal{U}^{\frac{1}{r_{power}}}(0, r_{max})
+\theta \sim \mathcal{U}(0, 2\pi), \quad r \sim r_{max} \cdot \mathcal{U}^{\frac{1}{r_{power}}}(0, 1)
 $$
 
 Donde $r_{power} = 2$ corresponde al muestreo uniforme dentro de la circunferencia. Para valores mayores ($r_{power} > 2$) se obtiene una concentración más fuerte de puntos en los radios superiores, mientras que para $r_{power} < 2$ se obtienen más muestras cercanas al centro.
-Será de especial interés analizar los casos de $r_{power} > 2$ ya que se espera que los métodos trabajados logren descartar la existencia de agujeros a pesar de la baja en la densidad de muestreo cerca del orígen.
+Será de especial interés analizar los casos de $r_{power} > 2$ ya que se espera que los métodos trabajados logren descartar la existencia de agujeros a pesar de la baja en la densidad de muestreo cerca del origen.
 
-A continuación se muestra el conjunto de datos para un rádio `{python} max_r`
+A continuación se muestra el conjunto de datos para un radio `{python} max_r`
 
 ```{python}
 #| label: fig-filled-circle
@@ -142,15 +142,15 @@ plot_dataset(X_filled, title="Conjunto de datos"); plt.show()
 
 ## Conjuntos de datos reales  {#sec-methods-data-real}
 
-Adicionalmente al uso de los conjuntos de datos sintéticos descritos en la @sec-methods-data-synth se buscará también validar los resultados obtenidos en cuanto a la detección de agujeros de primer grado un conjunto de datos reales utilizado en @FootballRobustDataset cuya estructura se describe en @FootballRobustDatasetExplanation. El *dataset* consiste en mediciones correspondientes a la posición de jugadores de *football* dentro de la cancha a lo largo de un partido, en el que se obtiene un punto cada un intervalo de tiempo determinado. A este conjunto de datos, siguiendo lo realizado en @FootballRobustDataset, se le agrega un borde artificial demarcando los límites de la cancha con el objetivo de que los espacios en donde el jugador no tuvo incidencia sean agujeros con bordes en los límites de la cancha y las posibles ubicaciones del jugador en conjunto.
+Adicionalmente al uso de los conjuntos de datos sintéticos descritos en la @sec-methods-data-synth se buscará también validar los resultados obtenidos en cuanto a la detección de agujeros de primer grado un conjunto de datos reales utilizado en [@FootballRobustDataset] cuya estructura se describe en [@FootballRobustDatasetExplanation]. El *dataset* consiste en mediciones correspondientes a la posición de jugadores de fútbol dentro de la cancha a lo largo de un partido, en el que se obtiene un punto cada un intervalo de tiempo determinado. A este conjunto de datos, siguiendo lo realizado en [@FootballRobustDataset], se le agrega un borde artificial demarcando los límites de la cancha con el objetivo de que los espacios en donde el jugador no tuvo incidencia sean agujeros con bordes en los límites de la cancha y las posibles ubicaciones del jugador en conjunto.
 
 ```{python}
 #| label: fig-football-data
-#| fig-cap: Conjunto de datos reales correspondientes a la posición medida de distintos jugadores a lo largo de un partido de football. Los diferentes jugadores ocupan diferentes roles en el equipo para mostrar diferentes patrones de posiciones
+#| fig-cap: Conjunto de datos reales correspondientes a la posición medida de distintos jugadores a lo largo de un partido de fútbol. Los diferentes jugadores ocupan diferentes roles en el equipo para mostrar diferentes patrones de posiciones
 #| fig-subcap:
-#|   - "Jugador 2: Defensor Ofensivo"
+#|   - "Jugador 2: Defensor Central"
 #|   - "Jugador 5: Mediocampista"
-#|   - "Jugador 8: Lateral Defensivo"
+#|   - "Jugador 8: Lateral Izquierdo"
 #|   - "Jugador 14: Mediocampista"
 #| layout: [[1, 1], [1, 1]]
 length_x, length_y = 105, 68
@@ -180,7 +180,7 @@ En la figura @fig-football-data se observan los datos para cuatro jugadores corr
 
 Haciendo uso de los conjuntos de datos descritos en la @sec-methods-data-synth, calcularemos los intervalos de confianza para los diagramas de persistencia resultantes haciendo uso de tres métodos, dos de ellos propuestos por la literatura, en particular analizados extensivamente en [@ConfidenceSetsForPersistenceDiagrams] y un método adicional, que consiste en reemplazar la distancia euclídea utilizada en uno de ellos por la distancia de Fermat, con el objetivo de observar las diferencias obtenidas en los intervalos de confianza y las cualidades topológicas detectadas. A continuación se describen los métodos a utilizar para calcular estos intervalos de confianza
 
-### Sub-muestreo con distancia euclídea {#sec-methods-subsampling}
+### Sub-muestreo con distancia euclídea {#sec-methods-subsampling-euclid}
 
 El primer método de cálculo de intervalos de confianza para diagramas de persistencia será mediante el sub-muestreo con distancia euclídea, desarrollado en [@ConfidenceSetsForPersistenceDiagrams]. Este método consiste en usar la técnica de submuestreo, introducida de forma teórica en la @sec-intro-subsampling, para obtener sub-muestras $\mathcal{S}_{N, b}^k$ del conjunto original mediante las cuales calcular directamente la distancia de Hausdorff basada en una distancia euclídea. Es decir, sea $\mathcal{S}_{N, b}^k$ una sub-muestra sin reposición de tamaño $b$ sobre $\mathcal{S}_N$ y sea $\theta_j = d_H(\mathcal{S}_{N}, \mathcal{S}_{N, b}^k)$ la distancia de Hausdorff entre $\mathcal{S}_N$ y $\mathcal{S}_{N, b}^k$, definimos
 
@@ -210,9 +210,9 @@ De esta forma haremos uso del siguiente algoritmo (descrito en *pseudo*-código)
     \Return 2 * quantile($\theta$, $1-\alpha$)
 \end{algorithm}
 
-### Sub-muestreo con distancia de Fermat {#sec-methods-subsampling}
+### Sub-muestreo con distancia de Fermat {#sec-methods-subsampling-fermat}
 
-El método descrito en la @sec-methods-subsampling hace uso de la distancia de Hausdorff para conseguir una cota superior de $\mathbb{P}(W_{\infty}(\hat{\mathcal{P}}, \mathcal{P}) > c_b)$, pero resulta importante destacar que esta distancia se define a partir de una medida de distancia subyacente, que se evidencia en la definición de la distancia de Hausdorff para nubes de puntos
+El método descrito en la @sec-methods-subsampling-euclid hace uso de la distancia de Hausdorff para conseguir una cota superior de $\mathbb{P}(W_{\infty}(\hat{\mathcal{P}}, \mathcal{P}) > c_b)$, pero resulta importante destacar que esta distancia se define a partir de una medida de distancia subyacente, que se evidencia en la definición de la distancia de Hausdorff para nubes de puntos
 
 $$
 d_H(\mathcal{S}_{N}, \mathcal{S}_{N, b}^k) = \max(\max_{\mathbf{x_i} \in \mathcal{S}_{N}}{\min_{\mathbf{x_j} \in \mathcal{S}_{N, b}^k}}{d(\mathbf{x_i}, \mathbf{x_j})}, \max_{\mathbf{x_i} \in \mathcal{S}_{N, b}^k}{\min_{\mathbf{x_j} \in \mathcal{S}_{N}}}{d(\mathbf{x_i}, \mathbf{x_j})})
@@ -224,31 +224,38 @@ $$
 d_H(\mathcal{S}_{N}, \mathcal{S}_{N, b}^k) = \max_{\mathbf{x_i} \in \mathcal{S}_{N}}{\min_{\mathbf{x_j} \in \mathcal{S}_{N, b}^k}}{d(\mathbf{x_i}, \mathbf{x_j})}
 $$
 
-Donde la maximización se alcanzará en alguno de aquellos puntos que no hayan sido sub-muestreados. A partir de esta descripción de la distancia de Hausdorff resulta evidente que si se reemplaza la función de distancia euclídea $d$, utilizada en la @sec-methods-subsampling por la distancia de Fermat, todas las garantías teóricas obtenidas en @ConfidenceSetsForPersistenceDiagrams seguirán siendo válidas ya que las mismas no dependen de la función elegida para este cómputo. De esta forma, el algoritmo desarrollado para el método de la @sec-methods-subsampling no debe ser modificado más allá del cambio en la medida de distancia.
+Donde la maximización se alcanzará en alguno de aquellos puntos que no hayan sido sub-muestreados. A partir de esta descripción de la distancia de Hausdorff resulta evidente que si se reemplaza la función de distancia euclídea $d$, utilizada en la @sec-methods-subsampling-euclid, por la distancia de Fermat, todas las garantías teóricas obtenidas en [@ConfidenceSetsForPersistenceDiagrams] seguirán siendo válidas ya que las mismas no dependen de la función elegida para este cómputo. De esta forma, el algoritmo desarrollado para el método de la @sec-methods-subsampling-euclid no debe ser modificado más allá del cambio en la medida de distancia.
 
+En la práctica, tanto para la distancia de Fermat como para la distancia Euclídea de la sección precedente, la distancia de Hausdorff definida en la @eq-cloud-hausdorff-distance-full se modifica con el objetivo de hacerla más robusta a conjuntos reales y posibles muestras atípicas. Siguiendo el mecanismo propuesto en [@RobustHausdorffDistance], se reemplazan los "máximos" del cómputo por una versión podada de los mismos, es decir, un percentil apropiado que en la práctica se busca como el máximo percentil que logra que los resultados no cambien abruptamente al variar el parámetro. Es decir, si al modificar un $1\%$ este percentil el resultado obtenido cambia drásticamente, significa que el método está siendo efectivo en eliminar distancias atípicas, por lo que debemos seguir buscando el valor apropiado. A partir de esta observación, la distancia de Hausdorff que utilizaremos para nubes de puntos resulta:
+
+$$
+d_H(\mathcal{S}_{N}, \mathcal{S}_{N, b}^k) = \mathrm{Percentil}^{\gamma}_{\mathbf{x_i} \in \mathcal{S}_{N}}{\min_{\mathbf{x_j} \in \mathcal{S}_{N, b}^k}}{d(\mathbf{x_i}, \mathbf{x_j})}
+$$
+
+Los percentiles utilizados se buscarán en el intervalo $0.91 \leq \gamma \leq 0.99$.
 
 ### Bootstrap con estimación por densidad {#sec-methods-bootstrap-density}
 
 Este enfoque es distinto a los tratados anteriormente ya que no se basa en una distancia propiamente dicha, el mismo consta de construir un estimador de densidad suave a partir de los datos para posteriormente calcular el diagrama de persistencia a partir de una filtración de las curvas de nivel superior de la función del estimador de densidad [@ConfidenceSetsForPersistenceDiagrams].
 
-Sea $\mathcal{S}_{N}$ un conjunto de muestras *i.i.d* obtenidas mediante una función de densidad $f$ con soporte en un *manifold* $\mathcal{M}$, se define
+Sea $\mathcal{S}_{N}$ un conjunto de muestras i.i.d obtenidas a partir de la medida de probabilidad $F$ con soporte en una variedad $\mathcal{M}$, se define
 
 $$
-f_h(x) = \int_{\mathcal{M}} \frac{1}{h^D} K \left( \frac{||x - u||_2}{h}\right) df(u)
+f_h(x) = \int_{\mathcal{M}} \frac{1}{h^D} K \left( \frac{||x - u||_2}{h}\right) dF(u)
 $$
 
-$f_h$ representa entonces la densidad de la medida de probabilidad $f_h$ que es la convolución $f_h =  f \star \mathbb{K}_h$ con $\mathbb{K}_h(A) = h^{-D} \mathbb{K}(h^{-1}A)$ y $\mathbb{K}(A) = \int_{A}K(t)dt$. Esto básicamente significa que $f_h$ es una versión suavizada de $f$.
-Nuestro objetivo será entonces el de computar el diagrama de persistencia de los conjuntos de nivel superiores de $f_h$, $\mathcal{P}_h$.
+$f_h$ representa entonces la densidad de la medida de probabilidad $F_h$, que es la convolución $F_h =  F \star \mathbb{K}_h$ con $\mathbb{K}_h(A) = h^{-D} \mathbb{K}(h^{-1}A)$ y $\mathbb{K}(A) = \int_{A}K(t)dt$. Esto básicamente significa que la medida de probabilidad $F_h$ es una versión suavizada de $F$.
+Nuestro objetivo será entonces el de computar el diagrama de persistencia de los conjuntos de nivel superiores de $f_h$, el cual denotaremos $\mathcal{P}_h$.
 
-Estos conjuntos de nivel son relevantes ya que se demuestra que conservan la información topológica de $\mathcal{M}$ y que son más estables, al costo de  omitir detalles más sutiles de la topología del espacio original [@ConfidenceSetsForPersistenceDiagrams]. Esto resulta de especial importancia en los casos en los que la muestra $\mathcal{S}_{N}$ se obtiene, no directamente de la densidad $f$ sobre $\mathcal{M}$, sino con un agregado de ruido o posiblemente de datos atípicos. Este método podría ser capaz de ignorar los detalles ruidosos y concentrarse mejor en las características topológicas relevantes del espacio subyacente.
+Estos conjuntos de nivel son relevantes ya que se demuestra que conservan la información topológica de $\mathcal{M}$ y que son más estables al costo de omitir detalles más sutiles de la topología del espacio original [@ConfidenceSetsForPersistenceDiagrams]. Esto resulta de especial importancia en los casos en los que la muestra $\mathcal{S}_{N}$ se obtiene, no directamente de la densidad $f$ sobre $\mathcal{M}$, sino con un agregado de ruido o posiblemente de datos atípicos. Este método podría ser capaz de ignorar los detalles ruidosos y concentrarse mejor en las características topológicas relevantes del espacio subyacente.
 
-Dado que $f_h$ es desconocido, utilizaremos su estimador usual
+Dado que $f_h$ es desconocido, utilizaremos su estimador usual:
 
 $$
 \hat{f}_h(x) = \frac{1}{n} \sum_{i=1}^N \frac{1}{h^D} K \left( \frac{||x - x_i||_2}{h} \right)
 $$
 
-Que será evaluado en una grilla de puntos, a partir del cual construiremos el diagrama de persistencia.
+que será evaluado en una grilla de puntos, a partir del cual construiremos el diagrama de persistencia.
 
 Para obtener el intervalo de confianza, repetiremos el procedimiento realizado en las secciones precedentes para utilizar *bootstrap*. El algoritmo se muestra a continuación
 
@@ -268,4 +275,4 @@ Para obtener el intervalo de confianza, repetiremos el procedimiento realizado e
 \end{algorithm}
 
 
-Se demuestra que este método resulta en pruebas más potentes frente a las realizadas haciendo uso de la distancia euclídea [@ConfidenceSetsForPersistenceDiagrams]. Será de interés verificar su rendimiento frente a los *test* de hipótesis que se obtengan haciendo uso de la distancia de Fermat
+Se demuestra que este método resulta en pruebas más potentes frente a las realizadas haciendo uso de la distancia euclídea [@ConfidenceSetsForPersistenceDiagrams]. Será de interés verificar su rendimiento frente a los *test* de hipótesis que se obtengan haciendo uso de la distancia de Fermat.

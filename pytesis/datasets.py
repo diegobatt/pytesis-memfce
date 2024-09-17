@@ -38,7 +38,9 @@ def plot_dataset(X, title="Conjunto de datos", ax=None):
     d = X.shape[1]
     if d == 2:
         return plot_dataset_2d(X, ax=ax, title=title)
-    elif d == 3 and ax is not None:
+    elif d == 3:
+        if ax is None:
+            ax = plt.figure().add_subplot(projection="3d")
         return plot_dataset_3d(X, ax=ax, title=title)
     else:
         raise ValueError("Only 2D and 3D datasets are supported")
@@ -193,5 +195,6 @@ def add_outliers(X, frac=0.05, iqr_factor=1.5):
 
 def add_dummy_dimensions(X, d=1):
     n, _ = X.shape
-    new_columns = np.random.normal(0, 1, (n, d))
+    new_dummies = np.random.normal(0, 1, (1, d))
+    new_columns = np.tile(new_dummies, (n, 1))
     return np.hstack((X, new_columns))

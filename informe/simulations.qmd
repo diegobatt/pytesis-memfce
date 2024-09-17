@@ -1,4 +1,4 @@
-A continuación se disponen los resultados obtenidos de los intervalos de confianza para los conjuntos de datos introducidos en la @sec-methods-data-synth. Se observa en primera instancia un ejemplo de resultado de diagrama de persistencia junto con su intervalo de confianza para cada método desarrollado en la @sec-methods-intervals y posteriormente se procede a repetir el experimento una cantidad $M$ de veces para analizar la potencia, estimada como la tasa de aciertos a la hora de rechazar la hipótesis de no existencia de agujeros en el conjunto de datos, para cada uno de los métodos utilizados sobre los distintos espacios topológicos sintéticos presentados
+A continuación se disponen los resultados obtenidos de los intervalos de confianza para los conjuntos de datos introducidos en la @sec-methods-data-synth. Se observa en primera instancia un ejemplo de resultado de diagrama de persistencia junto con su intervalo de confianza para cada método desarrollado en la @sec-methods-intervals y posteriormente se procede a repetir el experimento una cantidad $M$ de veces para analizar la potencia, estimada como la tasa de aciertos a la hora de rechazar la hipótesis nula $H_0$ dado que la misma es falsa. Dicho en otras palabras, decidir que hay cualidades topológicas de primer grado (agujeros) en el conjunto de datos, dado que efectivamente las hay. Este análisis se realiza para cada uno de los métodos utilizados sobre los distintos espacios topológicos sintéticos presentados, disponiendo los resultados en forma de tablas.
 
 ```{python}
 import warnings
@@ -11,13 +11,17 @@ from pytesis.datasets import (
     filled_circle,
     add_noise,
     add_outliers,
+    add_dummy_dimensions,
     football_sensor,
-    rectangle
+    rectangle,
+    plot_dataset,
+    plot_dataset_3d,
 )
-from pytesis.results import run_all_intervals, run_all
+from pytesis.results import run_all_intervals, run_all, get_intervals_times_table
 from pytesis.utils import compose
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 
 from functools import partial
 
@@ -191,7 +195,7 @@ intervals_circle_gauss_outliers = run_all_intervals(
 ```
 
 
-Análogamente a los resultados de obtenidos para el muestreo uniforme sobre la circunferencia (@sec-results-diagrams-plus-intervals-circle), en las Figuras [-@fig-sim-intervals-circle-gauss], [-@fig-sim-intervals-circle-gauss-noise] y [-@fig-sim-intervals-circle-gauss-outliers] se observan los resultados para el caso del muestreo gaussiano sobre la circunferencia. Se observa que los resultados son también análogos a los obtenidos en el caso uniforme, ya que en todos los casos se logra detectar de forma apropiada los agujeros de la topología subyacente. Esto demuestra que ninguno de los métodos se ve notoriamente afectado por la diferencia de densidad en el muestreo de las diferentes zonas. KDE podría ser el método más afectado dada las hipótesis con las cuales este método se desarrolla, pero para los hiperparámetros y cantidad de muestras probados el mismo no muestra dificultades para descartar correctamente la hipótesis nula en este caso.
+Análogamente a los resultados de obtenidos para el muestreo uniforme sobre la circunferencia (@sec-results-diagrams-plus-intervals-circle), en las Figuras [-@fig-sim-intervals-circle-gauss-base], [-@fig-sim-intervals-circle-gauss-noise] y [-@fig-sim-intervals-circle-gauss-outliers] se observan los resultados para el caso del muestreo gaussiano sobre la circunferencia. Se observa que los resultados son también análogos a los obtenidos en el caso uniforme, ya que en todos los casos se logra detectar de forma apropiada los agujeros de la topología subyacente. Esto demuestra que ninguno de los métodos se ve notoriamente afectado por la diferencia de densidad en el muestreo de las diferentes zonas. KDE podría ser el método más afectado dada las hipótesis con las cuales este método se desarrolla, pero para los hiperparámetros y cantidad de muestras probados el mismo no muestra dificultades para descartar correctamente la hipótesis nula en este caso.
 Resulta destacable que, nuevamente, Fermat es el único método que evidencia los datos atípicos como conjuntos conexos por encima del intervalo de confianza.
 
 
@@ -266,7 +270,13 @@ En la @fig-sim-intervals-filled-circle se observan los resultados obtenidos, seg
 
 ### Potencia {#sec-results-power}
 
-Si ahora se repite en procedimiento realizado en la @sec-results-diagrams-plus-intervals un cantidad $M = `{python} B_power`$  de veces con el objetivo de analizar la frecuencia en la que el intervalo estimado contiene efectivamente a la cantidad de agujeros reales, siendo en nuestro caso un agujero real para todos los conjuntos de datos analizados, entonces se obtiene la potencia estimada del test, es decir, la probabilidad de rechazar la hipótesis nula dado que esta es falsa, donde la hipótesis nula representa la no existencia de agujeros en la topología
+Si ahora se repite en procedimiento realizado en la @sec-results-diagrams-plus-intervals un cantidad $M = `{python} B_power`$  de veces con el objetivo de analizar la frecuencia en la que el intervalo estimado contiene efectivamente a la cantidad de agujeros reales, siendo en nuestro caso un agujero real para todos los conjuntos de datos analizados, entonces se obtiene la potencia estimada de la prueba de hipótesis, es decir, la probabilidad de rechazar la hipótesis nula $H_0$ dado que esta es falsa. Como se detalló en la @sec-homologia-intervalos, se define una hipótesis nula $H^{i}_0$ para cada una de las cualidades topológicas que resultan del diagrama de persistencia, manifestándose estas como un punto $p_i$ con tiempo de vida $l_i = d_i - b_i$ en dicho gráfico. Estas hipótesis se expresan entonces como:
+
+$$
+H^{i}_0: l_i = d_i - b_i = 0
+$$
+
+Donde las mismas se evaluan en simultáneo con nivel $1 - \alpha$. Como se mencionó en la @sec-homologia-intervalos y en [@ConfidenceSetsForPersistenceDiagrams], esta interpretación del intervalo de confianza construido sobre el diagrama de persistencia que consiste en caracterizar de forma dicotómica, como "ruido" o "señal", a las cualidad topológicas individuales no es la única interpretación posible. El intervalo de confianza construido da un conjunto posible de variedades $\mathcal{M}$ de las cuales nuestro conjunto de datos finito de $n$ elementos podría haberse muestreado, por lo que resulta interesante ver, para casos más desafiantes, como puede ser el conjunto de datos de anteojos, cómo las distintas técnicas utilizadas para construir el diagrama logran modificar este conjunto de variedades $\mathcal{M}$ posibles para el número de muestras utilizado.
 
 ```{python}
 base_results_params = dict(
@@ -409,7 +419,7 @@ def get_printable_table(mega_table: pd.DataFrame) -> Markdown:
 get_printable_table(mega_table_base)
 ```
 
-Resultados de potencia estimada para los tres métodos sobre los conjuntos de datos originales. Cada fila de la tabla muestra, según el método que se indica a la izquierda, el porcentaje de veces que cada cantidad de agujeros fue detectada en las corridas realizadas.
+Resultados de potencia estimada para los tres métodos sobre los conjuntos de datos originales. Cada fila de la tabla muestra, según el método que se indica a la izquierda, el porcentaje de veces que cada cantidad de agujeros fue detectada de forma significativa en las corridas realizadas.
 
 :::
 
@@ -426,7 +436,7 @@ Resultados obtenidos para los conjuntos de datos con ruido agregado, análogamen
 
 :::
 
-Se muestran en la @tbl-power-table-noise los resultados para los conjuntos de datos con ruido agregado. La conclusiones resultan altamente similares a las obtenidas en la @tbl-power-table-base para los conjuntos base, con la única salvedad de que, si bien sigue siendo el único método en correctamente detectar a los anteojos como una topología de un único agujero significativo con alta potencia, el método de Fermat detecta en limitadas ocasiones (2%) dos agujeros significativos en los Anteojos. Esto se debe, posiblemente, a que la presencia de ruido en el canal que une a las dos circunferencias principales de los anteojos puede llegar "engañar" al método reduciendo el ancho de este canal. Para los casos de circunferencias ninguno de los tres métodos se ve afectado por la presencia del ruido en la varianza estudiada ($\sigma =`{python}  sd`$).
+Se muestran en la @tbl-power-table-noise los resultados para los conjuntos de datos con ruido agregado. La conclusiones resultan altamente similares a las obtenidas en la @tbl-power-table-base para los conjuntos base, con la única salvedad de que, si bien sigue siendo el único método en correctamente detectar a los anteojos como una topología de un único agujero significativo con alta potencia, el método de Fermat detecta en limitadas ocasiones (2%) dos agujeros significativos en los Anteojos. Esto se debe, posiblemente, a que la presencia de ruido en el canal que une a las dos circunferencias principales de los anteojos puede llegar "engañar" al método reduciendo el ancho de este canal. Para los casos de circunferencias ninguno de los tres métodos se ve afectado por la presencia del ruido en la varianza estudiada ($\sigma = `{python} sd`$).
 
 
 ```{python}
@@ -444,18 +454,87 @@ En la @tbl-power-table-outliers se observan los resultados para el caso de datos
 get_printable_table(mega_table_filled_circle)
 ```
 
-Resulta importante destacar que los resultados obtenidos para el método de ventanas de densidad (KDE) no varían en ningún caso, como se observa en las tablas [-@tbl-power-table], [-@tbl-power-table-noise] y [-@@tbl-power-table-outliers]. Un primer instinto podría indicarnos que esto se debe a una propiedad de robustez del método, como se analiza en el trabajo que introduce este algoritmo (@ConfidenceSetsForPersistenceDiagrams), tal que el ruido y los datos atípicos no afectan las buenas propiedades del mismo. Si bien esto tiene mucho sentido, ya que al usar ventanas de densidad la topología sobre la cual se realiza el test es en realidad una versión suavizada de la original, ocultándose las cualidades ruidosas del conjunto y centrándose en las características principales de la topología subyacente, es también posible que en ese proceso se escondan o se pierdan cualidades que eran de interés para reconstruir la topología subyacente verdadera del manifold $\mathcal{M}$ bajo estudio. Esto puede evidenciarse en la @tbl-power-table-filled, en la que ahora las corridas se realizan sobre diferentes conjuntos de datos obtenidos de una distribución que muestrea sobre un círculo en el que la densidad de probabilidad es dependiente del rádio, como se introdujo en la @sec-methods-data-synth-filled-circle. Se observa que tanto el método Euclídeo como el de Fermat detectan correctamente que la topología subyacente no presenta ningún agujero, mientras que el método de ventanas de densidad (KDE) descarta la existencia de agujeros solo el 50% por ciento de las veces, lo que es muy lejano al 95% que se esperaría en función del nivel buscado en la prueba de hipótesis asociada. La explicación más plausible es que, para la distorsión generada por KDE en la topología original, la baja en la densidad cercana al origen de la topología no sea apropiadamente distinguible de un agujero ruidoso.
+Resulta importante destacar que los resultados obtenidos para el método de ventanas de densidad (KDE) no varían en ningún caso, como se observa en las tablas [-@tbl-power-table-base], [-@tbl-power-table-noise] y [-@tbl-power-table-outliers]. Un primer instinto podría indicarnos que esto se debe a una propiedad de robustez del método, como se analiza en el trabajo que introduce este algoritmo (@ConfidenceSetsForPersistenceDiagrams), tal que el ruido y los datos atípicos no afectan las buenas propiedades del mismo. Si bien esto tiene mucho sentido, ya que al usar ventanas de densidad la topología sobre la cual se realiza el test es en realidad una versión suavizada de la original, ocultándose las cualidades ruidosas del conjunto y centrándose en las características principales de la topología subyacente, es también posible que en ese proceso se escondan o se pierdan cualidades que eran de interés para reconstruir la topología subyacente verdadera de la variedad $\mathcal{M}$ bajo estudio. Esto puede evidenciarse en la @tbl-power-table-filled, en la que ahora las corridas se realizan sobre diferentes conjuntos de datos obtenidos de una distribución que muestrea sobre un círculo en el que la densidad de probabilidad es dependiente del rádio, como se introdujo en la @sec-methods-data-synth-filled-circle. Se observa que tanto el método Euclídeo como el de Fermat detectan correctamente que la topología subyacente no presenta ningún agujero, mientras que el método de ventanas de densidad (KDE) descarta la existencia de agujeros solo el 50% por ciento de las veces, lo que es muy lejano al 95% que se esperaría en función del nivel buscado en la prueba de hipótesis asociada. La explicación más plausible es que, para la distorsión generada por KDE en la topología original, la baja en la densidad cercana al origen de la topología no sea apropiadamente distinguible de un agujero ruidoso.
 
 ## Conjuntos de Datos Sintéticos en Dimensiones Superiores {#sec-results-synth-higher-dim}
 
-<span style="color:red;"> ESTO DEBERÍA SER CONCLUSIONES? </span>
+Una observación importante es que en ningún momento del trabajo se discutió analizar conjuntos de datos, sintéticos o no, cuya dimensión de origen sea superior a dos, es decir $D > 2$. Esto se debe a que una parte fundamental de la presente Tesis es contrastar el comportamiento del método de Fermat con el de KDE, y este último presenta un grave problema a la hora de ser evaluado en conjuntos de datos provenientes de dimensiones superiores. Esto se debe a que para obtener el diagrama de persistencia mediante KDE, o cualquier otro conjunto de nivel de una función, como se introdujo en la @sec-intro-dgm-function, se requiere trazar una grilla de $M_h$ puntos por dimensión, sobre la cual evaluar la función cuyos conjuntos de nivel son de interés. Teniendo en cuenta que la cantidad de estos puntos condiciona la sensibilidad que se tiene sobre el espacio, resulta importante que $M_h$ sea lo más alto posible, por ejemplo para los casos discutidos en las secciones precedentes, se utilizó $M_h = 100$. Teniendo en cuenta que la cantidad de puntos a evaluar y que serán posteriormente utilizados en la construcción del diagrama de persistencia crecen de forma exponencial con la dimensión del espacio ($k = M_h^D$), y que la complejidad algorítmica de la construcción del diagrama de persistencia escala también de forma exponencial con la cantidad de dimensiones ($\mathcal{O}(k^D) = \mathcal{O}(M_h^{D^2})$) [@CubicalPersistentDiagrams], Para los recursos computacionales trabajados una dimensión $D = 3$ ya se torna computacionalmente muy costosa. Resulta importante destacar que esto no sucede para los métodos que se basan en distancias, ya que para estos la complejidad computacional en la construcción del diagrama de persistencia solo depende de la cantidad de puntos, que no depende entonces de la dimensionalidad del espacio.
 
-Una observación importante es que en ningún momento del trabajo se discutió analizar conjuntos de datos, sintéticos o no, cuya dimensión de origen sea superior a dos, es decir $D > 2$. Esto se debe a que una parte fundamental de la presente Tesis es contrastar el comportamiento del método de Fermat con el de KDE, y este último presenta un grave problema a la hora de ser evaluado en conjuntos de datos provenientes de dimensiones superiores. Esto se debe a que para obtener el diagrama de persistencia mediante KDE, o cualquier otro conjunto de nivel de una función, como se introdujo en la @sec-intro-dgm-function, se requiere trazar una grilla de $M_h$ puntos por dimensión, sobre la cual evaluar la función cuyos conjuntos de nivel son de interés. Teniendo en cuenta que la cantidad de estos puntos condiciona la sensibilidad que se tiene sobre el espacio, resulta importante que $M_h$ sea lo más alto posible, por ejemplo para los casos discutidos en las secciones precedentes, se utilizó $M_h = 100$. Teniendo en cuenta que la cantidad de puntos a evaluar y que serán posteriormente utilizados en la construcción del diagrama de persistencia crecen de forma exponencial con la dimensión del espacio ($k = M_h^D$), y que la complejidad algorítmica de la construcción del diagrama de persistencia escala también de forma exponencial con la cantidad de dimensiones ($\mathcal{O}(k^D) = \mathcal{O}(M_h^{D^2})$) @CubicalPersistentDiagrams, Para los recursos computacionales trabajados una dimensión $D = 3$ ya se torna computacionalmente muy costosa. Resulta importante destacar que esto no sucede para los métodos que se basan en distancias, ya que para estos la complejidad computacional en la construcción del diagrama de persistencia solo depende de la cantidad de puntos, que no depende entonces de la dimensionalidad del espacio.
+A modo de ejemplo, podemos ilustrar esta ventaja de los métodos basados en distancia para un conjunto de datos de mayor dimensionalidad construido de forma sencilla: Tomamos el conjunto de datos de la circunferencia uniforme, introducido en la @sec-methods-data-synth, y agregamos dimensiones con valores constantes a cada muestra. Para un ejemplo de dos puntos, este procedimiento se vería de la siguiente forma: si tenemos dos puntos muestreados de la circunferencia $x_1 = [0, 1]$ y $x_2 = [1, 0]$, obtenemos muestras en mayores dimensiones como $\hat{x}_1 = [0, 1, \sigma_D^{1}, \dots, \sigma_D^{L}]$ y $\hat{x}_2 = [1, 0, \sigma_D^{1}, \dots, \sigma_D^{L}]$. Lo que se obtiene es la misma circunferencia pero embebida en un espacio de dimensión mayor, en donde la muestra se encuentra ahora viviendo en un plano distinto. En la @fig-circle-more-dims se ilustra este procedimiento para $L = 1$, dando lugar a una circunferencia suspendida en un plano del tercer eje de $\mathbb{R}^3$.
 
+```{python}
+#| label: fig-circle-more-dims
+#| fig-cap: Conjunto de datos correspondientes a la circunferencia uniforme con un agregado de una variable adicional que toma un valor constante para todas las muestras, con el objetivo de suspender el conjunto de datos en un plano diferente de un espacio de dimensionalidad superior
+timing_grid_n = 30
+X_circle_dims_3 = add_dummy_dimensions(X_circle, d=1)
+X_circle_dims_4 = add_dummy_dimensions(X_circle, d=2)
+
+dims_3_ax = plot_dataset(X_circle_dims_3, title="Circunferencia con D = 3")
+dims_3_ax.set_facecolor("white")
+plt.show()
+```
+
+A partir de este nuevo conjunto de datos, podemos realizar el cálculo del diagrama de persistencia y su respectivo intervalo de confianza variando la dimensión $D$ y observando como este procedimiento se vuelve más computacionalmente costoso. En la @tbl-timing-dims-results se ilustra este fenómeno, donde se muestra el tiempo demorado, medido en segundos, para cada método en obtener el intervalo de confianza al tomar las dimensiones $D = 2, 3, 4$. Se observa claramente que los métodos Euclídeo y Fermat no varían en el tiempo demorado, pero KDE crece exponencialmente en el mismo. Para realizar estas pruebas se utilizó $M_h = `{python} timing_grid_n`$, siendo este valor menor al que se utilizó en el resto de los experimentos para conjuntos de datos en dimensión dos ($M_h = 100$), esto se debe a que de otra forma el tiempo requerido para el cómputo con $D = 4$ hubiese sido innecesariamente excesivo.
+
+```{python}
+intervals_circle_timed = run_all_intervals(
+    X_circle,
+    h=h_eyeglasses,
+    robust_quantile=robust_quantile,
+    grid_n=timing_grid_n,
+    log=False,
+    plot=False,
+    B=B_intervals,
+    cache_prefix=f"circle_dims_original"
+)
+intervals_dummy_dims_3 = run_all_intervals(
+    X_circle_dims_3,
+    h=h,
+    robust_quantile=robust_quantile,
+    grid_n=timing_grid_n,
+    log=False,
+    plot=False,
+    B=B_intervals,
+    cache_prefix=f"circle_dims_3"
+)
+intervals_dummy_dims_4 = run_all_intervals(
+    X_circle_dims_4,
+    h=h,
+    robust_quantile=robust_quantile,
+    grid_n=timing_grid_n,
+    log=False,
+    plot=False,
+    B=B_intervals,
+    cache_prefix=f"circle_dims_4"
+)
+
+timing_dims_results = get_intervals_times_table(intervals_circle_timed)
+timing_dims_results["Dimensiones"] = "2"
+timing_dims_results_3 = get_intervals_times_table(intervals_dummy_dims_3)
+timing_dims_results_3["Dimensiones"] = "3"
+timing_dims_results_4 = get_intervals_times_table(intervals_dummy_dims_4)
+timing_dims_results_4["Dimensiones"] = "4"
+timing_dims_results = pd.concat(
+    [timing_dims_results, timing_dims_results_3, timing_dims_results_4]
+)
+```
+
+```{python}
+#| label: tbl-timing-dims-results
+#| tbl-cap: Costo computacional, representado en segundos que se demora en la construcción del diagrama de pesistencia y su correspondiente intervalo de confianza para los distintos métodos estudiados y tres dimensionalidades diferentes. Se observa como los métodos basados en distancia (Euclídeo y Fermat) no varían en el tiempo demandando, mientras que KDE escala exponencialmente.
+from IPython.display import Markdown, Latex
+
+timing_dims_results = timing_dims_results.reset_index(drop=True).set_index("Dimensiones")
+timing_dims_results = timing_dims_results.map("{:.2f}".format)
+# Latex(timing_dims_results.style.highlight_max(
+#     axis=None,props='cellcolor:{red}; bfseries: ;'
+# ).to_latex(convert_css=True, hrules=True))
+timing_dims_results
+```
 
 ## Conjuntos de Datos Reales {#sec-results-real-data}
 
-El trabajar con conjuntos de datos sintéticos nos permite evaluar nuestros resultados a lo largo de diferentes muestras de la misma distribución, como se realizó en la @sec-results-power, pero resulta también muy importante analizar cómo estos métodos se comportan con conjuntos de datos reales, de los cuales interpretaciones relevantes del dominio de aplicación puedan extraerse a partir de las cualidades significativas del diagrama de persistencia para cada uno de los métodos. En línea con el trabajo realizado en @FootballRobustDataset utilizaremos el conjunto de datos reales allí utilizado, que como se explicó brevemente en la @sec-methods-data-real, consiste en mediciones correspondientes a la posición de jugadores de football dentro de la cancha a lo largo de un partido, en el que se obtiene un punto cada un intervalo de tiempo determinado. Con el objetivo de obtener agujeros en las zonas donde los jugadores no participan activamente, se agregan artificialmente puntos en los bordes del conjunto de datos, correspondientes a los límites de la cancha [@FootballRobustDatasetExplanation]. Los diferentes jugadores ocupan diferentes espacios en la cancha, en función de la posición que ocupan en el juego, por lo que analizaremos por separado los diferentes jugadores elegidos
+El trabajar con conjuntos de datos sintéticos nos permite evaluar nuestros resultados a lo largo de diferentes muestras de la misma distribución, como se realizó en la @sec-results-power, pero resulta también muy importante analizar cómo estos métodos se comportan con conjuntos de datos reales, de los cuales interpretaciones relevantes del dominio de aplicación puedan extraerse a partir de las cualidades significativas del diagrama de persistencia para cada uno de los métodos. En línea con el trabajo realizado en [@FootballRobustDataset] utilizaremos el conjunto de datos reales allí utilizado, que como se explicó brevemente en la @sec-methods-data-real, consiste en mediciones correspondientes a la posición de jugadores de fútbol dentro de la cancha a lo largo de un partido, en el que se obtiene un punto cada un intervalo de tiempo determinado. Con el objetivo de obtener agujeros en las zonas donde los jugadores no participan activamente, se agregan artificialmente puntos en los bordes del conjunto de datos, correspondientes a los límites de la cancha [@FootballRobustDatasetExplanation]. Los diferentes jugadores ocupan diferentes espacios en la cancha, en función de la posición que ocupan en el juego, por lo que analizaremos por separado los diferentes jugadores elegidos
 
 ```{python}
 n_borders = 100
@@ -477,12 +556,12 @@ football_X_tag_8 = np.vstack([football_tag_8, borders])
 football_X_tag_14 = np.vstack([football_tag_14, borders])
 ```
 
-### Jugador 2 (Defensor Ofensivo)
+### Jugador 2 (Defensor Central)
 
 
 ```{python}
 #| label: fig-real-intervals-player-2
-#| fig-cap: Conjunto de datos e intervalos de confianza obtenidos para el jugador identificado como el número 2, que corresponde al comportamiento de un defensor ofensivo
+#| fig-cap: Conjunto de datos e intervalos de confianza obtenidos para el jugador identificado como el número 2, que corresponde al comportamiento de un defensor central
 intervals_football = run_all_intervals(
     football_X_tag_2,
     h=h_football,
@@ -494,7 +573,7 @@ intervals_football = run_all_intervals(
 )
 ```
 
-El jugador con identificador número dos corresponde según una inspección visual a un defensor ofensivo, ya que se observa en el gráfico de dispersión en la @fig-real-intervals-player-2 que el mismo ocupa mayoritariamente posiciones del cuadrante superior izquierdo, correspondiente al lado del arco de su equipo, aunque realiza algunas maniobras ofensivas por el centro al arco rival. En esta muestra, el método euclídeo detecta un único agujero significativo, seguido por un agujero que por poco no logra ser significativo, mientras que Fermat detecta dos bien marcados. Una interpretación es que en ambos casos esos dos puntos del diagrama de persistencia para ambos métodos corresponde a las partes inferior y superior de la zona ofensiva del campo de juego, aunque solo Fermat determina que ambas son significativas. Por su parte, KDE no logra detectar ninguna componente significativa, a pesar de que se varió ampliamente los hiperparámetros con los que se obtiene este diagrama no se logró que KDE obtuviera ningún resultado relevante.
+El jugador con identificador número dos corresponde según una inspección visual a un defensor central, ya que se observa en el gráfico de dispersión en la @fig-real-intervals-player-2 que el mismo ocupa mayoritariamente posiciones en el centro del sector correspondiente al lado del arco de su equipo, aunque realiza algunas maniobras ofensivas por el centro al arco rival, posiblemente para cabecear ofensivamente en los tiros de esquina. En esta muestra, el método euclídeo detecta un único agujero significativo, seguido por un agujero que por poco no logra ser significativo, mientras que Fermat detecta dos bien marcados. Una interpretación es que en ambos casos esos dos puntos del diagrama de persistencia para ambos métodos corresponde a las partes inferior y superior de la zona ofensiva del campo de juego, aunque solo Fermat determina que ambas son significativas. Por su parte, KDE no logra detectar ninguna componente significativa, a pesar de que se varió ampliamente los hiperparámetros con los que se obtiene este diagrama no se logró que KDE obtuviera ningún resultado relevante.
 
 
 ### Jugador 5 (Mediocampista)
@@ -516,11 +595,11 @@ intervals_football = run_all_intervals(
 Para el caso del jugador número 5, puede observarse mediante inspección visual de la @fig-real-intervals-player-5 que el comportamiento del jugador corresponde al de un mediocampista. Se observa que el lateral inferior del campo carece de puntos y que también existen zonas de baja densidad en las esquinas superiores derecha e izquierda, aunque esta última presenta una zona desocupada más reducida. Los distintos métodos obtienen distintos resultados: Como ya se mencionó para el caso del jugador número 2, KDE no logra hacer ningún tipo de detección relevante, sin importar cómo se ajusten los hiperparámetros. El método euclídeo detecta dos agujeros significativos, que no resulta obvio a qué agujeros visuales se corresponden, mientras que Fermat detecta cuatro de estos, que muy posiblemente se correspondan con las cuatro esquinas del campo de juego.
 
 
-### Jugador 8 (Lateral Defensivo)
+### Jugador 8 (Lateral Izquierdo)
 
 ```{python}
 #| label: fig-real-intervals-player-8
-#| fig-cap: Conjunto de datos e intervalos de confianza obtenidos para el jugador identificado como el número 8, que corresponde al comportamiento de un lateral defensivo
+#| fig-cap: Conjunto de datos e intervalos de confianza obtenidos para el jugador identificado como el número 8, que corresponde al comportamiento de un lateral izquierdo
 intervals_football = run_all_intervals(
     football_X_tag_8,
     h=h_football,
@@ -532,7 +611,7 @@ intervals_football = run_all_intervals(
 )
 ```
 
-El caso del jugador número 8 resulta el más sencillo de todos, ya que en la inspección visual del diagrama de dispersión en la @fig-real-intervals-player-8 se evidencia de forma clara que el jugador solo ocupa, aunque con buena densidad, la esquina superior izquierda, adentrándose hasta no mucho más que la mitad del campo rival. Esto significa que el comportamiento del jugador se corresponde con el de un lateral defensivo, y se espera que los distintos algoritmos detecten con facilidad la existencia de un único agujero significativo. Los métodos de Fermat y Euclídeo no presentan problemas en detectar esta topología subyacente, descartando del intervalo significativo todo salvo un agujero de primer orden. Análogamente a lo obtenido en los jugadores anteriores, KDE no logra resultados satisfactorios
+El caso del jugador número 8 resulta el más sencillo de todos, ya que en la inspección visual del diagrama de dispersión en la @fig-real-intervals-player-8 se evidencia de forma clara que el jugador solo ocupa, aunque con buena densidad, la esquina superior izquierda, adentrándose hasta no mucho más que la mitad del campo rival. Esto significa que el comportamiento del jugador se corresponde con el de un lateral izquierdo de corte defensivo, y se espera que los distintos algoritmos detecten con facilidad la existencia de un único agujero significativo. Los métodos de Fermat y Euclídeo no presentan problemas en detectar esta topología subyacente, descartando del intervalo significativo todo salvo un agujero de primer orden. Análogamente a lo obtenido en los jugadores anteriores, KDE no logra resultados satisfactorios.
 
 
 ### Jugador 14 (Mediocampista)

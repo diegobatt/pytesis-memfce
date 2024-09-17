@@ -100,6 +100,17 @@ def run_all_intervals(
     return intervals  # type: ignore
 
 
+def get_intervals_times_table(intervals: Intervals) -> pd.DataFrame:
+    return pd.DataFrame(
+        {
+            "Euclídeo": intervals.euclidean.elapsed,
+            "Fermat": intervals.fermat.elapsed,
+            "KDE": intervals.kde.elapsed,
+        },
+        index=["Segundos"],
+    )
+
+
 def run_all(
     dataset_factory: Callable,
     h: float = 0.3,

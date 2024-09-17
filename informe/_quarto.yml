@@ -1,12 +1,16 @@
 pdf-engine: pdflatex
 format:
   pdf:
+    documentclass: report
     toc: false
     fig-pos: 'h'
+    tbl-pos: 'h'
+    # tbl-cap-location: bottom
 header-includes:
     - \newcommand{\argmin}{\mathop{\mathrm{argmin}}\limits}
     - \usepackage{algorithm2e}
     - \usepackage{float}
+    - \usepackage{booktabs}
     - \floatplacement{table}{H}
 geometry: "left=3cm,right=3cm,top=2cm,bottom=2.5cm"
 urlcolor: blue
@@ -14,6 +18,9 @@ toc-title: "Tabla de contenidos"
 lang: es
 nocite: '@*'
 number-sections: true
+crossref:
+  chapters: true
+number-depth: 2
 execute:
   echo: false
   message: false
