@@ -13,7 +13,7 @@ I.  No negatividad: $\rho(\mathbf{x}, \mathbf{y}) \geq 0$ y $\rho(\mathbf{x}, \m
 II.  Simetría: $\rho(\mathbf{x}, \mathbf{y}) = \rho(\mathbf{y}, \mathbf{x})$
 III.  Desigualdad triangular: $\rho(\mathbf{x}, \mathbf{z}) \leq \rho(\mathbf{x}, \mathbf{y}) + \rho(\mathbf{y}, \mathbf{z})$
 
-Puede demostrarse @PatuFermatDistance que la distancia de Fermat desarrollada en la @sec-intro-fermat cumple las condiciones para ser una distancia según esta definición, por lo que pueden estudiarse las cualidades topológicas de un espacio métrico en base a esta misma.
+Puede demostrarse [@PatuFermatDistance] que la distancia de Fermat desarrollada en la @sec-intro-fermat cumple las condiciones para ser una distancia según esta definición, por lo que pueden estudiarse las cualidades topológicas de un espacio métrico en base a esta misma.
 
 #### Distancia de Hausdorff {#sec-hausdorff-distance}
 
@@ -72,7 +72,7 @@ B(\mathbf{x}_i, \epsilon) = \{ \mathbf{x} \mid d(\mathbf{x}_i, \mathbf{x}) < \ep
 $$
 
 con $d(\cdot, \cdot)$ una función de distancia.
-Se demuestra en @ConfidenceSetsForPersistenceDiagrams que cuando $\mathcal{M}$ es una variedad compacta y suave, bajo condiciones poco restrictivas sobre la distancia de Hausdorff (definida en la @sec-hausdorff-distance) entre la muestra y la variedad de la que proviene $d_{H}(\mathcal{S}_N, \mathcal{M})$, y una elección apropiada del valor $\epsilon$, entonces el espacio $\mathcal{S}_N^{\epsilon}$ es topológicamente equivalente a $\mathcal{M}$ [@Niyogi2008]. Esto significa que podemos inferir la topología de $\mathcal{M}$ a partir de $\mathcal{S}_N^{\epsilon}$. Se ilustra este concepto en la @fig-topologia-equivalente.
+Se demuestra en [@ConfidenceSetsForPersistenceDiagrams] que cuando $\mathcal{M}$ es una variedad compacta y suave, bajo condiciones poco restrictivas sobre la distancia de Hausdorff (definida en la @sec-hausdorff-distance) entre la muestra y la variedad de la que proviene $d_{H}(\mathcal{S}_N, \mathcal{M})$, y una elección apropiada del valor $\epsilon$, entonces el espacio $\mathcal{S}_N^{\epsilon}$ es topológicamente equivalente a $\mathcal{M}$ [@Niyogi2008]. Esto significa que podemos inferir la topología de $\mathcal{M}$ a partir de $\mathcal{S}_N^{\epsilon}$. Se ilustra este concepto en la @fig-topologia-equivalente.
 
 ![Se ilustra en la imagen el conjunto de datos $\mathcal{S}_N$ (esquina superior izquierda, denotado como $\mathbb{X}_n$) y los espacios $\mathcal{S}_N^{\epsilon}$ (denotados en la imagen como $\mathbb{X}_n^{r_i}$) para tres diferentes valores de $\epsilon$. Se observa como el conjunto de datos parece provenir de una variedad que presenta un agujero en su interior, pero esto deja de ser apreciable para el valor de $\epsilon$ más grande en la esquina inferior derecha. Crédito de la imagen: [@IntroductionTDA]](imagenes/topologia-equivalente-epsilon.png){#fig-topologia-equivalente width=60%}
 
@@ -99,7 +99,6 @@ Las aplicaciones están usualmente interesadas en cualidades que pueden ser dist
 
 ![Construcción del diagrama de persistencia para datos provenientes de una circunferencia ruidosa. Se incluyen solamente las cualidades topológicas de primer grado, ignorando las componentes conexas. Cada ciclo se ilustra desde el $\epsilon$ de su nacimiento hasta su muerte con un color diferente, esta duración resultando es finalmente representada bajo el mismo color en el diagrama de persistencia final. Crédito de la imagen: [@ParamethricInferencePersistenceDiagrams]](imagenes/noise-persistence-diagram.png){#fig-intro-noise-persistence-diagram width=100%}
 
-<!-- EN @ImagenPersistenceDiagramLinda hay una version mas de esta imagen que esta buena -->
 
 ##### Distancia entre diagramas de persistencia {#sec-distancia-diagramas}
 

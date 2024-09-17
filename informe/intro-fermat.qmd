@@ -10,7 +10,7 @@ Donde $\mathcal{M} \subseteq \mathbb{R}^D$ es una variedad de dimensión $d \geq
 Se define entonces la distancia de Fermat para el par de puntos $\mathbf{p}, \mathbf{q} \in \mathcal{M}$ como:
 
 $$
-d_F(\mathbf{p}, \mathbf{q}) = \mathcal{D}_{\mathcal{S}_n}(\mathbf{p}, \mathbf{q}) = \min_{\mathcal{S}_n^K} \sum_{i = 1}^{K-1} l\left( \mathbf{x}^i, \mathbf{x}^{i+1} \right) ^\alpha
+d_F(\mathbf{p}, \mathbf{q}) = \mathcal{D}_{\mathcal{S}_n}(\mathbf{p}, \mathbf{q}) = \min_K {\min_{\mathcal{S}_n^K} \sum_{i = 1}^{K-1} l\left( \mathbf{x}^i, \mathbf{x}^{i+1} \right) ^\alpha}
 $$ {#eq-def-fermat}
 
 Donde $\mathcal{S}_n^K$, $K \geq 2$, representa todas las secuencias de puntos compuestas por $K$ elementos tomados de $\mathcal{S}_n$ con
@@ -64,7 +64,7 @@ Si se definen $L = \max_i|\phi_i(s) - \phi_i(t)|$ y $\min_j\{\phi_j(s) + \phi_j(
 - La estimación del punto medio $\tilde{d}_G(s,t) = \frac{L+U}{2}$
 - La estimación de la media geométrica $\tilde{d}_G(s, t) = \sqrt{L \cdot U}$.
 
-Nótese que en todos los casos, la estimación es muy rápida, ya que solo se necesitan $O(d)$. La cota superior $\tilde{d}_G(s,t) = U$ resulta la mejor estimación según la experimentación realizada en @FermatLandmarks. Adicionalmente, en @FermatLandmarks se muestra que la elección aleatoria de *landmarks* cuenta con buenas garantías frente a la elección óptima, siendo esta última un problema computacionalmente demasiado costoso.
+Nótese que en todos los casos, la estimación es muy rápida, ya que solo se necesitan $O(d)$. La cota superior $\tilde{d}_G(s,t) = U$ resulta la mejor estimación según la experimentación realizada en [@FermatLandmarks]. Adicionalmente, en [@FermatLandmarks] se muestra que la elección aleatoria de *landmarks* cuenta con buenas garantías frente a la elección óptima, siendo esta última un problema computacionalmente demasiado costoso.
 
 ### Implementación
 
