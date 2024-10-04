@@ -8,7 +8,7 @@
   tutor: "Dr. Pablo Groisman",
   date: none,
   authors: "Diego Javier Battocchio",
-  layout: "medium",
+  layout: "large",
   ratio: 4/3,
   title-color: none,
 )
@@ -19,16 +19,9 @@
 #set heading(numbering: "1.")
 
 
-= Qué buscamos y qué encontramos
+= Qué buscamos y qué aprendimos
 
-#frame(counter: "Buscamos", color: INFORMATIVE_COLOR)[
-  - Validar
-  -
-]
-
-#frame(counter: "Encontramos", color: rgb("#157d17"))[
-  #lorem(20)
-]
+#include("intro.typ")
 
 = Conceptos Utilizados
 
@@ -38,13 +31,18 @@
 
 // == Intervalos de Confianza
 
-#definition(title: "asdads", color: rgb("#57a778"))[
+#frame(title: "asdads", color: POSITIVE_COLOR)[
   #lorem(20)
 ]
 
 = Conjuntos de datos utilizados
 
 #include("datos.typ")
+
+
+= Resultados
+
+#include("resultados.typ")
 
 
 #bibliography("references.bib", title: "Referencias")

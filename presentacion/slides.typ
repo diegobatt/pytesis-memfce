@@ -1,6 +1,7 @@
 #let POSITIVE_COLOR = rgb("#157d17")
-#let NEGATIVE_COLOR = rgb("#cc2424")
-#let INFORMATIVE_COLOR = rgb("#5e77f6")
+#let NEGATIVE_COLOR = rgb("#ff2e2e")
+#let INFORMATIVE_COLOR = rgb("#4865f6")
+#let EXTRA_INFO_COLOR = rgb("#bac00c")
 
 
 #let default-color = blue.darken(40%)
@@ -62,10 +63,10 @@
             x => x.depth <= 2 and x.location().page() < heading.location().page()
           ).body
           let prev_heading_text = text(1.1em, weight: "bold", fill: title-color, prev_body)
-          let heading_text = text(1.4em, weight: "bold", fill: title-color, heading.body + numbering)
+          let heading_text = text(1.3em, weight: "bold", fill: title-color, heading.body + numbering)
           block(heading_text + h(1fr) + prev_heading_text , below: 0.6em)
         } else {
-          let heading_text = text(1.4em, weight: "bold", fill: title-color, heading.body + numbering)
+          let heading_text = text(1.3em, weight: "bold", fill: title-color, heading.body + numbering)
           block(heading_text, below: 0.6em)
         }
         line(length: 100%, stroke: title-color)
@@ -152,14 +153,28 @@
   )
 }
 
-#let d = counter("definition")
-#let definition(content, title: none, color: none) = {
-  d.step()
-  frame(counter: d.display(x => "Definition " + str(x)), title: title, color: color, content)
+
+#let message(body, fill: red) = {
+  set text(white, size: 0.95em)
+  set align(center)
+  set block(breakable: false, above: 0.5em, below: 0.1em)
+
+  block(
+    fill: fill.lighten(10%),
+    inset: 13pt,
+    radius: 4pt,
+    [*#body*],
+  )
 }
 
-#let a = counter("algorithm")
-#let algorithm(content, title: none, color: none) = {
-  a.step()
-  frame(counter: a.display(x => "Algorithm " + str(x)), title: title, color: color, content)
-}
+// #let d = counter("definition")
+// #let definition(content, title: none, color: none) = {
+//   d.step()
+//   frame(counter: d.display(x => "Definition " + str(x)), title: title, color: color, content)
+// }
+
+// #let a = counter("algorithm")
+// #let algorithm(content, title: none, color: none) = {
+//   a.step()
+//   frame(counter: a.display(x => "Algorithm " + str(x)), title: title, color: color, content)
+// }
