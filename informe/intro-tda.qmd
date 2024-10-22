@@ -19,7 +19,7 @@ Puede demostrarse [@PatuFermatDistance] que la distancia de Fermat desarrollada 
 
 Dados dos subconjuntos compactos $A, B \subseteq M$ la distancia de Hausdorff $d_H(A, B)$ entre $A$ y $B$ se define como el valor $\delta$ más pequeño tal que para cualquier $\mathbf{a} \in A$ existe un $\mathbf{b} \in B$ tal que $\rho(\mathbf{a}, \mathbf{b}) \leq \delta$ (Ver @fig-hausdorff-distance)
 
-![Se ilustra la distancia de Hausdorff para el caso de dos curvas $X$ e $Y$, representando los subconjuntos $A, B \subseteq M$ siguiendo la notación de la @eq-hausdorff-distance. Si para todo punto en la curva gris se busca su punto más cercano en la curva verde, para posteriormente conservar la máxima de esas distancias, se obtienen los puntos $x$ e $y$ en la parte superior de la imagen. Por otro lado, si este proceso se realiza tomando ahora en cuenta todos los puntos de la curva verde, buscando su par más cercano en la curva verde, para posteriormente solo conservar la mayor de esas distancias, se obtiene la distancia marcada en línea punteada roja a la izquierda. Habiendo obtenido estas dos distancias, la mayor de ellas será la distancia de Hausdorff. Crédito de la imagen: [@ImagenHausdorff]](imagenes/hausdorff-distance.png){#fig-hausdorff-distance width=70%}
+![Se ilustra la distancia de Hausdorff para el caso de dos curvas $X$ e $Y$, representando los subconjuntos $A, B \subseteq M$ siguiendo la notación de \eqref{eq-hausdorff-distance}. Si para todo punto en la curva gris se busca su punto más cercano en la curva verde, para posteriormente conservar la máxima de esas distancias, se obtienen los puntos $x$ e $y$ en la parte superior de la imagen. Por otro lado, si este proceso se realiza tomando ahora en cuenta todos los puntos de la curva verde, buscando su par más cercano en la curva verde, para posteriormente solo conservar la mayor de esas distancias, se obtiene la distancia marcada en línea punteada roja a la izquierda. Habiendo obtenido estas dos distancias, la mayor de ellas será la distancia de Hausdorff. Crédito de la imagen: [@ImagenHausdorff]](imagenes/hausdorff-distance.png){#fig-hausdorff-distance width=70%}
 
 En otras palabras, si para todo subconjunto compacto $C \subseteq M$ denotamos $d(\cdot, C) : M \longrightarrow \mathbb{R}^{+}$ como la función de distancia a $C$, definida como
 $$
@@ -109,7 +109,7 @@ Sean entonces $\mathcal{X}$ e $\mathcal{Y}$ dos diagramas de persistencia, para 
 $$|| x - y ||_{\infty} = \max\{|x_1 - y_1|, |x_2 - y_2|\}$$
 
 
-entonces se define la distancia _bottleneck_ $W_{\infty}(\mathcal{X}, \mathcal{Y})$ en la @eq-bottleneck-distance
+entonces se define la distancia _bottleneck_ $W_{\infty}(\mathcal{X}, \mathcal{Y})$ en \eqref{eq-bottleneck-distance}
 
 $$
 W_{\infty}(\mathcal{X}, \mathcal{Y}) = \inf_{\eta : \mathcal{X} \rightarrow \mathcal{Y}} \sup_{x \in \mathcal{X}} || x - \eta(x) ||_{\infty}
@@ -124,13 +124,13 @@ En la @fig-intro-bottleneck-distance se ilustra el cálculo de esta distancia, E
 
 Resulta evidente que $W_{\infty}(\mathcal{X}, \mathcal{Y}) = 0$ solo sí $\mathcal{X} = \mathcal{Y}$, más aún, $W_{\infty}(\mathcal{X}, \mathcal{Y}) = W_{\infty}(\mathcal{Y}, \mathcal{X})$ y $W_{\infty}(\mathcal{X}, \mathcal{Z}) \leq W_{\infty}(\mathcal{X}, \mathcal{Y}) + W_{\infty}(\mathcal{Y}, \mathcal{Z})$ por lo que la distancia _bottleneck_ cumple todos los axiomas de una métrica y merece ser llamada una distancia [@IntroductionComputationalTopology].
 
-Una desventaja de la distancia _bottleneck_ es su falta de sensibilidad a detalles de la biyección por fuera de la distancia entre puntos a máxima distancia de la misma. Para sobrellevar esta desventaja, se introduce la distancia de _Wasserstein_ de grado $q$. Esta distancia reemplaza el cálculo del supremo en la distancia _bottleneck_ mediante la suma de las $q$-ésima potencias  de las distancias $|| x - \eta(x) ||_{\infty}$, nuevamente, minimizando para todas las biyecciónes posibles y finalmente tomando la raiz $q$-ésima, como se ilustra en la @eq-wasserstein-distance
+Una desventaja de la distancia _bottleneck_ es su falta de sensibilidad a detalles de la biyección por fuera de la distancia entre puntos a máxima distancia de la misma. Para sobrellevar esta desventaja, se introduce la distancia de _Wasserstein_ de grado $q$. Esta distancia reemplaza el cálculo del supremo en la distancia _bottleneck_ mediante la suma de las $q$-ésima potencias  de las distancias $|| x - \eta(x) ||_{\infty}$, nuevamente, minimizando para todas las biyecciónes posibles y finalmente tomando la raiz $q$-ésima, como se ilustra en \eqref{eq-wasserstein-distance}
 
 $$
 W_q(\mathcal{Y}, \mathcal{X}) = \left( \inf_{\eta : \mathcal{X} \rightarrow \mathcal{Y}} \sum_{x \in \mathcal{X}} || x - \eta(x) ||_{\infty}^q \right)^{1/q}
 $$ {#eq-wasserstein-distance}
 
-Como la similitud entre la notación de las ecuaciones [-@eq-bottleneck-distance] y [-@eq-wasserstein-distance] lo sugiere, la distancia _bottleneck_ es el límite de la distancia _Wasserstein_ para $q$ tendiendo a infinito. Análogamente a la distancia _bottleneck_, es fácil verificar que $W_q$ satisface los requerimientos de una métrica y también merece ser llamada distancia [@IntroductionComputationalTopology]
+Como la similitud entre la notación de las ecuaciones \eqref{eq-bottleneck-distance} y \eqref{eq-wasserstein-distance} lo sugiere, la distancia _bottleneck_ es el límite de la distancia _Wasserstein_ para $q$ tendiendo a infinito. Análogamente a la distancia _bottleneck_, es fácil verificar que $W_q$ satisface los requerimientos de una métrica y también merece ser llamada distancia [@IntroductionComputationalTopology]
 
 Estas distancias definidas son de suma importancia ya que se logra probar para cada una de ellas, mediante los teoremas de estabilidad que las mismas están acotadas por la distancia real que existe entre los espacios topológicos subyacentes que dan lugar a los conjuntos de datos sobre los cuáles se calculan los diagramas de persistencia [@IntroductionComputationalTopology]
 
