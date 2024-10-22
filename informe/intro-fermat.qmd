@@ -21,13 +21,16 @@ $$
 \mathbf{x}^K = \argmin_{\mathbf{x} \in \mathcal{S}_n} l\left( \mathbf{q} , \mathbf{x} \right)
 $$ {#eq-def-fermat-xk}
 
-La minimización se realiza sobre todos los valores posibles de $K$. Esta distancia captura por sí sola características topológicas del espacio [@IntrinsicPersistentHomologyFermatDistance], por lo que se espera que ayude a la posterior inferencia sobre el diagrama de persistencia construido.
+La minimización se realiza sobre todos los valores posibles de $K$ [@PatuFermatDistance]. Esta distancia captura por sí sola características topológicas del espacio [@IntrinsicPersistentHomologyFermatDistance], por lo que se espera que ayude a la posterior inferencia sobre el diagrama de persistencia construido.
 
-Uno de los principales resultados de la distancia de Fermat es que si $\mathcal{S}_N$ es una muestra i.i.d, entonces sea $f: \mathcal{M} \longrightarrow \mathbb{R}$ una función de densidad desconocida con soporte en $\mathcal{M}$, entonces se demuestra en [@PatuFermatDistance] que
+Uno de los principales resultados de la distancia de Fermat es que si $\mathcal{S}_N$ es una muestra i.i.d, entonces sea $f: \mathcal{M} \longrightarrow \mathbb{R}$ una función de densidad desconocida con soporte en $\mathcal{M}$, entonces se demuestra en [@IntrinsicPersistentHomologyFermatDistance] que
 
 $$ \lim_{N \rightarrow \infty} N^{\alpha} \mathcal{D}_{\mathcal{S}_n}(\mathbf{p}, \mathbf{q}) = c_{d, D} \inf_{\Gamma \subset \mathcal{M}} \int_{\Gamma} \frac{1}{f^{\alpha}}$$
 
-Es decir, la distancia de Fermat es un estimador consistente de la distancia geodésica sobre $\mathcal{M}$ en la que los caminos se ponderan por el valor de la función de densidad. Esto significa que la distancia de Fermat recupera tanto características de la topología del espacio $\mathcal{M}$ como de la función de distribución a partir de la cual se muestrea $\mathcal{S}_N$
+Es decir, la distancia de Fermat es un estimador consistente de la distancia geodésica sobre $\mathcal{M}$ en la que los caminos se ponderan por el valor de la función de densidad. Esto significa que la distancia de Fermat recupera tanto características de la topología del espacio $\mathcal{M}$ como de la función de distribución a partir de la cual se muestrea $\mathcal{S}_N$.
+
+![Ilustración de la distancia de Fermat entre las muestras destacadas en rojo y verde. Se observa que la misma se obtiene al recorrer la zona con alta densidad de datos del conjunto, sumando las bolas de distancia entre sucesivos saltos. Contrario a lo que se obtendría al utilizar la distancia Euclídea, donde la misma resultaría dada por una línea recta que une ambas muestras de forma directa, pasando por el espacio vacío de la parábola de datos.](imagenes/fermat-distance-eg.png){#fig-intro-fermat-eg width=70%}
+
 
 ### Aproximación por *k*-NN
 
