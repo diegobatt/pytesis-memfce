@@ -127,7 +127,7 @@ $$
 \theta \sim \mathcal{U}(0, 2\pi), \quad r \sim r_{max} \cdot \mathcal{U}^{\frac{1}{r_{power}}}(0, 1)
 $$
 
-Donde $r_{power} = 2$ corresponde al muestreo uniforme dentro de la circunferencia. Para valores mayores ($r_{power} > 2$) se obtiene una concentración más fuerte de puntos en los radios superiores, mientras que para $r_{power} < 2$ se obtienen más muestras cercanas al centro.
+Donde $r_{power} = 2$ corresponde al muestreo uniforme en el interior del círculo. Para valores mayores ($r_{power} > 2$) se obtiene una concentración más fuerte de puntos en los radios superiores, mientras que para $r_{power} < 2$ se obtienen más muestras cercanas al centro.
 Será de especial interés analizar los casos de $r_{power} > 2$ ya que se espera que los métodos trabajados logren descartar la existencia de agujeros a pesar de la baja en la densidad de muestreo cerca del origen.
 
 A continuación se muestra el conjunto de datos para un radio `{python} max_r`
