@@ -11,6 +11,7 @@ header-includes:
     - \usepackage{algorithm2e}
     - \usepackage{float}
     - \usepackage{booktabs}
+    # - \usepackage[spanish, english]{babel}
     - \floatplacement{table}{H}
 geometry: "left=3cm,right=3cm,top=2cm,bottom=2.5cm"
 urlcolor: blue

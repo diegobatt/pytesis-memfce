@@ -5,24 +5,20 @@ format:
     toc: true
     include-before-body:
       - latex/caratula.tex
+      - resumen-latex.tex
     link-citations: true
-abstract: This is the abstract
 bibliography: "latex/references.bib"
 ---
 
 <!-- Entre TOC y Primer Sección -->
 {{< pagebreak >}}
-# Resumen {.unnumbered .unlisted}
+# Introducción
 
 {{< include abstract.qmd >}}
 
-{{< pagebreak >}}
-# Abstract {.unnumbered .unlisted}
-
-{{< include abstract-EN.qmd >}}
 
 {{< pagebreak >}}
-# Introducción y Marco Teórico {#sec-intro}
+# Conceptos Utilizados y Marco Teórico {#sec-intro}
 
 {{< include intro-fermat.qmd >}}
 
@@ -57,4 +53,4 @@ FIRMA DEL DIRECTOR \hfill FIRMA DEL MAESTRANDO
 
 
 {{< pagebreak >}}
-# Referencias {.unnumbered .unlisted}
+# Referencias {.unnumbered}

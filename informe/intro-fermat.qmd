@@ -10,32 +10,32 @@ Donde $\mathcal{M} \subseteq \mathbb{R}^D$ es una variedad de dimensión $d \geq
 Se define entonces la distancia de Fermat para el par de puntos $\mathbf{p}, \mathbf{q} \in \mathcal{M}$ como:
 
 $$
-d_F(\mathbf{p}, \mathbf{q}) = \mathcal{D}_{\mathcal{S}_n}(\mathbf{p}, \mathbf{q}) = \min_K {\min_{\mathcal{S}_n^K} \sum_{i = 1}^{K-1} l\left( \mathbf{x}^i, \mathbf{x}^{i+1} \right) ^\alpha}
+d_F(\mathbf{p}, \mathbf{q}) = \mathcal{D}_{\mathcal{S}_N}(\mathbf{p}, \mathbf{q}) = \min_K {\min_{\mathcal{S}_N^K} \sum_{i = 1}^{K-1} l\left( \mathbf{x}^i, \mathbf{x}^{i+1} \right) ^\alpha}
 $$ {#eq-def-fermat}
 
-Donde $\mathcal{S}_n^K$, $K \geq 2$, representa todas las secuencias de puntos compuestas por $K$ elementos tomados de $\mathcal{S}_n$ con
+Donde $\mathcal{S}_N^K$, $K \geq 2$, representa todas las secuencias de puntos compuestas por $K$ elementos tomados de $\mathcal{S}_N$ con
 $$
-\mathbf{x}^1 = \argmin_{\mathbf{x} \in \mathcal{S}_n} l\left( \mathbf{p} , \mathbf{x} \right)
+\mathbf{x}^1 = \argmin_{\mathbf{x} \in \mathcal{S}_N} l\left( \mathbf{p} , \mathbf{x} \right)
 $$ {#eq-def-fermat-x1}
 $$
-\mathbf{x}^K = \argmin_{\mathbf{x} \in \mathcal{S}_n} l\left( \mathbf{q} , \mathbf{x} \right)
+\mathbf{x}^K = \argmin_{\mathbf{x} \in \mathcal{S}_N} l\left( \mathbf{q} , \mathbf{x} \right)
 $$ {#eq-def-fermat-xk}
 
 La minimización se realiza sobre todos los valores posibles de $K$ [@PatuFermatDistance]. Esta distancia captura por sí sola características topológicas del espacio [@IntrinsicPersistentHomologyFermatDistance], por lo que se espera que ayude a la posterior inferencia sobre el diagrama de persistencia construido.
 
-Uno de los principales resultados de la distancia de Fermat es que si $\mathcal{S}_N$ es una muestra i.i.d, entonces sea $f: \mathcal{M} \longrightarrow \mathbb{R}$ una función de densidad desconocida con soporte en $\mathcal{M}$, entonces se demuestra en [@IntrinsicPersistentHomologyFermatDistance; @PatuFermatDistance] que
+Uno de los principales resultados de la distancia de Fermat es que si $\mathcal{S}_N$ es una muestra i.i.d, distribuida a partir de $f: \mathcal{M} \longrightarrow \mathbb{R}$ una función de densidad desconocida con soporte en $\mathcal{M}$, entonces se demuestra en [@IntrinsicPersistentHomologyFermatDistance; @PatuFermatDistance] que
 
-$$ \lim_{N \rightarrow \infty} N^{\frac{\alpha - 1}{D}} \mathcal{D}_{\mathcal{S}_n}(\mathbf{p}, \mathbf{q}) = c_{d, D} \inf_{\Gamma \subset \mathcal{M}} \int_{\Gamma} \frac{1}{f^{\frac{\alpha - 1}{D}}}$$
+$$ \lim_{N \rightarrow \infty} N^{\frac{\alpha - 1}{D}} \mathcal{D}_{\mathcal{S}_N}(\mathbf{p}, \mathbf{q}) = c_{d, D} \inf_{\Gamma \subset \mathcal{M}} \int_{\Gamma} \frac{1}{f^{\frac{\alpha - 1}{D}}}$$
 
 Es decir, la distancia de Fermat es un estimador consistente de la distancia geodésica sobre $\mathcal{M}$ en la que los caminos se ponderan por el valor de la función de densidad. Esto significa que la distancia de Fermat recupera tanto características de la topología del espacio $\mathcal{M}$ como de la función de distribución a partir de la cual se muestrea $\mathcal{S}_N$.
 
-![Ilustración de la distancia de Fermat entre las muestras destacadas en rojo y verde. Se observa que la misma se obtiene al recorrer la zona con alta densidad de datos del conjunto, sumando las bolas de distancia entre sucesivos saltos. Contrario a lo que se obtendría al utilizar la distancia Euclídea, donde la misma resultaría dada por una línea recta que une ambas muestras de forma directa, pasando por el espacio vacío de la parábola de datos.](imagenes/fermat-distance-eg.png){#fig-intro-fermat-eg width=70%}
+![Ilustración de la distancia de Fermat entre los puntos destacadas en rojo y verde. Se observa que la misma se obtiene al recorrer la zona con alta densidad de datos del conjunto, sumando las bolas de distancia entre sucesivos saltos. Contrario a lo que se obtendría al utilizar la distancia Euclídea, donde la misma resultaría dada por una línea recta que une ambas muestras de forma directa, pasando por el espacio vacío de la parábola de datos.](imagenes/fermat-distance-eg.png){#fig-intro-fermat-eg width=70%}
 
 
 ### Aproximación por *k*-NN
 
-Teniendo en cuenta que la carga computacional del cálculo de la distancia de Fermat es altamente elevado, siendo este $\mathcal{O}(N^3)$ para todas las distancias entre pares de un conjunto de $N$ puntos, una heurística sencilla para reducir este tiempo, sin perdida de garantías en cuanto a los resultados asintóticos, es tomar solo los $k$ vecinos más cercanos de $\mathbf{x}^i$ como posibles $\mathbf{x}^{i+1}$ durante la construcción de las secuencias $\mathcal{S}_n^K$ sobre las cuales se realiza la maximización.
-Formalmente, si se define $\mathcal{N}_k(\mathbf{x})$ como el conjunto de $k$ vecinos más cercanos ($k$-NN) de $\mathbf{x}$, entonces la distancia de Fermat se define análogamente en \eqref{eq-def-fermat} pero siendo $\mathcal{S}_n^K$, $K \geq 2$ todas las secuencias posibles de puntos compuestos de $K$ elementos tomados de $\mathcal{S}_n$ tal que $\mathbf{x}^{i+1} \in \mathcal{N}_k(\mathbf{x}^i) \ \forall i$.
+Teniendo en cuenta que la carga computacional del cálculo de la distancia de Fermat es elevada, siendo esta $\mathcal{O}(N^3)$ para todas las distancias entre pares de un conjunto de $N$ puntos, una heurística sencilla para reducir este tiempo, sin perdida de garantías en cuanto a los resultados asintóticos, es tomar solo los $k$ vecinos más cercanos de $\mathbf{x}^i$ como posibles $\mathbf{x}^{i+1}$ durante la construcción de las secuencias $\mathcal{S}_N^K$ sobre las cuales se realiza la maximización.
+Formalmente, si se define $\mathcal{N}_k(\mathbf{x})$ como el conjunto de $k$ vecinos más cercanos ($k$-NN) de $\mathbf{x}$, entonces la distancia de Fermat se define análogamente en \eqref{eq-def-fermat} pero siendo $\mathcal{S}_N^K$, $K \geq 2$ todas las secuencias posibles de puntos compuestos de $K$ elementos tomados de $\mathcal{S}_N$ tal que $\mathbf{x}^{i+1} \in \mathcal{N}_k(\mathbf{x}^i) \ \forall i$.
 
 Con esta modificación, el cómputo de la distancia de Fermat para todos los pares de un conjunto de $N$ puntos tiene una complejidad temporal asintótica de $\mathcal{O}(N^2 \log N)$, sumado a esto, es posible almacenar la matriz de distancia de forma mucho más eficiente, ya que la misma pasa de ser densa, con $N^2$ elementos distinto de cero, a ser rala contando con $N*k$ elementos no nulos, pudiéndose esto almacenar de forma mucho más eficiente.
 

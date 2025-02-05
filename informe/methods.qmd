@@ -1,8 +1,8 @@
-En esta sección abordaremos los distintos métodos computacionales y estadísticos que utilizaremos para obtener los resultados de este trabajo. Así mismo, se presentarán los conjuntos de datos sobre los cuales estos métodos serán utilizados
+En esta sección abordaremos los distintos métodos computacionales y estadísticos que utilizaremos para obtener los resultados de este trabajo. Asimismo, se presentarán los conjuntos de datos sobre los cuales estos métodos serán utilizados
 
 ## Conjuntos de datos sintéticos  {#sec-methods-data-synth}
 
-Es común en la literatura de topología computacional enfocarse en unos conjuntos de datos sintéticos simples, sobre los cuales se corren los métodos de interés. Al ser estos utilizados por diferentes trabajos los resultados pueden ser fácilmente contrastados [@ConfidenceSetsForPersistenceDiagrams; @FootballRobustDataset]. A continuación se muestran los conjuntos de datos sintéticos que se utilizarán durante la @sec-results. En cada caso, se generarán dos nuevos conjuntos de datos por medio de agregar muestras atípicas y ruido, respectivamente, para lograr una mayor variabilidad en los conjuntos que puedan dificultar la tarea a las técnicas desarrolladas.
+Es común en la literatura de topología computacional enfocarse en unos conjuntos de datos sintéticos simples, sobre los cuales se corren los métodos de interés. Al ser estos utilizados por diferentes trabajos los resultados pueden ser fácilmente contrastados [@ConfidenceSetsForPersistenceDiagrams; @FootballRobustDataset]. A continuación se muestran los conjuntos de datos sintéticos que se utilizarán durante la @sec-results. En cada caso, se generarán dos nuevos conjuntos de datos por medio de agregar datos atípicos y ruido, respectivamente, para lograr una mayor variabilidad en los conjuntos que puedan dificultar la tarea a las técnicas desarrolladas.
 
 
 ```{python}
@@ -65,7 +65,7 @@ plot_dataset(X_circle_outliers, title="Datos Atípicos"); plt.show()
 
 ### Circunferencia gaussiana {#sec-methods-data-synth-circle-gauss}
 
-Una variación utilizada de la circunferencia uniforme, que busca enfatizar regiones con menor densidad de muestras aunque manteniendo el soporte del cual estas mismas se obtienen, es la circunferencia gaussiana. La definición de este conjunto de datos es análoga a la del caso uniforme, pero en este caso el ángulo $\angle \mathbf{x}$ se obtiene de una distribución normal truncada entre $-\pi$ y $\pi$, es decir
+Una variación utilizada de la circunferencia uniforme, que busca construir regiones con menor densidad de datos aunque manteniendo el soporte del cual estas mismas se obtienen, es la circunferencia gaussiana. La definición de este conjunto de datos es análoga a la del caso uniforme, pero en este caso el ángulo $\angle \mathbf{x}$ se obtiene de una distribución normal truncada entre $-\pi$ y $\pi$, es decir
 
 $$
 \angle \mathbf{x} \sim \mathrm{TruncNormal}(-\pi, \pi, \mu, \sigma)
@@ -275,4 +275,4 @@ Para obtener el intervalo de confianza, repetiremos el procedimiento realizado e
 \end{algorithm}
 
 
-Se demuestra que este método resulta en pruebas más potentes frente a las realizadas haciendo uso de la distancia euclídea [@ConfidenceSetsForPersistenceDiagrams]. Será de interés verificar su rendimiento frente a los *test* de hipótesis que se obtengan haciendo uso de la distancia de Fermat.
+Se demuestra que este método resulta en *tests* más potentes frente a las realizadas haciendo uso de la distancia euclídea [@ConfidenceSetsForPersistenceDiagrams]. Será de interés verificar su rendimiento frente a los *test* de hipótesis que se obtengan haciendo uso de la distancia de Fermat.

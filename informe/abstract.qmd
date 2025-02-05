@@ -6,10 +6,3 @@ Los resultados obtenidos muestran que efectivamente la distancia de Fermat logra
 Como aporte adicional, se desarrolló una biblioteca en el lenguaje de programación R que podrá ser utilizada para futuros trabajos sobre la distancia de Fermat en este lenguaje.
 
 A modo de compromiso con la reproducibilidad en la ciencia, la totalidad de esta Tesis se encuentra en [GitHub](https://github.com/diegobatt/pytesis-memfce)
-
-
-\begin{flushleft}
-\vfill
-
-FIRMA DEL DIRECTOR \hfill FIRMA DEL MAESTRANDO
-\end{flushleft}
