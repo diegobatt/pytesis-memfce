@@ -182,7 +182,7 @@ Haciendo uso de los conjuntos de datos descritos en la @sec-methods-data-synth, 
 
 ### Sub-muestreo con distancia euclídea {#sec-methods-subsampling-euclid}
 
-El primer método de cálculo de intervalos de confianza para diagramas de persistencia será mediante el sub-muestreo con distancia euclídea, desarrollado en [@ConfidenceSetsForPersistenceDiagrams]. Este método consiste en usar la técnica de submuestreo, introducida de forma teórica en la @sec-intro-subsampling, para obtener sub-muestras $\mathcal{S}_{N, b}^j$ del conjunto original mediante las cuales calcular directamente la distancia de Hausdorff basada en una distancia euclídea. Es decir, sea $\mathcal{S}_{N, b}^j$ una sub-muestra sin reposición de tamaño $b$ sobre $\mathcal{S}_N$ y sea $\theta_j = d_H(\mathcal{S}_{N}, \mathcal{S}_{N, b}^j)$ la distancia de Hausdorff entre $\mathcal{S}_N$ y $\mathcal{S}_{N, b}^k$, definimos
+El primer método de cálculo de intervalos de confianza para diagramas de persistencia será mediante el sub-muestreo con distancia euclídea, desarrollado en [@ConfidenceSetsForPersistenceDiagrams]. Este método consiste en usar la técnica de submuestreo, introducida de forma teórica en la @sec-intro-subsampling, para obtener sub-muestras $\mathcal{S}_{N, b}^j$ del conjunto original mediante las cuales calcular directamente la distancia de Hausdorff basada en una distancia euclídea. Es decir, sea $\mathcal{S}_{N, b}^j$ una sub-muestra sin reposición de tamaño $b$ sobre $\mathcal{S}_N$ y sea $\theta_j = d_H(\mathcal{S}_{N}, \mathcal{S}_{N, b}^j)$ la distancia de Hausdorff entre $\mathcal{S}_N$ y $\mathcal{S}_{N, b}^j$, definimos
 
 $$
 L_b(t) = \frac{1}{M}\sum_{j=1}^M I(\theta_j > t)
