@@ -6,11 +6,11 @@ Sea una muestra de $N$ puntos
 
 $$\mathcal{S}_{N} = \{\mathbf{x}_1, \dots, \mathbf{x}_N \} \subset \mathcal{M}$$
 
-Donde $\mathcal{M} \subseteq \mathbb{R}^D$ es una variedad de dimensión $d \geq 1$ y tal que $d \ll D$. Sea además $l(\cdot, \cdot)$ una función de distancia definida en $\mathcal{M} \times \mathcal{M}$ (siendo una opción típica la distancia Euclídea, pero pudiendo ser considerada cualquier otra distancia).
-Se define entonces la distancia de Fermat para el par de puntos $\mathbf{p}, \mathbf{q} \in \mathcal{M}$ como:
+Donde $\mathcal{M} \subseteq \mathbb{R}^D$ es una variedad de dimensión $d \geq 1$ y tal que $d \ll D$. Sea además $l(\cdot, \cdot)$ una función de distancia definida en $\mathcal{M} \times \mathcal{M}$ (siendo una opción típica la distancia euclídea, pero pudiendo ser considerada cualquier otra distancia).
+Se define entonces, para $\lambda \geq 1$, la distancia de Fermat para el par de puntos $\mathbf{p}, \mathbf{q} \in \mathcal{M}$ como:
 
 $$
-d_F(\mathbf{p}, \mathbf{q}) = \mathcal{D}_{\mathcal{S}_N}(\mathbf{p}, \mathbf{q}) = \min_K {\min_{\mathcal{S}_N^K} \sum_{i = 1}^{K-1} l\left( \mathbf{x}^i, \mathbf{x}^{i+1} \right) ^\alpha}
+d_F(\mathbf{p}, \mathbf{q}) = \mathcal{D}_{\mathcal{S}_N}(\mathbf{p}, \mathbf{q}) = \min_K {\min_{\mathcal{S}_N^K} \sum_{i = 1}^{K-1} l\left( \mathbf{x}^i, \mathbf{x}^{i+1} \right) ^\lambda}
 $$ {#eq-def-fermat}
 
 Donde $\mathcal{S}_N^K$, $K \geq 2$, representa todas las secuencias de puntos compuestas por $K$ elementos tomados de $\mathcal{S}_N$ con
@@ -23,13 +23,13 @@ $$ {#eq-def-fermat-xk}
 
 La minimización se realiza sobre todos los valores posibles de $K$ [@PatuFermatDistance]. Esta distancia captura por sí sola características topológicas del espacio [@IntrinsicPersistentHomologyFermatDistance], por lo que se espera que ayude a la posterior inferencia sobre el diagrama de persistencia construido.
 
-Uno de los principales resultados de la distancia de Fermat es que si $\mathcal{S}_N$ es una muestra i.i.d, distribuida a partir de $f: \mathcal{M} \longrightarrow \mathbb{R}$ una función de densidad desconocida con soporte en $\mathcal{M}$, entonces se demuestra en [@IntrinsicPersistentHomologyFermatDistance; @PatuFermatDistance] que
+Una de las principales ventajas de la distancia de Fermat es que si $\mathcal{S}_N$ es una muestra i.i.d, distribuida a partir de $f: \mathcal{M} \longrightarrow \mathbb{R}$ una función de densidad desconocida con soporte en $\mathcal{M}$, entonces se demuestra en [@IntrinsicPersistentHomologyFermatDistance; @PatuFermatDistance] que
 
-$$ \lim_{N \rightarrow \infty} N^{\frac{\alpha - 1}{D}} \mathcal{D}_{\mathcal{S}_N}(\mathbf{p}, \mathbf{q}) = c_{d, D} \inf_{\Gamma \subset \mathcal{M}} \int_{\Gamma} \frac{1}{f^{\frac{\alpha - 1}{D}}}$$
+$$ \lim_{N \rightarrow \infty} N^{\frac{\lambda - 1}{D}} \mathcal{D}_{\mathcal{S}_N}(\mathbf{p}, \mathbf{q}) = c_{d, D} \inf_{\Gamma \subset \mathcal{M}} \int_{\Gamma} \frac{1}{f^{\frac{\lambda - 1}{D}}}$$
 
 Es decir, la distancia de Fermat es un estimador consistente de la distancia geodésica sobre $\mathcal{M}$ en la que los caminos se ponderan por el valor de la función de densidad. Esto significa que la distancia de Fermat recupera tanto características de la topología del espacio $\mathcal{M}$ como de la función de distribución a partir de la cual se muestrea $\mathcal{S}_N$.
 
-![Ilustración de la distancia de Fermat entre los puntos destacadas en rojo y verde. Se observa que la misma se obtiene al recorrer la zona con alta densidad de datos del conjunto, sumando las bolas de distancia entre sucesivos saltos. Contrario a lo que se obtendría al utilizar la distancia Euclídea, donde la misma resultaría dada por una línea recta que une ambas muestras de forma directa, pasando por el espacio vacío de la parábola de datos.](imagenes/fermat-distance-eg.png){#fig-intro-fermat-eg width=70%}
+![Ilustración de la distancia de Fermat entre los puntos destacadas en rojo y verde. Se observa que la misma se obtiene al recorrer la zona con alta densidad de datos del conjunto, sumando las bolas de distancia entre sucesivos saltos. Contrario a lo que se obtendría al utilizar la distancia euclídea, donde la misma resultaría dada por una línea recta que une ambas muestras de forma directa, pasando por el espacio vacío de la parábola de datos.](imagenes/fermat-distance-eg.png){#fig-intro-fermat-eg width=70%}
 
 
 ### Aproximación por *k*-NN
@@ -41,7 +41,7 @@ Con esta modificación, el cómputo de la distancia de Fermat para todos los par
 
 ### Aproximación por *Landmarks*
 
-Otra mecanismo de aproximación para la distancia de Fermat se obtiene a partir de la utilización de *landmarks* en el cálculo del camino más corto entre nodos dentro de un grafo. Teniendo en cuenta que el problema de encontrar la distancia de Fermat entre dos puntos puede verse como el problema análogo de encontrar el camino más corto entre dos nodos en el grafo en el que cada punto del conjunto representa un nodo y sus aristas están dadas por las distancias entre los respectivos puntos elevadas al factor $\alpha$, es decir, un grafo completo. A continuación se describe la técnica de *Landmarks* para el cálculo eficiente del camino más corto entre nodos de un grafo:
+Otro mecanismo de aproximación para la distancia de Fermat se obtiene a partir de la utilización de *landmarks* en el cálculo del camino más corto entre nodos dentro de un grafo. Teniendo en cuenta que el problema de encontrar la distancia de Fermat entre dos puntos puede verse como el problema análogo de encontrar el camino más corto entre dos nodos en el grafo en el que cada punto del conjunto representa un nodo y sus aristas están dadas por las distancias entre los respectivos puntos elevadas al factor $\lambda$, es decir, un grafo completo. A continuación se describe la técnica de *Landmarks* para el cálculo eficiente del camino más corto entre nodos de un grafo:
 
 Sea un grafo $G(V,E)$ con $n$ vértices y $m$ aristas. Dados dos vértices $s, t \in V$, se define $d_G(s,t)$ como la longitud del camino más corto entre dos vértices $s, t \in V$.
 Sea además un conjunto ordenado de $d$ vértices $D = \{u_1, u_2, . . . , u_d\}$ del grafo $G$, que llamamos *landmarks*. La idea principal es representar cada otro vértice en el grafo como un vector de distancias de camino más corto al conjunto de landmarks. En particular, cada vértice $v \in V$ se representa como un vector $\phi(v)$ en $\mathbb{R}^d$:
