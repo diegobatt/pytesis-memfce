@@ -46,32 +46,29 @@ $$
 \Pi_1(\mathcal{M}) = \mathbb{Z}
 $$
 
-Siendo uno la dimensión del espacio que representa la homología de la variedad, es decir
+Siendo uno la dimensión del espacio de homología en grado uno de la variedad, lo que significa que hay un solo ciclo independiente que no puede deformarse dentro de la estructura, en notación matemática:
 $$
-\mathrm{dim}(\Pi_1(\mathcal{M})) = \beta_1(\mathcal{M}) = 1
+\mathrm{dim}(\Pi_1(\mathcal{M})) = \mathrm{dim}(\mathbb{Z}) = \beta_1(\mathcal{M}) = 1
 $$
 
 A la cantidad $\beta_1$, o en general, $\beta_k$ para homologías de grado superior, se la conoce como el $k$-ésimo número de *Betti*.
 
-Otro grado de homología que mencionaremos brevemente será el de las componentes conexas, denotado como $\Pi_0$, que intuitivamente representa todos los puntos que pueden ser unidos mediante una curva sin salirse de la variedad.
+Otro grado de homología que mencionaremos brevemente será el de las componentes conexas, denotado como $\Pi_0$. Intuitivamente, una componente conexa representa todos los puntos que pueden ser unidos mediante una curva sin salirse de la variedad.
 
-<!-- ACA CAMBIE H por PI, hay que ver como funciona -->
 
 ![Se ilustra la homología de primer grado de un toro, marcando en azul las dos curvas del mismo que no pueden ser continuamente deformadas la una en la otra. Cualquier otra curva cerrada que elijamos sobre el toro, podrá ser deformada en alguna de estas dos. Crédito de la imagen: [@IntroductionTDA]](imagenes/homology-torus.png){#fig-torus-homology  width=50%}
 
 
 ### Homología persistente {#sec-intro-persistent-homology}
 
-A partir de la definición general de Homología desarrollada en la @sec-intro-homology, el problema fundamental que se busca abordar con el Análisis Topológico de Datos (TDA) es inferir la homología en cuestión de una variedad $\mathcal{M}$ a partir de una muestra $\mathcal{S}_N$, obtenida mediante una función de densidad $f$ con soporte en $\mathcal{M}$. Como se mencionó brevemente en la @sec-espacios-metricos, esto se realiza mediante la elección de una medida de distancia. Concretamente, se define el espacio generado por una unión de bolas de radio $\epsilon$ centradas en las muestran de $\mathcal{S}_N$, es decir
+A partir de la definición general de Homología desarrollada en la @sec-intro-homology, el problema fundamental que se busca abordar con el Análisis Topológico de Datos (TDA) es inferir la homología en cuestión de una variedad $\mathcal{M}$ a partir de una muestra $\mathcal{S}_N$, obtenida mediante una función de densidad $f$ con soporte en $\mathcal{M}$. Como se mencionó brevemente en la @sec-espacios-metricos, esto se realiza mediante la elección de una medida de distancia. Concretamente, si se define una *bola* $B(\mathbf{x}_i, \epsilon)$ como la región del espacio que se encuentra a distancia menor a $\epsilon$ del punto $\mathbf{x}_i$, es decir:
+
+$$ B(\mathbf{x}_i, \epsilon) = \{ \mathbf{x} \mid d(\mathbf{x}_i, \mathbf{x}) < \epsilon \} $$
+
+con $d(\cdot, \cdot)$ una función de distancia. Se define entonces el espacio generado por la unión de estas bolas de radio $\epsilon$ centradas en cada una de las muestras de $\mathcal{S}_N$:
 
 $$ \mathcal{S}_N^{\epsilon} = \cup_{\mathbf{x} \in \mathcal{S}_N} B(\mathbf{x}, \epsilon)$$
 
-Donde
-$$
-B(\mathbf{x}_i, \epsilon) = \{ \mathbf{x} \mid d(\mathbf{x}_i, \mathbf{x}) < \epsilon \}
-$$
-
-con $d(\cdot, \cdot)$ una función de distancia.
 Se demuestra en [@ConfidenceSetsForPersistenceDiagrams] que cuando $\mathcal{M}$ es una variedad compacta y suave, bajo condiciones poco restrictivas sobre la distancia de Hausdorff (definida en la @sec-hausdorff-distance) entre la muestra y la variedad de la que proviene $d_{H}(\mathcal{S}_N, \mathcal{M})$, y una elección apropiada del valor $\epsilon$, entonces el espacio $\mathcal{S}_N^{\epsilon}$ es topológicamente equivalente a $\mathcal{M}$ [@Niyogi2008]. Esto significa que podemos inferir la topología de $\mathcal{M}$ a partir de $\mathcal{S}_N^{\epsilon}$. Se ilustra este concepto en la @fig-topologia-equivalente.
 
 ![Se ilustra en la imagen el conjunto de datos $\mathcal{S}_N$ (esquina superior izquierda, denotado como $\mathbb{X}_n$) y los espacios $\mathcal{S}_N^{\epsilon}$ (denotados en la imagen como $\mathbb{X}_n^{r_i}$) para tres diferentes valores de $\epsilon$. Se observa cómo el conjunto de datos parece provenir de una variedad que presenta un agujero en su interior, pero esto deja de ser apreciable para el valor de $\epsilon$ más grande en la esquina inferior derecha. Crédito de la imagen: [@IntroductionTDA]](imagenes/topologia-equivalente-epsilon.png){#fig-topologia-equivalente width=60%}
@@ -140,9 +137,11 @@ Como se mencionó previamente, calcular la homología $H(\mathcal{M})$ directame
 
 $$ \bigcap_{i=1}^k B(\mathbf{v}_i, \epsilon) \neq \emptyset $$
 
-El teorema del Nervio garantiza que $\mathcal{S}_N^{\epsilon}$ y $Čech(\mathcal{S}_N, \epsilon)$ son homotópicamente equivalentes [@ConfidenceSetsForPersistenceDiagrams; @NerveTheorem], es decir, comparten la misma homología.
+Es decir, un símplice $\sigma$ se incluye en el complejo de Čech solo sí la intersección entre todas las bolas de radio $\epsilon$ centradas en los vértices de $\sigma$ es no nula. Evaluar la intersección de bolas resulta muy costoso computacionalmente [@CechEfficientConstruction], en especial a medida que la dimensión del espacio crece, ya que para realizar esto no basta con evaluar las distancias de a pares entre los vértices y se requiere realizar operaciones mas complejas.
 
-Por cuestiones de eficiencia computacional, es común aproximar el complejo de Čech con el complejo de Vietoris-Rips [@ConfidenceSetsForPersistenceDiagrams], denotado como $V(\mathcal{S}_N, \epsilon)$, que consiste en los símplices con vértices en $\mathcal{S}_N$ de diámetro máximo $2\epsilon$. En otras palabras, el símplice $\sigma$ es incluido en el complejo si cada par de vértices en $\sigma$ está separado como máximo a distancia  $2\epsilon$. Este complejo resulta de cálculo más eficiente que el de Čech ya que solo las distancias de a pares entre los puntos son necesarias, y el mismo cumple la siguiente igualdad [@ConfidenceSetsForPersistenceDiagrams]:
+Este complejo resulta muy importante ya que el Teorema del Nervio garantiza que $\mathcal{S}_N^{\epsilon}$ y $Čech(\mathcal{S}_N, \epsilon)$ son homotópicamente equivalentes [@ConfidenceSetsForPersistenceDiagrams; @NerveTheorem], es decir, comparten la misma homología.
+
+Por cuestiones de eficiencia computacional, es común aproximar el complejo de Čech con el complejo de Vietoris-Rips [@ConfidenceSetsForPersistenceDiagrams], denotado como $V(\mathcal{S}_N, \epsilon)$, que consiste en los símplices con vértices en $\mathcal{S}_N$ de diámetro máximo $2\epsilon$. En otras palabras, el símplice $\sigma$ es incluido en el complejo si cada par de vértices en $\sigma$ está separado como máximo a distancia $2\epsilon$. Este complejo resulta de cálculo más eficiente que el de Čech ya que solo las distancias de a pares entre los puntos son necesarias, y el mismo cumple la siguiente igualdad [@ConfidenceSetsForPersistenceDiagrams]:
 
 $$
 Čech(\mathcal{S}_N, \epsilon) \subset V(\mathcal{S}_N, \epsilon) \subset Čech(\mathcal{S}_N, \sqrt{2}\epsilon)
