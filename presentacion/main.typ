@@ -16,6 +16,7 @@
 #heading(level: 2, outlined: false)[Contenidos]
 #outline(title: none, depth: 2, indent: 1em)
 
+#set text(10pt)
 #set heading(numbering: "1.")
 
 

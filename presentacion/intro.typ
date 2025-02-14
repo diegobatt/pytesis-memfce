@@ -7,7 +7,7 @@
 ]
 
 #frame(counter: "Encontramos", color: POSITIVE_COLOR)[
-  - La distancia de Fermat optiones resultados más potentes para topologías complejas
+  - La distancia de Fermat obtiene resultados más potentes para topologías complejas
   - Los métodos introducidos en @ConfidenceSetsForPersistenceDiagrams encuentran problemas para ciertas topologías y en dimensiones superiores a $D = 2$
   - Fermat lográ resultados consistentes con la inspección visual para los conjuntos de datos reales, donde los otros métodos fallan
 ]
