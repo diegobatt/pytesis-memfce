@@ -113,25 +113,53 @@ Al combinar estos valores de nacimiento y muerte obtenemos un par ordenado $(b_i
 
 == Distancia de Fermat
 
-  Sea una muestra de $N$ puntos
-  $ cal(S)_N  = {bold(x)_1, dots.h , bold(x)_N} in cal(M) $
-  Donde $cal(M) in bb(R)^D $ es una variedad de dimensión $d >= 1$ y tal que $d << D$.
+Sea una muestra de $N$ puntos
+$ cal(S)_N  = {bold(x)_1, dots.h , bold(x)_N} in cal(M) $
+Donde $cal(M) in bb(R)^D $ es una variedad de dimensión $d >= 1$ y tal que $d << D$.
 
-  Sea además $l(dot, dot)$ una función de distancia defininda en $cal(M) times cal(M)$. Se define entonces la distancia de Fermat para el par de puntos $bold(p)$ y $bold(q)$ como:
+Sea además $l(dot, dot)$ una función de distancia defininda en $cal(M) times cal(M)$. Se define entonces la distancia de Fermat para el par de puntos $bold(p)$ y $bold(q)$ como:
 
-  $ d_F (bold(p), bold(q)) = min_K min_(cal(S)_N^K) sum_(i=1)^(K-1) l(bold(x)^i, bold(x)^(i+1))^lambda $
+$ d_F (bold(p), bold(q)) = min_K min_(cal(S)_N^K) sum_(i=1)^(K-1) l(bold(x)^i, bold(x)^(i+1))^lambda $
 
-  Donde $cal(S)_N^K, K ≥ 2$, representa todas las secuencias de puntos compuestas por $K$ elementos tomados de $cal(S)_N$ con:
+Donde $cal(S)_N^K, K ≥ 2$, representa todas las secuencias de puntos compuestas por $K$ elementos tomados de $cal(S)_N$ con:
 
-  $ bold(x)^1 = op("argmin", limits: #true)_(bold(x) in cal(S)_N) l(bold(p), bold(x)) $
-  $ bold(x)^K = op("argmin", limits: #true)_(bold(x) in cal(S)_N) l(bold(q), bold(x)) $
+$ bold(x)^1 = op("argmin", limits: #true)_(bold(x) in cal(S)_N) l(bold(p), bold(x)) $
+$ bold(x)^K = op("argmin", limits: #true)_(bold(x) in cal(S)_N) l(bold(q), bold(x)) $
 
-  La minimización se realiza sobre todos los valores posibles de $K$
+La minimización se realiza sobre todos los valores posibles de $K$
 
 
 
 #figure(image("imagenes/intro/fermat-distance-eg.png", width: 75%))
 
+== Espacios Métricos
+
+Una espacio métrico $(M, rho)$ es un conjunto $M$ con una función $rho : M times M arrow.long bb(R)^+$, llamada distancia, tal que para cualquier terna de puntos $bold(x), bold(y), bold(z) in M$ se cumple:
+
+1. No negatividad: $rho(bold(x),bold(y)) gt.eq 0$ y $rho(bold(x),bold(y))=0$ solo sí $x=y$
+2. Simetría: $rho(bold(x),bold(y)) = rho(bold(y),bold(x))$
+3. Desigualdad triangular: $rho(bold(x),bold(z)) lt.eq rho(bold(x),bold(y)) + rho(bold(y),bold(z))$
+
+#v(1em)
+
+#frame(counter: "Distancia a un conjunto", color: INFORMATIVE_COLOR)[
+  Se define $d(dot, C): M arrow.long bb(R)^+$ la distancia  de un punto $bold(x)$ a un conjunto $C subset.eq M$ como:
+
+  $ d(bold(x), C) = inf_(bold(c) in C) rho(bold(x), bold(c)) $
+]
+
+
+=== Distancia de Hausdorff
+
+Dados dos subconjuntos compactos $A, B subset.eq M$ la distancia de Hausdorff $d_H (A, B)$ entre $A$ y $B$ se define como el valor $delta$ más pequeño tal que para cualquier $a in A$ existe un $b in B$ tal que $rho(a,b) lt.eq delta$
+
+
+#figure(image("imagenes/intro/hausdorff-distance.png", width: 55%))
+
+$
+d_H (A, B) &= max{sup_(bold(b) in B) d(bold(b), A), sup_(bold(a) in A) d(bold(a), B)} \
+d_H (A, B) &= sup_(bold(x) in M) |d(bold(x), A) - d(bold(x), B)|
+$
 
 
 == Regiones de Confianza
@@ -197,8 +225,34 @@ De esta forma, se obtiene la región de confianza para nuestro diagrama de persi
 
 $ cal(C)_n = {tilde(P) | W_infinity (tilde(P) , hat(P)) < theta_n} $
 
-#figure(image("imagenes/intro/intervalo-diagrama-persistencia.png", width: 70%))
+El conjunto $cal(C)_n$ tiene la siguiente interpretacion
+
+#message(fill: INFORMATIVE_COLOR)[
+  La región de confianza resultante puede visualizarse centrando una caja de lado $2 theta_n$ en cada punto $p_i = (b_i, d_i)$ del diagrama de persistencia. Todos los diagramas de persistencia $tilde(cal(P))$ dentro del intervalo de confianza de nivel $1 - alpha$ poseen una cualidad topológica dentro de esa caja, formalmente definida como ${ q in bb(R)^2 : ||q - p_i||_infinity lt.eq theta_n}$
+]
+
+#v(0.5em)
+
+Si centramos toda nuestra atención en la dicotomía de existencia o no de una cualidad topológica, surge otra interpretación
+
+#v(0.5em)
 
 #message(fill: POSITIVE_COLOR)[
-  La región de confianza resultante puede visualizarse centrando una caja de lado $2 theta_n$ en cada punto $p = (b_i, d_i)$ del diagrama de persistencia
+ podemos visualizar la región de confianza como una banda de ancho $sqrt(2) theta_n$ alrededor de la diagonal del diagrama de persistencia. Si para una dada cualidad topo
+ SADdadasdasdaASDASDASDASDASDS
 ]
+
+#v(0.5em)
+
+A partir de esta última interpretación, podemos plantear la siguiente prueba de hipótesis para cada una de las cualidades topologicas del diagrama de persistencia.
+
+$
+  l_i = d_i - b_i \
+  H_0^i : l_i  = 0 \
+  H_1^i : l_i > 0
+$
+
+Donde todas estas pruebas de hipótesis se realizan simultanealmente con un nivel de confianza $1 - alpha$ ya que se obtienen a partir de la región de confianza $cal(C)_n$
+
+
+#figure(image("imagenes/intro/intervalo-diagrama-persistencia.png", width: 75%))

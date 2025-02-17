@@ -28,18 +28,13 @@
 
 #include("conceptos.typ")
 
-= Técnicas y Algoritmos
+= Técnicas y desarrollo
 
-// == Intervalos de Confianza
-
-#frame(title: "asdads", color: POSITIVE_COLOR)[
-  #lorem(20)
-]
+#include("desarrollo.typ")
 
 = Conjuntos de datos utilizados
 
 #include("datos.typ")
-
 
 = Resultados
 
