@@ -143,9 +143,9 @@
     header = [*#counter:* #title.]
   }
 
-  set block(width: 100%, inset: (x: 0.4em, top: 0.35em, bottom: 0.45em))
+  set block(width: 100%, inset: (x: 0.4em, top: 0.30em, bottom: 0.30em))
   show stack: set block(breakable: false)
-  show stack: set block(breakable: false, above: 0.8em, below: 0.5em)
+  show stack: set block(breakable: false, above: 0.25em, below: 0.25em)
 
   stack(
     block(fill: color.lighten(20%), radius: (top: 0.3em), header),
@@ -154,10 +154,10 @@
 }
 
 
-#let message(body, fill: red) = {
+#let message(body, fill: red, alignment: center) = {
   set text(white, size: 0.95em)
-  set align(center)
-  set block(breakable: false, above: 0.5em, below: 0.1em)
+  // set align(alignment)
+  set block(width: 100%, breakable: false, above: 0.5em, below: 0.5em)
 
   block(
     fill: fill.lighten(10%),
