@@ -17,18 +17,15 @@ Por lo que la distancia de Hausdorff se reduce a
 $ d_H (cal(S)_N, cal(S)_N^j) = max_(bold(a) in cal(S)_N) min_(bold(b) in cal(S)^j_N) d(bold(a), bold(b)) $
 
 #frame(counter: "Estimación robusta de distancia de Hausdorff", color: POSITIVE_COLOR)[
-  Tomar el máximo de una distancia es una operación muy sensible a valores atípicos, por lo que con el objecivo de hacer esta operación más robusta, se reemplaza el máximo por un percentil alto $gamma$ de la distribución de distancias @RobustHausdorffDistance.
-
-  $ hat(d)_H (cal(S)_N, cal(S)_N^j) = op("percentil", limits: #true)_(bold(a) in cal(S)_N)(gamma)  min_(bold(b) in cal(S)^j_N) d(bold(a), bold(b)) $
-
-El valor de $gamma$ obtenido mediante experimentación fue $gamma = 0.97$
+  Tomar el máximo de una distancia es una operación muy sensible a valores atípicos, por lo que con el objecivo de hacer esta operación más robusta, se reemplaza el máximo por un percentil alto $gamma$ de la distribución de distancias @RobustHausdorffDistance. El valor de $gamma$ obtenido mediante experimentación fue $gamma = 0.97$
 ]
+
+$ hat(d)_H (cal(S)_N, cal(S)_N^j) = op("percentil", limits: #true)_(bold(a) in cal(S)_N)(gamma)  min_(bold(b) in cal(S)^j_N) d(bold(a), bold(b)) $
+
 
 
 
 == Estimación de regiones de confianza
-
-asd
 
 === Sub-muestreo con función de distancia
 
@@ -49,11 +46,13 @@ es decir, la caja de lado $2c_b$ centrada en los puntos del diagrama de persiste
 
 #v(1em)
 
-#message(fill: POSITIVE_COLOR)[
-  Al variar la función de distancia utilizada
-
-  #lorem(50)
+#message(fill: INFORMATIVE_COLOR)[
+  Al variar la función de distancia utilizada se obtendran diferentes resultados para la distancia de hausdorff $d_H (cal(S)_N , cal(S)^j_N)$ pero las garantias se mantienen. De esta forma podemos utilizar el mismo algoritmo para obtener las regiones de confianza pero variando la función de distancia, utilizando la distancia euclidea y la distancia de Fermat.
 ]
+#message(fill: POSITIVE_COLOR)[
+  Este método resulta muy eficiente ya que no es necesario calcular el diagrama de persistencia de las sub-muestras $cal(S)_N^j$
+]
+
 
 
 #align(center)[
@@ -81,7 +80,7 @@ $f_h$ representa la densidad de la medida de probabilidad $F_h$ que es una versi
 
 #v(0.5em)
 
-#message(fill: INFORMATIVE_COLOR)[
+#message(fill: POSITIVE_COLOR)[
   El diagrama de persistencia de los conjuntos de nivel de $f_h$, denotado como $cal(P)_h$, conserva la información topológica de $cal(M)$ y resulta más estables al costo de omitir detalles sutiles de la topología del espacio original, haciéndolo mas robusto al ruido y datos atípicos.
 ]
 
@@ -93,6 +92,9 @@ $ f_h (x) = sum_(i=1)^N 1/h^D K(frac(||x - x_i ||_2, h)) $
 
 que será evaluado en una grilla de puntos para construir diagrama de persistencia.
 
+#message(fill: NEGATIVE_COLOR)[
+  Este método es computacionalmente costoso ya que requiere calcular el diagrama de persistencia $hat(cal(P))^j$ para cada sub-muestra $cal(S)_N^j$
+]
 
 #align(center)[
   #scale(x: 100%, y: 100%)[
@@ -109,15 +111,3 @@ que será evaluado en una grilla de puntos para construir diagrama de persistenc
     ]
   ]
 ]
-
-
-// Input: SN , α, M j ← 1;
-// θ ← array(M);
-// fˆ (x): Estimador de densidad de f; h
-// Pˆ : Diagrama de persistencia de una grilla de fˆ (x); h
-// whilej≤M do
-// SNj : Sub-muestro de tamaño N con reposición de SN ;
-// fˆ (x)j : Estimador de densidad de f basado en la submuestra; h
-// Pˆj : Diagrama de persistencia de una grilla de fˆ (x)j; h
-// θ[j] ← W∞(Pˆ,Pˆj); end
-// return 2 * quantile(θ, 1 − α)

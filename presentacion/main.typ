@@ -28,11 +28,11 @@
 
 #include("conceptos.typ")
 
-= Técnicas y desarrollo
+= Desarrollo y Métodos Utilizados
 
 #include("desarrollo.typ")
 
-= Conjuntos de datos utilizados
+= Conjuntos de datos
 
 #include("datos.typ")
 
@@ -40,5 +40,10 @@
 
 #include("resultados.typ")
 
+= Conclusiones y Proximos Pasos
+
+#include("conclusiones.typ")
+
+#heading(outlined: false)[Preguntas?]
 
 #bibliography("references.bib", title: "Referencias")

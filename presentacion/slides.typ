@@ -55,18 +55,26 @@
       if heading != none {
         set align(top)
         v(space / 2.5)
-        let numbering = if heading.location().page() <= (page - 2) {
-          " " + numbering("(I)", page - heading.location().page())
+        let offset_numbering = if heading.depth > 1 {1} else {2}
+        let starting_numbering = if heading.depth > 1 {1} else {0}
+        let head_numbering = if heading.location().page() <= (page - offset_numbering) {
+          " " + numbering("(I)", page - heading.location().page() + starting_numbering)
         }
         if heading.depth == 3 {
           let prev_body = headings.rev().find(
-            x => x.depth <= 2 and x.location().page() < heading.location().page()
+            x => x.depth <= 2
+            and x.location().page() < heading.location().page()
           ).body
           let prev_heading_text = text(1.1em, weight: "bold", fill: title-color, prev_body)
-          let heading_text = text(1.3em, weight: "bold", fill: title-color, heading.body + numbering)
-          block(heading_text + h(1fr) + prev_heading_text , below: 0.6em)
+          let heading_text = text(1.3em, weight: "bold", fill: title-color, heading.body + head_numbering)
+          let header_block = grid(
+            columns: (1.5fr, 1fr),
+            align(left, heading_text),
+            align(right, prev_heading_text)
+          )
+          block(header_block , below: 0.6em)
         } else {
-          let heading_text = text(1.3em, weight: "bold", fill: title-color, heading.body + numbering)
+          let heading_text = text(1.3em, weight: "bold", fill: title-color, heading.body + head_numbering)
           block(heading_text, below: 0.6em)
         }
         line(length: 100%, stroke: title-color)
@@ -143,38 +151,47 @@
     header = [*#counter:* #title.]
   }
 
-  set block(width: 100%, inset: (x: 0.4em, top: 0.30em, bottom: 0.30em))
-  show stack: set block(breakable: false)
-  show stack: set block(breakable: false, above: 0.25em, below: 0.25em)
+  show stack: set block(breakable: false, above: 0.8em, below: 0.8em)
 
   stack(
-    block(fill: color.lighten(20%), radius: (top: 0.3em), header),
-    block(fill: color.lighten(55%), radius: (bottom: 0.3em), content),
+    block(
+      width: 100%,
+      fill: color.lighten(20%),
+      radius: (top: 0.3em),
+      inset: (x: 0.6em, top: 0.40em, bottom: 0.40em),
+      header
+    ),
+    block(
+      width: 100%,
+      fill: color.lighten(55%),
+      radius: (bottom: 0.3em),
+      inset: (x: 0.6em, top: 0.40em, bottom: 0.40em),
+      content
+    ),
   )
 }
 
 
-#let message(body, fill: red, alignment: center) = {
+#let message(body, fill: red) = {
   set text(white, size: 0.95em)
-  // set align(alignment)
   set block(width: 100%, breakable: false, above: 0.5em, below: 0.5em)
 
   block(
     fill: fill.lighten(10%),
-    inset: 13pt,
+    inset: 0.9em,
     radius: 4pt,
+    above: 1em,
+    below: 1em,
     [*#body*],
   )
 }
 
-// #let d = counter("definition")
-// #let definition(content, title: none, color: none) = {
-//   d.step()
-//   frame(counter: d.display(x => "Definition " + str(x)), title: title, color: color, content)
-// }
+#let subtitle_emph(body, color: none, align: none) = {
+  let fill = if color != none {color} else {INFORMATIVE_COLOR}
+  set text(1.1em, weight: "bold", fill: fill)
+  if align != none {
+    set align(align)
+  }
 
-// #let a = counter("algorithm")
-// #let algorithm(content, title: none, color: none) = {
-//   a.step()
-//   frame(counter: a.display(x => "Algorithm " + str(x)), title: title, color: color, content)
-// }
+  block(body, inset: 0em, above: 1.5em, below: 1.5em)
+}

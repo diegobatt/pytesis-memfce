@@ -12,42 +12,82 @@
   table.cell(fill: gray.lighten(70%))[#body]
 }
 
+#subtitle_emph()[Diagramas de Persistencia]
+
+Se obtuvieron los diagrama de persistencia con regiones de confianza según los métodos:
+  - Sub-muestreo con distancia euclídea
+  - Sub-muestreo con distancia de Fermat
+  - Bootstrap con estimación por densidad
+
+Para cada uno de los conjuntos de datos presentados.
+
+#v(3em)
+
+#message(fill: INFORMATIVE_COLOR)[
+  El objetivo fue evaluar si el diagrama de persistencia obtenido detecta apropiadamente, en el marco de la prueba de hipótesis, la cantidad correcta de agujeros según sea el conjunto datos.
+]
+
+#pagebreak()
+
+#subtitle_emph()[Potencia]
+
+Para los conjuntos de datos sintéticos, se repitió el análisis de detección de agujeros para una cantidad $M = 50$ de conjuntos de datos generados siguiendo la misma distribución. La región de confianza se calculó con un nivel de significancia de $alpha = 0.05$ para la muestra original de datos.
+
+#v(3em)
+
+#message(fill: INFORMATIVE_COLOR)[
+  El objetivo fue evaluar si la región de confianza obtenida lograba efectivamente detectar la cantidad correcta de agujeros en muestras de datos que no sean a partir de la cual la misma fue estimada.
+]
+
+#pagebreak()
+
+#subtitle_emph()[Limitaciones de Bootstrap con estimación por densidad]
+
+El método propuesto en esta tesis, es decir, Sub-muestreo con distancia de Fermat se presenta como un contendiente del método de bootstrap con estimación por densidad propuesto en @ConfidenceSetsForPersistenceDiagrams. Se realizaron las siguientes pruebas con el fin de exponer las limitaciones en el método de bootstrap con estimación por densidad, enfatizando que Fermat no presenta estas limitaciones.
+
+#v(3em)
+
+#message(fill: POSITIVE_COLOR)[
+  Fermat se presenta como una solución más computacionalmente eficiente en dimensiones superiores a $D = 2$ y para muestras de densidad no uniforme sobre la variedad $cal(M)$.
+]
+
+
 
 == Diagramas de Persistencia
 
 === Circunferencia Uniforme
 
-#align(center, text("Original", fill: POSITIVE_COLOR, weight: "bold"))
+#subtitle_emph()[Original]
 #figure(image("imagenes/resultados/circulo-base.png", width: 75%))
 
-#align(center, text("Ruido", fill: POSITIVE_COLOR, weight: "bold"))
+#subtitle_emph()[Ruido]
 #figure(image("imagenes/resultados/circulo-noise.png", width: 74.2%))
 
-#align(center, text("Datos atípicos", fill: POSITIVE_COLOR, weight: "bold"))
+#subtitle_emph()[Datos Atípicos]
 #figure(image("imagenes/resultados/circulo-outliers.png", width: 74%))
 
 
 === Circunferencia Gaussiana
 
-#align(center, text("Original", fill: POSITIVE_COLOR, weight: "bold"))
+#subtitle_emph()[Original]
 #figure(image("imagenes/resultados/circulo-gaussiano-base.png", width: 75%))
 
-#align(center, text("Ruido", fill: POSITIVE_COLOR, weight: "bold"))
+#subtitle_emph()[Ruido]
 #figure(image("imagenes/resultados/circulo-gaussiano-noise.png", width: 75%))
 
-#align(center, text("Datos atípicos", fill: POSITIVE_COLOR, weight: "bold"))
+#subtitle_emph()[Datos Atípicos]
 #figure(image("imagenes/resultados/circulo-gaussiano-outliers.png", width: 75%))
 
 
 === Anteojos
 
-#align(center, text("Original", fill: POSITIVE_COLOR, weight: "bold"))
+#subtitle_emph()[Original]
 #figure(image("imagenes/resultados/anteojos-base.png", width: 75%))
 
-#align(center, text("Ruido", fill: POSITIVE_COLOR, weight: "bold"))
+#subtitle_emph()[Ruido]
 #figure(image("imagenes/resultados/anteojos-noise.png", width: 75%))
 
-#align(center, text("Datos atípicos", fill: POSITIVE_COLOR, weight: "bold"))
+#subtitle_emph()[Datos Atípicos]
 #figure(image("imagenes/resultados/anteojos-outliers.png", width: 75%))
 
 === Círculo Relleno
@@ -56,16 +96,16 @@
 
 === Jugadores de Futbol
 
-#align(center, text("Defensor Central (2)", fill: POSITIVE_COLOR, weight: "bold"))
+#subtitle_emph()[Defensor Central (2)]
 #figure(image("imagenes/resultados/jugador-2.png", width: 75%))
 
-#align(center, text("Mediocampista (5)", fill: POSITIVE_COLOR, weight: "bold"))
+#subtitle_emph()[Mediocampista (5)]
 #figure(image("imagenes/resultados/jugador-5.png", width: 75%))
 
-#align(center, text("Lateral Izquierdo (8)", fill: POSITIVE_COLOR, weight: "bold"))
+#subtitle_emph()[Lateral Izquierdo (8)]
 #figure(image("imagenes/resultados/jugador-8.png", width: 75%))
 
-#align(center, text("Mediocampista (14)", fill: POSITIVE_COLOR, weight: "bold"))
+#subtitle_emph()[Mediocampista (14)]
 #figure(image("imagenes/resultados/jugador-14.png", width: 75%))
 
 == Dimensiones Superiores
@@ -87,9 +127,12 @@
 // #figure(image("imagenes/resultados/tiempos-dimensiones.png", width: 55%))
 #v(1.5em)
 
-// #frame(counter: "Costo computacional", color: INFORMATIVE_COLOR)[
-#message(fill: INFORMATIVE_COLOR)[
-  Se observa que los métodos Euclídeo y Fermat tienen un costo computacional similar para las diferentes dimensiones, el tiempo que demora el cómputo de los diagramas de persistencia no varía significativamente. Por su parte, #text(fill: NEGATIVE_COLOR, weight: "bold")[KDE demora exponencialmente más tiempo para dimensiones superiores a $D = 2$].
+#message(fill: POSITIVE_COLOR)[
+  Se observa que los métodos Euclídeo y Fermat tienen un costo computacional similar para las diferentes dimensiones, el tiempo que demora el cómputo de los diagramas de persistencia no varía significativamente.
+]
+
+#message(fill: NEGATIVE_COLOR)[
+  KDE demora exponencialmente más tiempo para dimensiones superiores a $D = 2$
 ]
 
 == Potencia
@@ -119,7 +162,7 @@
     [2], emph_cell[0], emph_cell[0], emph_cell(good: false)[100%],
 )]]
 
-#message(fill: INFORMATIVE_COLOR)[
+#message(fill: POSITIVE_COLOR)[
   Fermat es el único método que logra identificar correctamente la existencia de un único agujero para el conjunto de datos de anteojos.
 ]
 
@@ -145,7 +188,7 @@
     [2], emph_cell[0], emph_cell[0], emph_cell(good: false)[100%],
 )]]
 
-#message(fill: INFORMATIVE_COLOR)[
+#message(fill: POSITIVE_COLOR)[
   Similar al caso sin ruido, Fermat logra mayoritariamente detectar un único agujero en los anteojos para el 98% de las corridas
 ]
 
@@ -179,7 +222,7 @@
     [3], emph_cell[0], emph_cell[0], emph_cell[0],
 )]]
 
-#message(fill: INFORMATIVE_COLOR)[
+#message(fill: POSITIVE_COLOR)[
   Similar al caso sin ruido, Fermat logra mayoritariamente detectar un único agujero en los anteojos para el 98% de las corridas
 ]
 
@@ -206,6 +249,10 @@
     [1], emph_cell(good: false)[50%],
 )]
 
+#message(fill: POSITIVE_COLOR)[
+  Tanto el método euclídeo como Fermat logran detectar correctamente que el conjunto de datos de círculo relleno no tiene agujeros.
+]
+
 #message(fill: NEGATIVE_COLOR)[
-  Similar al caso sin ruido, Fermat logra mayoritariamente detectar un único agujero en los anteojos para el 98% de las corridas
+  El método KDE falla en detectar la ausencia de agujeros en el conjunto de datos de círculo relleno para el 50% de las corridas.
 ]

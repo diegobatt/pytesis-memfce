@@ -1,5 +1,7 @@
 #import "slides.typ": *
 
+#v(-1.8em)
+
 #frame(counter: "Buscamos", color: INFORMATIVE_COLOR)[
   - Introducir las herramientas del estado del arte en pruebas de hipótesis para homología persistente
   - Validar los resultados obtenidos en la bibliografía @ConfidenceSetsForPersistenceDiagrams
