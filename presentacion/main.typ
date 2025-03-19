@@ -24,6 +24,10 @@
 
 #include("intro.typ")
 
+= Problema y Motivación
+
+#include("problema.typ")
+
 = Conceptos Utilizados
 
 #include("conceptos.typ")

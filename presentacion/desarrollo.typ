@@ -4,70 +4,77 @@
 
 == Estimación robusta de distancia de Hausdorff
 
-Si tenemos dos conjuntos de puntos $cal(A)_N$ y $cal(B)_N $, la distancia de Hausdorff puede escribirse como:
+// Si tenemos dos conjuntos de puntos $cal(A)_N$ y $cal(B)_N $, la distancia de Hausdorff puede escribirse como:
+
+#subtitle_emph()[Distancia de Hausdorff para nubes de puntos]
 
 $
 d_H (cal(A)_N, cal(B)_N) = max{ max_(bold(a) in cal(A)_N) min_(bold(b) in cal(B)_N) d(bold(a), bold(b)), max_(bold(b) in cal(B)_N) min_(bold(a) in cal(A)_N) d(bold(a), bold(b)) }
 $
 
-Si tomamos el caso especial en el que $cal(A)_N$ es nuestro conjunto de datos $cal(A)_n = cal(S)_N$ y $cal(B)_N$ es el conjunto de puntos muestreada a partir de $cal(S)_N$, ya sea por sub-muestreo o por _bootstrap_, $cal(B)_N = cal(S)_N^j$, entonces al ser $cal(S)_N^j$ un *subconjunto* de $cal(S)_N$ se tiene que  $min_(bold(a) in cal(S)_N) d(bold(a), bold(b)) = 0$
+#subtitle_emph()[Nuestro caso particular $cal(A)_N = cal(S)_N, quad cal(B)_N = cal(S)_N^j$]
 
-Por lo que la distancia de Hausdorff se reduce a
+// Si tomamos el caso especial en el que $cal(A)_N$ es nuestro conjunto de datos $cal(A)_n = cal(S)_N$ y $cal(B)_N$ es el conjunto de puntos muestreada a partir de $cal(S)_N$, ya sea por sub-muestreo o por _bootstrap_, $cal(B)_N = cal(S)_N^j$, entonces al ser $cal(S)_N^j$ un *subconjunto* de $cal(S)_N$ se tiene que  $min_(bold(a) in cal(S)_N) d(bold(a), bold(b)) = 0$
+
+// Por lo que la distancia de Hausdorff se reduce a
 
 $ d_H (cal(S)_N, cal(S)_N^j) = max_(bold(a) in cal(S)_N) min_(bold(b) in cal(S)^j_N) d(bold(a), bold(b)) $
 
-#frame(counter: "Estimación robusta de distancia de Hausdorff", color: POSITIVE_COLOR)[
-  Tomar el máximo de una distancia es una operación muy sensible a valores atípicos, por lo que con el objecivo de hacer esta operación más robusta, se reemplaza el máximo por un percentil alto $gamma$ de la distribución de distancias @RobustHausdorffDistance. El valor de $gamma$ obtenido mediante experimentación fue $gamma = 0.97$
-]
+// #frame(counter: "Estimación robusta de distancia de Hausdorff", color: POSITIVE_COLOR)[
+//   Tomar el máximo de una distancia es una operación muy sensible a valores atípicos, por lo que con el objecivo de hacer esta operación más robusta, se reemplaza el máximo por un percentil alto $gamma$ de la distribución de distancias @RobustHausdorffDistance. El valor de $gamma$ obtenido mediante experimentación fue $gamma = 0.97$
+// ]
+
+#subtitle_emph(color: POSITIVE_COLOR)[Estimación robusta de distancia de Hausdorff]
 
 $ hat(d)_H (cal(S)_N, cal(S)_N^j) = op("percentil", limits: #true)_(bold(a) in cal(S)_N)(gamma)  min_(bold(b) in cal(S)^j_N) d(bold(a), bold(b)) $
+
+Valor obtenido mediante experimentación:
+$ gamma = 0.97 $
 
 
 
 
 == Estimación de regiones de confianza
+asd
 
 === Sub-muestreo con función de distancia
 
-Sea $cal(S)^j_N$ una sub-muestra sin reposición de tamaño $b$ sobre $cal(S)_N$ y
-sea
+#grid(
+  columns: (0.5fr, 1fr),
+  align: center,
+  $
+    theta_j &= d_H (cal(S)_N , cal(S)^j_N) \
+    L_b(t) &= 1/M sum_(j=1)^M I(theta_j > t) \
+    c_b &= 2 L_b^(-1) (alpha)
+  $,
+  [
+    Se demuestra
+    $ bb(P) (W_infinity (hat(cal(P)), cal(P)) gt c_b) lt.eq bb(P)( d_H (cal(S)_N , cal(M)) gt c_b ) = alpha + cal(O)(b/N)^(1/4) $
+  ]
+)
 
-$ theta_j = d_H (cal(S)_N , cal(S)^j_N) $
+#align(center, subtitle_emph()[Algoritmo])
 
-definimos
-
-$ L_b(t) = 1/M sum_(j=1)^M I(theta_j > t) $
-
-con $I$ la función indicadora y $M$ el número de sub-muestras. Si definimos $c_b = 2 L_b^(-1) (alpha) $ entonces se demuestra @ConfidenceSetsForPersistenceDiagrams que
-
-$ bb(P) (W_infinity (hat(cal(P)), cal(P)) gt c_b) lt.eq bb(P)( d_H (cal(S)_N , cal(M)) gt c_b ) = alpha + cal(O)(b/N)^(1/4) $
-
-es decir, la caja de lado $2c_b$ centrada en los puntos del diagrama de persistencia $hat(cal(P))$ es una región de confianza de nivel asintótico $1 − alpha$ para el diagrama de persistencia $cal(P)$.
-
-#v(1em)
-
-#message(fill: INFORMATIVE_COLOR)[
-  Al variar la función de distancia utilizada se obtendran diferentes resultados para la distancia de hausdorff $d_H (cal(S)_N , cal(S)^j_N)$ pero las garantias se mantienen. De esta forma podemos utilizar el mismo algoritmo para obtener las regiones de confianza pero variando la función de distancia, utilizando la distancia euclidea y la distancia de Fermat.
-]
-#message(fill: POSITIVE_COLOR)[
-  Este método resulta muy eficiente ya que no es necesario calcular el diagrama de persistencia de las sub-muestras $cal(S)_N^j$
-]
-
-
-
-#align(center)[
-  #scale(x: 100%, y: 100%)[
-    #algo(title: "Intervalo Sub-muestreo", parameters: ($cal(S)_N$, $b$, $alpha$, $M$))[
-      $theta <- "array"(M)$ \
-      for $j <- 0$ to $M$: #i\
-        $cal(S)^j_N <- "submuestra"(cal(S)_N, b)$ \
-        $theta[j] <- d_H (cal(S)_N , cal(S)^j_N)$ #d\
-      return $2 "quantile"(theta, 1 - alpha)$
+#grid(
+  columns: (1.1fr, 0.01fr, 1fr),
+  align: center,
+  algo(title: "Intervalo Sub-muestreo", parameters: ($cal(S)_N$, $b$, $alpha$, $M$))[
+    $theta <- "array"(M)$ \
+    for $j <- 0$ to $M$: #i\
+      $cal(S)^j_N <- "submuestra"(cal(S)_N, b)$ \
+      $theta[j] <- d_H (cal(S)_N , cal(S)^j_N)$ #d\
+    return $2 "quantile"(theta, 1 - alpha)$
+  ],
+  [],
+  [
+    #message(fill: INFORMATIVE_COLOR)[
+      La distancia utilizada para calcular $d_H (cal(S)_N , cal(S)^j_N)$ puede ser Fermat o euclídea
+    ]
+    #message(fill: POSITIVE_COLOR)[
+      Eficiente: No es necesario computar el diagrama de persistencia
     ]
   ]
-]
-
-
+)
 
 
 === Bootstrap con estimación por densidad
