@@ -56,7 +56,7 @@ asd
 #align(center, subtitle_emph()[Algoritmo])
 
 #grid(
-  columns: (1.1fr, 0.01fr, 1fr),
+  columns: (1.1fr, 0.06fr, 1fr),
   align: center,
   algo(title: "Intervalo Sub-muestreo", parameters: ($cal(S)_N$, $b$, $alpha$, $M$))[
     $theta <- "array"(M)$ \
@@ -79,31 +79,7 @@ asd
 
 === Bootstrap con estimación por densidad
 
-Sea $cal(S)_N$ un conjunto de muestras i.i.d obtenidas a partir de la medida de probabilidad $F$ con soporte en una variedad $cal(M)$, se define
-
-$ f_h (x) = integral_cal(M) 1/h^D K(frac(||x - u ||_2, h)) d F(u) $
-
-$f_h$ representa la densidad de la medida de probabilidad $F_h$ que es una versión suavizada de $F$ con un _kernel_ $K$ y un ancho de banda $h$ @ConfidenceSetsForPersistenceDiagrams.
-
-#v(0.5em)
-
-#message(fill: POSITIVE_COLOR)[
-  El diagrama de persistencia de los conjuntos de nivel de $f_h$, denotado como $cal(P)_h$, conserva la información topológica de $cal(M)$ y resulta más estables al costo de omitir detalles sutiles de la topología del espacio original, haciéndolo mas robusto al ruido y datos atípicos.
-]
-
-#v(0.5em)
-
-Dado que $f_h$ es desconocido, utilizaremos su estimador usual:
-
-$ f_h (x) = sum_(i=1)^N 1/h^D K(frac(||x - x_i ||_2, h)) $
-
-que será evaluado en una grilla de puntos para construir diagrama de persistencia.
-
-#message(fill: NEGATIVE_COLOR)[
-  Este método es computacionalmente costoso ya que requiere calcular el diagrama de persistencia $hat(cal(P))^j$ para cada sub-muestra $cal(S)_N^j$
-]
-
-#align(center)[
+#let algo_bootstrap = align(center)[
   #scale(x: 100%, y: 100%)[
     #algo(title: "Bootstrap densidad", parameters: ($cal(S)_N$, $h$, $alpha$, $M$))[
       $theta <- "array"(M)$ \
@@ -118,3 +94,44 @@ que será evaluado en una grilla de puntos para construir diagrama de persistenc
     ]
   ]
 ]
+
+#grid(
+  columns: (1fr, 0.04fr, 1fr),
+  align: center,
+  [
+    #v(1em)
+    // $ f_h (x) = integral_cal(M) 1/h^D K(frac(||x - u ||_2, h)) d F(u) $
+    $ f_h (x) = sum_(i=1)^N 1/h^D K(frac(||x - x_i ||_2, h)) $
+    evaluado en una grilla de puntos para construir el diagrama de persistencia.
+    #v(1em)
+    #message(fill: NEGATIVE_COLOR)[Computacionalmente muy costoso]
+    #message(fill: NEGATIVE_COLOR)[Puede omitir detalles sutiles de la topología del espacio original]
+    #message(fill: POSITIVE_COLOR)[Resulta más estable al ruido y datos atípicos]
+  ],
+  [],
+  algo_bootstrap
+)
+
+// Sea $cal(S)_N$ un conjunto de muestras i.i.d obtenidas a partir de la medida de probabilidad $F$ con soporte en una variedad $cal(M)$, se define
+
+// $ f_h (x) = integral_cal(M) 1/h^D K(frac(||x - u ||_2, h)) d F(u) $
+
+// $f_h$ representa la densidad de la medida de probabilidad $F_h$ que es una versión suavizada de $F$ con un _kernel_ $K$ y un ancho de banda $h$ @ConfidenceSetsForPersistenceDiagrams.
+
+// #v(0.5em)
+
+// #message(fill: POSITIVE_COLOR)[
+//   El diagrama de persistencia de los conjuntos de nivel de $f_h$, denotado como $cal(P)_h$, conserva la información topológica de $cal(M)$ y resulta más estables al costo de omitir detalles sutiles de la topología del espacio original, haciéndolo mas robusto al ruido y datos atípicos.
+// ]
+
+// #v(0.5em)
+
+// Dado que $f_h$ es desconocido, utilizaremos su estimador usual:
+
+// $ f_h (x) = sum_(i=1)^N 1/h^D K(frac(||x - x_i ||_2, h)) $
+
+// que será evaluado en una grilla de puntos para construir diagrama de persistencia.
+
+// #message(fill: NEGATIVE_COLOR)[
+//   Este método es computacionalmente costoso ya que requiere calcular el diagrama de persistencia $hat(cal(P))^j$ para cada sub-muestra $cal(S)_N^j$
+// ]

@@ -199,7 +199,7 @@ Analizar la distribución empírica de $hat(theta)^j = T(cal(S)_N^j)$
 ]
 
 #let subsampling_message = frame(counter: "Sub-muestreo", color: INFORMATIVE_COLOR)[
-  $cal(S)_N^j $ muestras de tamaño $b$ *sin reposición*
+  $cal(S)_N^j, b $: muestras de tamaño $b$ *sin reposición*
 ]
 
 #grid(
