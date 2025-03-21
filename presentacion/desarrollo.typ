@@ -35,7 +35,6 @@ $ gamma = 0.97 $
 
 
 == Estimación de regiones de confianza
-asd
 
 === Sub-muestreo con función de distancia
 

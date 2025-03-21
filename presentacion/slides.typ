@@ -61,16 +61,18 @@
           " " + numbering("(I)", page - heading.location().page() + starting_numbering)
         }
         if heading.depth == 3 {
-          let prev_body = headings.rev().find(
-            x => x.depth <= 2
-            and x.location().page() < heading.location().page()
-          ).body
-          let prev_heading_text = text(1.1em, weight: "bold", fill: title-color, prev_body)
-          let heading_text = text(1.3em, weight: "bold", fill: title-color, heading.body + head_numbering)
+          let filtered_headings = headings.filter(x => x.depth == 2 or x.location().page() == heading.location().page())
+          let body_ix = filtered_headings.position(x => x == heading)
+          let prev_body = filtered_headings.at(body_ix - 1).body
+          // let prev_body = headings.rev().find(
+          //   x => x.depth <= 2 and x.location().page() < heading.location().page()
+          // ).body
+          let prev_heading_text = text(1.3em, weight: "bold", fill: title-color, prev_body)
+          let heading_text = text(1.1em, weight: "bold", fill: title-color, heading.body + head_numbering)
           let header_block = grid(
             columns: (1.5fr, 1fr),
-            align(left, heading_text),
-            align(right, prev_heading_text)
+            align(left, prev_heading_text),
+            align(right, heading_text)
           )
           block(header_block , below: 0.6em)
         } else {

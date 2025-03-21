@@ -135,8 +135,6 @@ $ cal(S)_N^(epsilon) = union_(bold(x) in cal(S)_N) B(bold(x), epsilon ) = L_epsi
 
 
 
-#figure(image("imagenes/intro/bottleneck-distance.png", width: 40%))
-
 
 #let message_box_bottleneck = [
   #v(7em)
@@ -214,6 +212,7 @@ Analizar la distribución empírica de $hat(theta)^j = T(cal(S)_N^j)$
 === Regiones de confianza para diagramas de persistencia
 
 // Buscamos obtener una región de confianza de las cualidades topológicas de nuestro diagrama de persistencia.
+#v(2em)
 
 $
 lim_(n arrow infinity ) inf bb(P)(0 lt.eq  W_infinity (cal(P), hat(cal(P))) lt.eq theta_n) gt.eq 1 - alpha
