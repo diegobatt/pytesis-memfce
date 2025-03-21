@@ -3,19 +3,19 @@
 #v(-1.8em)
 
 #frame(counter: "Buscamos", color: INFORMATIVE_COLOR)[
-  - Introducir las herramientas del estado del arte en pruebas de hipótesis para homología persistente
-  - Validar los resultados obtenidos en la bibliografía @ConfidenceSetsForPersistenceDiagrams
-  - Contrastar los resultados de la bibliografía con los obtenidos al utilizar la distancia de Fermat
+  - Aplicar herramientas de pruebas de hipótesis para homología persistente.
+  - Validar resultados de la bibliografía.
+  - Comparar esos resultados con los obtenidos usando la distancia de Fermat.
 ]
 
 #frame(counter: "Encontramos", color: POSITIVE_COLOR)[
-  - La distancia de Fermat obtiene resultados más potentes para topologías complejas
-  - Los métodos introducidos en @ConfidenceSetsForPersistenceDiagrams encuentran problemas para ciertas topologías y en dimensiones superiores a $D = 2$
-  - Fermat lográ resultados consistentes con la inspección visual para los conjuntos de datos reales, donde los otros métodos fallan
+  - Fermat es más potente en topologías complejas.
+  - Los métodos de la bibliografía fallan en ciertas topologías y para $D > 2$.
+  - Fermat es consistente con la inspección visual en datos reales.
 ]
 
 #frame(counter: "Mientras tanto aprendimos", color: EXTRA_INFO_COLOR)[
-  - Nociones básicas de topología y sus aplicaciones a analisis de datos
-  - Algoritmos de geometría computacional
-  - Cómo crear y publicar un paquete de R a CRAN
+  - Topología aplicada a análisis de datos.
+  - Geometría computacional.
+  - Publicar un paquete de R en CRAN.
 ]

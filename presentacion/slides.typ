@@ -186,11 +186,11 @@
   )
 }
 
-#let subtitle_emph(body, color: none, align: none) = {
+#let subtitle_emph(body, color: none, alignment: none) = {
   let fill = if color != none {color} else {INFORMATIVE_COLOR}
   set text(1.1em, weight: "bold", fill: fill)
-  if align != none {
-    set align(align)
+  if alignment != none {
+    set align(alignment)
   }
 
   block(body, inset: 0em, above: 1.5em, below: 1.5em)

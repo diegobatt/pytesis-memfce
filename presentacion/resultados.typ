@@ -12,45 +12,22 @@
   table.cell(fill: gray.lighten(70%))[#body]
 }
 
+#v(2em)
+
 #subtitle_emph()[Diagramas de Persistencia]
 
-Se obtuvieron los diagrama de persistencia con regiones de confianza según los métodos:
-  - Sub-muestreo con distancia euclídea
-  - Sub-muestreo con distancia de Fermat
-  - Bootstrap con estimación por densidad
+#list(
+  spacing: 1.5em,
+  [Sub-muestreo con distancia euclídea #h(0.5em) #text(fill: POSITIVE_COLOR)[$times$ Todos los conjuntos de datos]],
+  [Sub-muestreo con distancia de Fermat #h(0.5em) #text(fill: POSITIVE_COLOR)[$times$ Todos los conjuntos de datos]],
+  [Bootstrap con estimación por densidad #h(0.5em) #text(fill: POSITIVE_COLOR)[$times$ Todos los conjuntos de datos]]
+)
 
-Para cada uno de los conjuntos de datos presentados.
-
-#v(3em)
-
-#message(fill: INFORMATIVE_COLOR)[
-  El objetivo fue evaluar si el diagrama de persistencia obtenido detecta apropiadamente, en el marco de la prueba de hipótesis, la cantidad correcta de agujeros según sea el conjunto datos.
-]
-
-#pagebreak()
+#v(2em)
 
 #subtitle_emph()[Potencia]
 
-Para los conjuntos de datos sintéticos, se repitió el análisis de detección de agujeros para una cantidad $M = 50$ de conjuntos de datos generados siguiendo la misma distribución. La región de confianza se calculó con un nivel de significancia de $alpha = 0.05$ para la muestra original de datos.
-
-#v(3em)
-
-#message(fill: INFORMATIVE_COLOR)[
-  El objetivo fue evaluar si la región de confianza obtenida lograba efectivamente detectar la cantidad correcta de agujeros en muestras de datos que no sean a partir de la cual la misma fue estimada.
-]
-
-#pagebreak()
-
-#subtitle_emph()[Limitaciones de Bootstrap con estimación por densidad]
-
-El método propuesto en esta tesis, es decir, Sub-muestreo con distancia de Fermat se presenta como un contendiente del método de bootstrap con estimación por densidad propuesto en @ConfidenceSetsForPersistenceDiagrams. Se realizaron las siguientes pruebas con el fin de exponer las limitaciones en el método de bootstrap con estimación por densidad, enfatizando que Fermat no presenta estas limitaciones.
-
-#v(3em)
-
-#message(fill: POSITIVE_COLOR)[
-  Fermat se presenta como una solución más computacionalmente eficiente en dimensiones superiores a $D = 2$ y para muestras de densidad no uniforme sobre la variedad $cal(M)$.
-]
-
+- $M = 50$ repeticiones de detección de agujeros #h(0.5em) #text(fill: POSITIVE_COLOR)[$times$ Conjuntos de datos literatura y adicionales]
 
 
 == Diagramas de Persistencia
@@ -110,6 +87,9 @@ El método propuesto en esta tesis, es decir, Sub-muestreo con distancia de Ferm
 
 == Dimensiones Superiores
 
+#v(3em)
+
+
 #align(center)[#table(
   columns: 4,
   align: center,
@@ -125,11 +105,8 @@ El método propuesto en esta tesis, es decir, Sub-muestreo con distancia de Ferm
 )]
 
 // #figure(image("imagenes/resultados/tiempos-dimensiones.png", width: 55%))
-#v(1.5em)
+#v(4em)
 
-#message(fill: POSITIVE_COLOR)[
-  Se observa que los métodos Euclídeo y Fermat tienen un costo computacional similar para las diferentes dimensiones, el tiempo que demora el cómputo de los diagramas de persistencia no varía significativamente.
-]
 
 #message(fill: NEGATIVE_COLOR)[
   KDE demora exponencialmente más tiempo para dimensiones superiores a $D = 2$
@@ -138,6 +115,8 @@ El método propuesto en esta tesis, es decir, Sub-muestreo con distancia de Ferm
 == Potencia
 
 === Base
+
+#v(4em)
 
 // #figure(image("imagenes/resultados/circulo-potencia.png", width: 100%))
 
@@ -162,11 +141,13 @@ El método propuesto en esta tesis, es decir, Sub-muestreo con distancia de Ferm
     [2], emph_cell[0], emph_cell[0], emph_cell(good: false)[100%],
 )]]
 
-#message(fill: POSITIVE_COLOR)[
-  Fermat es el único método que logra identificar correctamente la existencia de un único agujero para el conjunto de datos de anteojos.
-]
+// #message(fill: POSITIVE_COLOR)[
+//   Fermat es el único método que logra identificar correctamente la existencia de un único agujero para el conjunto de datos de anteojos.
+// ]
 
 === Ruido Agregado
+
+#v(4em)
 
 #scale(x: table_resize, y: table_resize)[#align(center)[#table(
   columns: 5,
@@ -188,11 +169,13 @@ El método propuesto en esta tesis, es decir, Sub-muestreo con distancia de Ferm
     [2], emph_cell[0], emph_cell[0], emph_cell(good: false)[100%],
 )]]
 
-#message(fill: POSITIVE_COLOR)[
-  Similar al caso sin ruido, Fermat logra mayoritariamente detectar un único agujero en los anteojos para el 98% de las corridas
-]
+// #message(fill: POSITIVE_COLOR)[
+//   Similar al caso sin ruido, Fermat logra mayoritariamente detectar un único agujero en los anteojos para el 98% de las corridas
+// ]
 
 === Datos Atípicos
+
+#v(1em)
 
 #let table_resize_outliers = 100%
 #scale(x: table_resize_outliers, y: table_resize_outliers)[#align(center)[#table(
@@ -222,12 +205,14 @@ El método propuesto en esta tesis, es decir, Sub-muestreo con distancia de Ferm
     [3], emph_cell[0], emph_cell[0], emph_cell[0],
 )]]
 
-#message(fill: POSITIVE_COLOR)[
-  Similar al caso sin ruido, Fermat logra mayoritariamente detectar un único agujero en los anteojos para el 98% de las corridas
-]
+// #message(fill: POSITIVE_COLOR)[
+//   Similar al caso sin ruido, Fermat logra mayoritariamente detectar un único agujero en los anteojos para el 98% de las corridas
+// ]
 
 
 === Círculo relleno
+
+#v(2em)
 
 #align(center)[#table(
   columns: 3,
@@ -249,10 +234,8 @@ El método propuesto en esta tesis, es decir, Sub-muestreo con distancia de Ferm
     [1], emph_cell(good: false)[50%],
 )]
 
-#message(fill: POSITIVE_COLOR)[
-  Tanto el método euclídeo como Fermat logran detectar correctamente que el conjunto de datos de círculo relleno no tiene agujeros.
-]
+#v(3em)
 
 #message(fill: NEGATIVE_COLOR)[
-  El método KDE falla en detectar la ausencia de agujeros en el conjunto de datos de círculo relleno para el 50% de las corridas.
+  El método KDE falla en detectar la ausencia de agujeros para el 50% de las corridas.
 ]
