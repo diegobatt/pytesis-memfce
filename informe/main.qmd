@@ -16,7 +16,6 @@ bibliography: "latex/references.bib"
 
 {{< include abstract.qmd >}}
 
-
 {{< pagebreak >}}
 # Conceptos Utilizados y Marco Teórico {#sec-intro}
 
