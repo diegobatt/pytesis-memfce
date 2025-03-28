@@ -4,37 +4,38 @@ En una gran cantidad de aplicaciones de aprendizaje automático resulta de cruci
 
 Sea una muestra de $N$ puntos
 
-$$\mathcal{S}_{N} = \{\mathbf{x}_1, \dots, \mathbf{x}_N \} \subset \mathcal{M}$$
+$$\mathcal{S}_{N} = \{\mathbf{x}_1, \dots, \mathbf{x}_N \} \subset \mathcal{M},$$
 
-Donde $\mathcal{M} \subseteq \mathbb{R}^D$ es una variedad de dimensión $d \geq 1$ y tal que $d \ll D$. Sea además $l(\cdot, \cdot)$ una función de distancia definida en $\mathcal{M} \times \mathcal{M}$ (siendo una opción típica la distancia euclídea, pero pudiendo ser considerada cualquier otra distancia).
+donde $\mathcal{M} \subseteq \mathbb{R}^D$ es una variedad de dimensión $d \geq 1$ y tal que $d \ll D$. Sea además $l(\cdot, \cdot)$ una función de distancia definida en $\mathcal{M} \times \mathcal{M}$ (siendo una opción típica la distancia euclídea, pero pudiendo ser considerada cualquier otra distancia).
 Se define entonces, para $\lambda \geq 1$, la distancia de Fermat para el par de puntos $\mathbf{p}, \mathbf{q} \in \mathcal{M}$ como:
 
 $$
-d_F(\mathbf{p}, \mathbf{q}) = \mathcal{D}_{\mathcal{S}_N}(\mathbf{p}, \mathbf{q}) = \min_K {\min_{\mathcal{S}_N^K} \sum_{i = 1}^{K-1} l\left( \mathbf{x}^i, \mathbf{x}^{i+1} \right) ^\lambda}
+d_F(\mathbf{p}, \mathbf{q}) = \mathcal{D}_{\mathcal{S}_N}(\mathbf{p}, \mathbf{q}) = \min_K {\min_{\mathcal{S}_N^K} \sum_{i = 1}^{K-1} l\left( \mathbf{x}^i, \mathbf{x}^{i+1} \right) ^\lambda},
 $$ {#eq-def-fermat}
 
-Donde $\mathcal{S}_N^K$, $K \geq 2$, representa todas las secuencias de puntos compuestas por $K$ elementos tomados de $\mathcal{S}_N$ con
+donde $\mathcal{S}_N^K$, $K \geq 2$, representa todas las secuencias posibles de puntos compuestas por $K$ elementos ${\mathbf{x}^1, \mathbf{x}^2, \dots, \mathbf{x}^K}$ tomados de $\mathcal{S}_N$ con
+
 $$
-\mathbf{x}^1 = \argmin_{\mathbf{x} \in \mathcal{S}_N} l\left( \mathbf{p} , \mathbf{x} \right)
+\mathbf{x}^1 = \argmin_{\mathbf{x} \in \mathcal{S}_N} l\left( \mathbf{p} , \mathbf{x} \right),
 $$ {#eq-def-fermat-x1}
 $$
-\mathbf{x}^K = \argmin_{\mathbf{x} \in \mathcal{S}_N} l\left( \mathbf{q} , \mathbf{x} \right)
+\mathbf{x}^K = \argmin_{\mathbf{x} \in \mathcal{S}_N} l\left( \mathbf{q} , \mathbf{x} \right).
 $$ {#eq-def-fermat-xk}
 
 La minimización se realiza sobre todos los valores posibles de $K$ [@PatuFermatDistance]. Esta distancia captura por sí sola características topológicas del espacio [@IntrinsicPersistentHomologyFermatDistance], por lo que se espera que ayude a la posterior inferencia sobre el diagrama de persistencia construido.
 
 Una de las principales ventajas de la distancia de Fermat es que si $\mathcal{S}_N$ es una muestra i.i.d, distribuida a partir de $f: \mathcal{M} \longrightarrow \mathbb{R}$ una función de densidad desconocida con soporte en $\mathcal{M}$, entonces se demuestra en [@IntrinsicPersistentHomologyFermatDistance; @PatuFermatDistance] que
 
-$$ \lim_{N \rightarrow \infty} N^{\frac{\lambda - 1}{D}} \mathcal{D}_{\mathcal{S}_N}(\mathbf{p}, \mathbf{q}) = c_{d, D} \inf_{\Gamma \subset \mathcal{M}} \int_{\Gamma} \frac{1}{f^{\frac{\lambda - 1}{D}}}$$
+$$ \lim_{N \rightarrow \infty} N^{\frac{\lambda - 1}{D}} \mathcal{D}_{\mathcal{S}_N}(\mathbf{p}, \mathbf{q}) = c_{d, D} \inf_{\Gamma \subset \mathcal{M}} \int_{\Gamma} \frac{1}{f^{\frac{\lambda - 1}{D}}},$$
 
-Es decir, la distancia de Fermat es un estimador consistente de la distancia geodésica sobre $\mathcal{M}$ en la que los caminos se ponderan por el valor de la función de densidad. Esto significa que la distancia de Fermat recupera tanto características de la topología del espacio $\mathcal{M}$ como de la función de distribución a partir de la cual se muestrea $\mathcal{S}_N$.
+es decir, la distancia de Fermat es un estimador consistente de la distancia geodésica sobre $\mathcal{M}$ en la que los caminos se ponderan por el valor de la función de densidad. Esto significa que la distancia de Fermat recupera tanto características de la topología del espacio $\mathcal{M}$ como de la función de distribución a partir de la cual se muestrea $\mathcal{S}_N$.
 
-![Ilustración de la distancia de Fermat entre los puntos destacadas en rojo y verde. Se observa que la misma se obtiene al recorrer la zona con alta densidad de datos del conjunto, sumando las bolas de distancia entre sucesivos saltos. Contrario a lo que se obtendría al utilizar la distancia euclídea, donde la misma resultaría dada por una línea recta que une ambas muestras de forma directa, pasando por el espacio vacío de la parábola de datos.](imagenes/fermat-distance-eg.png){#fig-intro-fermat-eg width=70%}
+![Ilustración de la distancia de Fermat (con $l$ la distancia euclídea y $\lambda = 2$) entre los puntos destacadas en rojo y verde. Se observa que la misma se obtiene al recorrer la zona con alta densidad de datos del conjunto, sumando las bolas de distancia entre sucesivos saltos. Contrario a lo que se obtendría al utilizar la distancia euclídea, donde la misma resultaría dada por una línea recta que une ambas muestras de forma directa, pasando por el espacio vacío de la parábola de datos.](imagenes/fermat-distance-eg.png){#fig-intro-fermat-eg width=70%}
 
 
 ### Aproximación por *k*-NN
 
-Teniendo en cuenta que la carga computacional del cálculo de la distancia de Fermat es elevada, siendo esta $\mathcal{O}(N^3)$ para todas las distancias entre pares de un conjunto de $N$ puntos, una heurística sencilla para reducir este tiempo, sin perdida de garantías en cuanto a los resultados asintóticos, es tomar solo los $k$ vecinos más cercanos de $\mathbf{x}^i$ como posibles $\mathbf{x}^{i+1}$ durante la construcción de las secuencias $\mathcal{S}_N^K$ sobre las cuales se realiza la maximización.
+Teniendo en cuenta que la carga computacional del cálculo de la distancia de Fermat es elevada, siendo esta $\mathcal{O}(N^3)$ para todas las distancias entre pares de un conjunto de $N$ puntos, una heurística sencilla para reducir este tiempo, sin perdida de garantías en cuanto a los resultados asintóticos, es tomar solo los $k$ vecinos más cercanos de $\mathbf{x}^i$ como posibles $\mathbf{x}^{i+1}$ durante la construcción de las secuencias $\mathcal{S}_N^K$ sobre las cuales se realiza la minimización.
 Formalmente, si se define $\mathcal{N}_k(\mathbf{x})$ como el conjunto de $k$ vecinos más cercanos ($k$-NN) de $\mathbf{x}$, entonces la distancia de Fermat se define análogamente en \eqref{eq-def-fermat} pero siendo $\mathcal{S}_N^K$, $K \geq 2$ todas las secuencias posibles de puntos compuestos de $K$ elementos tomados de $\mathcal{S}_N$ tal que $\mathbf{x}^{i+1} \in \mathcal{N}_k(\mathbf{x}^i) \ \forall i$.
 
 Con esta modificación, el cómputo de la distancia de Fermat para todos los pares de un conjunto de $N$ puntos tiene una complejidad temporal asintótica de $\mathcal{O}(N^2 \log N)$, sumado a esto, es posible almacenar la matriz de distancia de forma mucho más eficiente, ya que la misma pasa de ser densa, con $N^2$ elementos distinto de cero, a ser rala contando con $N*k$ elementos no nulos, pudiéndose esto almacenar de forma mucho más eficiente.
@@ -44,30 +45,30 @@ Con esta modificación, el cómputo de la distancia de Fermat para todos los par
 Otro mecanismo de aproximación para la distancia de Fermat se obtiene a partir de la utilización de *landmarks* en el cálculo del camino más corto entre nodos dentro de un grafo. Teniendo en cuenta que el problema de encontrar la distancia de Fermat entre dos puntos puede verse como el problema análogo de encontrar el camino más corto entre dos nodos en el grafo en el que cada punto del conjunto representa un nodo y sus aristas están dadas por las distancias entre los respectivos puntos elevadas al factor $\lambda$, es decir, un grafo completo. A continuación se describe la técnica de *Landmarks* para el cálculo eficiente del camino más corto entre nodos de un grafo:
 
 Sea un grafo $G(V,E)$ con $n$ vértices y $m$ aristas. Dados dos vértices $s, t \in V$, se define $d_G(s,t)$ como la longitud del camino más corto entre dos vértices $s, t \in V$.
-Sea además un conjunto ordenado de $d$ vértices $D = \{u_1, u_2, . . . , u_d\}$ del grafo $G$, que llamamos *landmarks*. La idea principal es representar cada otro vértice en el grafo como un vector de distancias de camino más corto al conjunto de landmarks. En particular, cada vértice $v \in V$ se representa como un vector $\phi(v)$ en $\mathbb{R}^d$:
+Sea además un conjunto ordenado de $d$ vértices $D = \{u_1, u_2, . . . , u_d\}$ del grafo $G$, que llamamos *landmarks*. La idea principal es representar cada otro vértice en el grafo como un vector de distancias de camino más corto al conjunto de *landmarks*. En particular, cada vértice $v \in V$ se representa como un vector $\phi(v)$ en $\mathbb{R}^d$:
 
 $$
-\phi(v) = [ d_G(v, u_1), d_G(v, u_2), ..., d_G(v, u_d) ]^T = [ \phi_1(v), \phi_2(v), ..., \phi_d(v) ]^T
+\phi(v) = [ d_G(v, u_1), d_G(v, u_2), ..., d_G(v, u_d) ]^T = [ \phi_1(v), \phi_2(v), ..., \phi_d(v) ]^T.
 $$
 
 
 Teniendo en cuenta que la distancia de camino más corto en grafos es una métrica y, por lo tanto, satisface la desigualdad triangular. Es decir, dados tres nodos $s, u$ y $t$, se cumplen las siguientes desigualdades:
 
-$$|d_G(s, u) - d_G(u, t)| \leq d_G(s, t) \leq d_G(s, u) + d_G(u, t) $$ {#eq-landmark-bounds}
+$$|d_G(s, u) - d_G(u, t)| \leq d_G(s, t) \leq d_G(s, u) + d_G(u, t). $$ {#eq-landmark-bounds}
 
 Resulta una observación importante que si $u$ pertenece al camino más corto de $s$ a $t$, entonces la cota superior se cumple con igualdad, es decir $d_G(s, t) = d_G(s, u) + d_G(u, t)$
 
 Haciendo uso entonces de las representaciones $\phi(v)$ y $\phi(t)$ y mediante las desigualdades expresadas en \eqref{eq-landmark-bounds} podemos acotar $d_G(s,t)$ como
 
-$$\max_i|\phi_i(s) - \phi_i(t)| \leq d_G(s,t) \leq \min_j\{\phi_j(s) + \phi_j(t)\}$$
+$$\max_i|\phi_i(s) - \phi_i(t)| \leq d_G(s,t) \leq \min_j\{\phi_j(s) + \phi_j(t)\}.$$
 
 Si se definen $L = \max_i|\phi_i(s) - \phi_i(t)|$ y $\min_j\{\phi_j(s) + \phi_j(t)\} = U$ podemos entonces estimar $d_G(s,t)$ como
 
-- La estimación superior $\tilde{d}_G(s,t) = U$
-- La estimación del punto medio $\tilde{d}_G(s,t) = \frac{L+U}{2}$
-- La estimación de la media geométrica $\tilde{d}_G(s, t) = \sqrt{L \cdot U}$.
+- La estimación superior $\tilde{d}_{G, U}(s,t) = U$.
+- La estimación del punto medio $\tilde{d}_{G, M}(s,t) = \frac{L+U}{2}$.
+- La estimación de la media geométrica $\tilde{d}_{G, G}(s, t) = \sqrt{L \cdot U}$.
 
-Nótese que en todos los casos, la estimación es muy rápida, ya que solo se necesitan $O(d)$. La cota superior $\tilde{d}_G(s,t) = U$ resulta la mejor estimación según la experimentación realizada en [@FermatLandmarks]. Adicionalmente, en [@FermatLandmarks] se muestra que la elección aleatoria de *landmarks* cuenta con buenas garantías frente a la elección óptima, siendo esta última un problema computacionalmente demasiado costoso.
+Nótese que en todos los casos, la estimación es muy rápida, ya que solo se necesitan $O(d)$. La cota superior $\tilde{d}_{G, U}(s,t) = U$ resulta la mejor estimación según la experimentación realizada en [@FermatLandmarks]. Adicionalmente, en [@FermatLandmarks] se muestra que la elección aleatoria de *landmarks* cuenta con buenas garantías frente a la elección óptima, siendo esta última un problema computacionalmente demasiado costoso.
 
 ### Implementación
 
