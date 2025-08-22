@@ -4,7 +4,6 @@
 
 == Estimación robusta de distancia de Hausdorff
 
-// Si tenemos dos conjuntos de puntos $cal(A)_N$ y $cal(B)_N $, la distancia de Hausdorff puede escribirse como:
 
 #subtitle_emph()[Distancia de Hausdorff para nubes de puntos]
 
@@ -14,15 +13,9 @@ $
 
 #subtitle_emph()[Nuestro caso particular $cal(A)_N = cal(S)_N, quad cal(B)_N = cal(S)_N^j$]
 
-// Si tomamos el caso especial en el que $cal(A)_N$ es nuestro conjunto de datos $cal(A)_n = cal(S)_N$ y $cal(B)_N$ es el conjunto de puntos muestreada a partir de $cal(S)_N$, ya sea por sub-muestreo o por _bootstrap_, $cal(B)_N = cal(S)_N^j$, entonces al ser $cal(S)_N^j$ un *subconjunto* de $cal(S)_N$ se tiene que  $min_(bold(a) in cal(S)_N) d(bold(a), bold(b)) = 0$
-
-// Por lo que la distancia de Hausdorff se reduce a
 
 $ d_H (cal(S)_N, cal(S)_N^j) = max_(bold(a) in cal(S)_N) min_(bold(b) in cal(S)^j_N) d(bold(a), bold(b)) $
 
-// #frame(counter: "Estimación robusta de distancia de Hausdorff", color: POSITIVE_COLOR)[
-//   Tomar el máximo de una distancia es una operación muy sensible a valores atípicos, por lo que con el objecivo de hacer esta operación más robusta, se reemplaza el máximo por un percentil alto $gamma$ de la distribución de distancias @RobustHausdorffDistance. El valor de $gamma$ obtenido mediante experimentación fue $gamma = 0.97$
-// ]
 
 #subtitle_emph(color: POSITIVE_COLOR)[Estimación robusta de distancia de Hausdorff]
 
@@ -30,8 +23,6 @@ $ hat(d)_H (cal(S)_N, cal(S)_N^j) = op("percentil", limits: #true)_(bold(a) in c
 
 Valor obtenido mediante experimentación:
 $ gamma = 0.97 $
-
-
 
 
 == Estimación de regiones de confianza
@@ -110,27 +101,3 @@ $ gamma = 0.97 $
   [],
   algo_bootstrap
 )
-
-// Sea $cal(S)_N$ un conjunto de muestras i.i.d obtenidas a partir de la medida de probabilidad $F$ con soporte en una variedad $cal(M)$, se define
-
-// $ f_h (x) = integral_cal(M) 1/h^D K(frac(||x - u ||_2, h)) d F(u) $
-
-// $f_h$ representa la densidad de la medida de probabilidad $F_h$ que es una versión suavizada de $F$ con un _kernel_ $K$ y un ancho de banda $h$ @ConfidenceSetsForPersistenceDiagrams.
-
-// #v(0.5em)
-
-// #message(fill: POSITIVE_COLOR)[
-//   El diagrama de persistencia de los conjuntos de nivel de $f_h$, denotado como $cal(P)_h$, conserva la información topológica de $cal(M)$ y resulta más estables al costo de omitir detalles sutiles de la topología del espacio original, haciéndolo mas robusto al ruido y datos atípicos.
-// ]
-
-// #v(0.5em)
-
-// Dado que $f_h$ es desconocido, utilizaremos su estimador usual:
-
-// $ f_h (x) = sum_(i=1)^N 1/h^D K(frac(||x - x_i ||_2, h)) $
-
-// que será evaluado en una grilla de puntos para construir diagrama de persistencia.
-
-// #message(fill: NEGATIVE_COLOR)[
-//   Este método es computacionalmente costoso ya que requiere calcular el diagrama de persistencia $hat(cal(P))^j$ para cada sub-muestra $cal(S)_N^j$
-// ]

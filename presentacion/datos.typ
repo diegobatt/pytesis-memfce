@@ -48,17 +48,6 @@
 
 == Datos Reales
 
-// Queremos analizar como los métodos estudiados se comportan con datos reales. Utilizamos los conjuntos de datos introducidos en @FootballRobustDataset
-
-// El conjunto de datos consiste en mediciones correspondientes a la posición de jugadores de fútbol dentro de la cancha a lo largo de un partido, en el que se obtiene un punto cada un intervalo de tiempo determinado
-
-// #message(fill: INFORMATIVE_COLOR)[
-//   Con el objetivo de obtener agujeros en las zonas donde los jugadores no participan activamente, se agregan artificialmente puntos en los bordes del conjunto de datos, correspondientes a los límites de la cancha @FootballRobustDatasetExplanation
-// ]
-
-// Los diferentes jugadores ocupan diferentes espacios en la cancha, en función de la posición que ocupan en el juego, por lo que analizaremos por separado los diferentes jugadores elegidos.
-
-// Se analizarón cuatro jugadores con las siguientes posiciones:
 #figure(image("imagenes/datos/paper-football.png", width: 80%))
 
 #subtitle_emph()[Jugadores analizados]
@@ -71,6 +60,6 @@
   [Mediocampista],
 )
 
-=== Jugadores de Futbol
+=== Jugadores de Fútbol
 
 #figure(image("imagenes/datos/futbol.png", width: 78%))

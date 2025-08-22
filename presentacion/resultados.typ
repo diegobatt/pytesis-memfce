@@ -71,7 +71,7 @@
 
 #figure(image("imagenes/resultados/circulo-relleno.png", width: 75%))
 
-=== Jugadores de Futbol
+=== Jugadores de Fútbol
 
 #subtitle_emph()[Defensor Central (2)]
 #figure(image("imagenes/resultados/jugador-2.png", width: 75%))

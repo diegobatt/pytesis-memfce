@@ -2,7 +2,7 @@
 
 
 #frame(counter: "Homología Persistente (Análisis Topologico de Datos)", color: INFORMATIVE_COLOR)[
-  Detectar agujeros en conjuntos de datos resulta útil para muchas áreas de aplicación.
+  Los “agujeros” en los datos revelan estructura: la homología persistente permite detectarlos y analizarlos de forma confiable.
 ]
 
 
