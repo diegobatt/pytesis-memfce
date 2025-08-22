@@ -9,9 +9,8 @@
     align:center,
     [
       #v(5em)
-      $ d_F (bold(p), bold(q)) = min_K min_(cal(S)_N^K) sum_(i=1)^(K-1) l(bold(x)^i, bold(x)^(i+1))^lambda $
-      $ bold(x)^1 = op("argmin", limits: #true)_(bold(x) in cal(S)_N) l(bold(p), bold(x)) $
-      $ bold(x)^K = op("argmin", limits: #true)_(bold(x) in cal(S)_N) l(bold(q), bold(x)) $
+      $ d_F (bold(p), bold(q)) = min_(K >= 2) min_(cal(S)_N^K) sum_(i=1)^(K-1) l(bold(x)^i, bold(x)^(i+1))^lambda $
+      $ bold(x)^1 = bold(p), #h(0.3cm) bold(x)^K = bold(q)$
     ],
     figure(image("imagenes/intro/fermat-distance-eg.png", width: 100%)),
 )
