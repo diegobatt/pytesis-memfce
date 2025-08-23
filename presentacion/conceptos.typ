@@ -1,4 +1,5 @@
 #import "slides.typ": *
+#import "@preview/cetz:0.4.1"
 
 
 == Distancia de Fermat
@@ -30,10 +31,48 @@
 
 #subtitle_emph("Homología", color: POSITIVE_COLOR)
 
+Área de estudio que clasifica espacios topológicos en términos de agujeros de diferentes dimensiones.
 
-  La homología es el área de estudio que clasifica espacios topológicos en términos de agujeros de diferentes dimensiones.
+// #figure(image("imagenes/intro/ciclostoro.png", width: 40%))
+#align(center, 
+  cetz.canvas({
+    import cetz.draw: *
+    set-style(stroke: (thickness: 1pt))
+    group({
+      translate(x: -2)
+      compound-path({
+        hobby(
+          (-2.0,  0.2),
+          (-1.0,  1.3),
+          ( 1.0,  1.3),
+          ( 2.0,  0.1),
+          ( 1.4, -0.9),
+          ( 0.0, -1.3),
+          (-1.4, -0.8),
+          close: true
+        )
+        circle((-0.6, 0.25), radius: 0.45)
+        circle(( 0.6, 0.25), radius: 0.45)
+      }, fill: green, fill-rule: "even-odd")
+    })
 
-#figure(image("imagenes/intro/ciclostoro.png", width: 40%))
+    group({
+      translate(x: 3)
+      compound-path({
+        hobby(
+          (-1.8,  1.2),
+          ( 0.8,  1.6),
+          ( 2.0,  0.2),
+          ( 1.3, -1.0),
+          (-0.6, -1.2),
+          (-2.0, -0.1),
+          close: true
+        )
+        circle((0.2, 0.2), radius: 0.45)
+      }, fill: green, fill-rule: "even-odd")
+    })
+  })
+)
 
 === Homología Persistente
 
@@ -116,9 +155,6 @@ $ cal(S)_N^(epsilon) = union_(bold(x) in cal(S)_N) B(bold(x), epsilon ) = L_epsi
 
 #subtitle_emph()[Distancia entre diagramas de persistencia]
 
-
-
-
 #let message_box_bottleneck = [
   #v(7em)
     $
@@ -138,14 +174,31 @@ $ cal(S)_N^(epsilon) = union_(bold(x) in cal(S)_N) B(bold(x), epsilon ) = L_epsi
 
 == Distancia de Hausdorff
 
-$
-d(bold(x), C) &= inf_(bold(c) in C) d(bold(x), bold(c)) \
-d_H (A, B) &= max{sup_(bold(b) in B) d(bold(b), A), sup_(bold(a) in A) d(bold(a), B)} \
-d_H (A, B) &= sup_(bold(x) in M) |d(bold(x), A) - d(bold(x), B)|
-$
+#let equations_hausdoroff = [
+  $
+  d(bold(x), Y) &= inf_(bold(y) in Y) d(bold(x), bold(y)) \
+  d_H (X, Y) &= max{sup_(bold(y) in Y) d(bold(y), X), sup_(bold(x) in X) d(bold(x), Y)} \
+  // d_H (A, B) &= sup_(bold(x) in M) |d(bold(x), A) - d(bold(x), B)|
+  $
+]
 
+#let cota_hausdorff = [
+  #v(1.5em)
+  $
+  W_infinity (cal(P)(X), cal(P)(Y)) <= d_H (X, Y)
+  $
+]
 
-#figure(image("imagenes/intro/hausdorff-distance.png", width: 67%))
+#grid(
+    columns: (1fr, 1fr),
+    align:center,
+    equations_hausdoroff,
+    cota_hausdorff,
+)
+
+#v(1em)
+
+#figure(image("imagenes/intro/hausdorff-distance.png", width: 77%))
 
 
 == Regiones de Confianza
@@ -195,7 +248,7 @@ lim_(n arrow infinity ) inf bb(P)(0 lt.eq  W_infinity (cal(P), hat(cal(P))) lt.e
 $
 
 
-$ cal(C)_n = {tilde(P) | W_infinity (tilde(P) , hat(P)) < theta_n} $
+$ cal(C)_n = {tilde(cal(P)) | W_infinity (tilde(cal(P)) , hat(cal(P))) < theta_n} $
 
 
 #subtitle_emph(color: INFORMATIVE_COLOR)[Interpretaciones de $cal(C)_n$]

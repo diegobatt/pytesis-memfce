@@ -2,29 +2,6 @@
 #import "@preview/algo:0.3.4": algo, i, d, comment, code
 
 
-== Estimación robusta de distancia de Hausdorff
-
-
-#subtitle_emph()[Distancia de Hausdorff para nubes de puntos]
-
-$
-d_H (cal(A)_N, cal(B)_N) = max{ max_(bold(a) in cal(A)_N) min_(bold(b) in cal(B)_N) d(bold(a), bold(b)), max_(bold(b) in cal(B)_N) min_(bold(a) in cal(A)_N) d(bold(a), bold(b)) }
-$
-
-#subtitle_emph()[Nuestro caso particular $cal(A)_N = cal(S)_N, quad cal(B)_N = cal(S)_N^j$]
-
-
-$ d_H (cal(S)_N, cal(S)_N^j) = max_(bold(a) in cal(S)_N) min_(bold(b) in cal(S)^j_N) d(bold(a), bold(b)) $
-
-
-#subtitle_emph(color: POSITIVE_COLOR)[Estimación robusta de distancia de Hausdorff]
-
-$ hat(d)_H (cal(S)_N, cal(S)_N^j) = op("percentil", limits: #true)_(bold(a) in cal(S)_N)(gamma)  min_(bold(b) in cal(S)^j_N) d(bold(a), bold(b)) $
-
-Valor obtenido mediante experimentación:
-$ gamma = 0.97 $
-
-
 == Estimación de regiones de confianza
 
 === Sub-muestreo con función de distancia
@@ -101,3 +78,26 @@ $ gamma = 0.97 $
   [],
   algo_bootstrap
 )
+
+
+== Estimación robusta de distancia de Hausdorff
+
+
+#subtitle_emph()[Distancia de Hausdorff para nubes de puntos]
+
+$
+d_H (cal(A)_N, cal(B)_N) = max{ max_(bold(a) in cal(A)_N) min_(bold(b) in cal(B)_N) d(bold(a), bold(b)), max_(bold(b) in cal(B)_N) min_(bold(a) in cal(A)_N) d(bold(a), bold(b)) }
+$
+
+#subtitle_emph()[Nuestro caso particular $cal(A)_N = cal(S)_N, quad cal(B)_N = cal(S)_N^j$]
+
+
+$ d_H (cal(S)_N, cal(S)_N^j) = max_(bold(a) in cal(S)_N) min_(bold(b) in cal(S)^j_N) d(bold(a), bold(b)) $
+
+
+#subtitle_emph(color: POSITIVE_COLOR)[Estimación robusta de distancia de Hausdorff]
+
+$ hat(d)_H (cal(S)_N, cal(S)_N^j) = op("percentil", limits: #true)_(bold(a) in cal(S)_N)(gamma)  min_(bold(b) in cal(S)^j_N) d(bold(a), bold(b)) $
+
+Valor obtenido mediante experimentación:
+$ gamma = 0.97 $
