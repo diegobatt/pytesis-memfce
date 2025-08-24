@@ -12,22 +12,22 @@
   table.cell(fill: gray.lighten(70%))[#body]
 }
 
-#v(2em)
+// #v(2em)
 
-#subtitle_emph()[Diagramas de Persistencia]
+// #subtitle_emph()[Diagramas de Persistencia]
 
-#list(
-  spacing: 1.5em,
-  [Sub-muestreo con distancia euclídea #h(0.5em) #text(fill: POSITIVE_COLOR)[$times$ Todos los conjuntos de datos]],
-  [Sub-muestreo con distancia de Fermat #h(0.5em) #text(fill: POSITIVE_COLOR)[$times$ Todos los conjuntos de datos]],
-  [Bootstrap con estimación por densidad #h(0.5em) #text(fill: POSITIVE_COLOR)[$times$ Todos los conjuntos de datos]]
-)
+// #list(
+//   spacing: 1.5em,
+//   [Sub-muestreo con distancia euclídea #h(0.5em) #text(fill: POSITIVE_COLOR)[$times$ Todos los conjuntos de datos]],
+//   [Sub-muestreo con distancia de Fermat #h(0.5em) #text(fill: POSITIVE_COLOR)[$times$ Todos los conjuntos de datos]],
+//   [Bootstrap con estimación por densidad #h(0.5em) #text(fill: POSITIVE_COLOR)[$times$ Todos los conjuntos de datos]]
+// )
 
-#v(2em)
+// #v(2em)
 
-#subtitle_emph()[Potencia]
+// #subtitle_emph()[Potencia]
 
-- $M = 50$ repeticiones de detección de agujeros #h(0.5em) #text(fill: POSITIVE_COLOR)[$times$ Conjuntos de datos literatura y adicionales]
+// - $M = 50$ repeticiones de detección de agujeros #h(0.5em) #text(fill: POSITIVE_COLOR)[$times$ Conjuntos de datos literatura y adicionales]
 
 
 == Diagramas de Persistencia

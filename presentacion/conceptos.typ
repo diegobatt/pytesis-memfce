@@ -10,7 +10,7 @@
     align:center,
     [
       #v(5em)
-      $ d_F (bold(p), bold(q)) = min_(K >= 2) min_(cal(S)_N^K) sum_(i=1)^(K-1) l(bold(x)^i, bold(x)^(i+1))^lambda $
+      $ d_F (bold(p), bold(q)) = min_(cal(S)_N^K) sum_(i=1)^(K-1) ||bold(x)^i - bold(x)^(i+1)||^lambda $
       $ bold(x)^1 = bold(p), #h(0.3cm) bold(x)^K = bold(q)$
     ],
     figure(image("imagenes/intro/fermat-distance-eg.png", width: 100%)),
@@ -243,33 +243,38 @@ Analizar la distribución empírica de $hat(theta)^j = T(cal(S)_N^j)$
 
 #v(2em)
 
-$
-lim_(n arrow infinity ) inf bb(P)(0 lt.eq  W_infinity (cal(P), hat(cal(P))) lt.eq theta_n) gt.eq 1 - alpha
-$
-
-
-$ cal(C)_n = {tilde(cal(P)) | W_infinity (tilde(cal(P)) , hat(cal(P))) < theta_n} $
-
-
-#subtitle_emph(color: INFORMATIVE_COLOR)[Interpretaciones de $cal(C)_n$]
-
 #grid(
-    columns: (1fr, 0.04fr, 1fr),
-    align:center,
-    message(fill: INFORMATIVE_COLOR)[Caja de lado $2 theta_n$ en cada cualidad topológica $p_i = (b_i, d_i)$],
-    [],
-    message(fill: POSITIVE_COLOR)[Banda de ancho $sqrt(2) theta_n$ alrededor de la diagonal del diagrama de persistencia],
+  align: center,
+  columns: (1fr, 1fr),
+  [$
+  lim_(n arrow infinity ) inf bb(P)(0 lt.eq  W_infinity (cal(P), hat(cal(P))) lt.eq theta_n) gt.eq 1 - alpha
+  $],
+  [$ cal(C)_n = {tilde(cal(P)) | W_infinity (tilde(cal(P)) , hat(cal(P))) < theta_n} $]
 )
 
 
-#subtitle_emph(color: POSITIVE_COLOR)[Test de Hipótesis basado en interpretación Dicotómica]
-
-$
-  l_i = d_i - b_i \
-  H_0^i : l_i  = 0 \
-  H_1^i : l_i > 0
-$
 
 
 
-#figure(image("imagenes/intro/intervalo-diagrama-persistencia.png", width: 100%))
+// #subtitle_emph(color: INFORMATIVE_COLOR)[Interpretaciones de $cal(C)_n$]
+
+// #grid(
+//     columns: (1fr, 0.04fr, 1fr),
+//     align:center,
+//     message(fill: INFORMATIVE_COLOR)[Caja de lado $2 theta_n$ en cada cualidad topológica $p_i = (b_i, d_i)$],
+//     [],
+//     message(fill: POSITIVE_COLOR)[Banda de ancho $sqrt(2) theta_n$ alrededor de la diagonal del diagrama de persistencia],
+// )
+
+
+// #subtitle_emph(color: POSITIVE_COLOR)[Test de Hipótesis basado en interpretación Dicotómica]
+
+// $
+//   l_i = d_i - b_i \
+//   H_0^i : l_i  = 0 \
+//   H_1^i : l_i > 0
+// $
+
+
+
+#figure(image("imagenes/intro/intervalo-diagrama-persistencia.png", width: 90%))

@@ -2,26 +2,26 @@
 
 == Datos Sintéticos
 
-#v(2em)
+// #v(2em)
 
-#subtitle_emph()[Conjuntos de datos de la literatura]
+// #subtitle_emph()[Conjuntos de datos de la literatura]
 
-#list(
-  spacing: 1.5em,
-  [Circunferencia Uniforme #h(0.5em) #text(fill: POSITIVE_COLOR)[$+$Ruido $+$Outliers] ],
-  [Circunferencia Gaussiana #h(0.5em) #text(fill: POSITIVE_COLOR)[$+$Ruido $+$Outliers]  ],
-  [Anteojos #h(0.5em) #text(fill: POSITIVE_COLOR)[$+$Ruido $+$Outliers] ],
-)
+// #list(
+//   spacing: 1.5em,
+//   [Circunferencia Uniforme #h(0.5em) #text(fill: POSITIVE_COLOR)[$+$Ruido $+$Outliers] ],
+//   [Circunferencia Gaussiana #h(0.5em) #text(fill: POSITIVE_COLOR)[$+$Ruido $+$Outliers]  ],
+//   [Anteojos #h(0.5em) #text(fill: POSITIVE_COLOR)[$+$Ruido $+$Outliers] ],
+// )
 
-#v(2em)
+// #v(2em)
 
-#subtitle_emph()[Conjuntos de datos adicionales]
+// #subtitle_emph()[Conjuntos de datos adicionales]
 
-#list(
-  spacing: 1.5em,
-  [Circunferencia en 3D],
-  [Círculo Relleno con densidad variable en función de la distancia al centro],
-)
+// #list(
+//   spacing: 1.5em,
+//   [Circunferencia en 3D],
+//   [Círculo Relleno con densidad variable en función de la distancia al centro],
+// )
 
 
 
