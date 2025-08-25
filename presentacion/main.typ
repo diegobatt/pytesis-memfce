@@ -48,8 +48,6 @@
 
 #include("conclusiones.typ")
 
-#heading(outlined: false, bookmarked: false)[
-  ¡Muchas Gracias!
-  #v(2em)
-  ¿Preguntas?
-]
+#heading(outlined: false, bookmarked: false)[¡Muchas Gracias!]
+
+#heading(outlined: false, bookmarked: false)[¿Preguntas?]
