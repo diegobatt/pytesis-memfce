@@ -24,16 +24,12 @@
 
 
 
-== Análisis topológico de datos
+== Homología
 
+Área de estudio dentro de la topología que clasifica variedades (_Manifold_) en términos de agujeros de diferentes dimensiones.
 
-#figure(image("imagenes/intro/TDA.png", width: 75%))
+#v(2em)
 
-#subtitle_emph("Homología", color: POSITIVE_COLOR)
-
-Área de estudio que clasifica espacios topológicos en términos de agujeros de diferentes dimensiones.
-
-// #figure(image("imagenes/intro/ciclostoro.png", width: 40%))
 #align(center, 
   cetz.canvas({
     import cetz.draw: *
@@ -73,6 +69,14 @@
     })
   })
 )
+
+#v(2em)
+
+#subtitle_emph()[Cualidades topológicas]
+
+- $H_0$: Dos componentes conexas 
+- $H_1$: Tres Agujeros 
+
 
 === Homología Persistente
 
