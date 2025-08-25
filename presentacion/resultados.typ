@@ -190,7 +190,7 @@
   table.hline(stroke: gray),
   table.cell(rowspan: 4)[Euclídeo],
     [0], emph_cell[0], emph_cell[0], emph_cell(good: false)[8%],
-    [1], emph_cell[100%], emph_cell[100%], emph_cell(good: false)[80%],
+    [1], emph_cell[100%], emph_cell[100%], emph_cell()[80%],
     [2], emph_cell[0], emph_cell[0], emph_cell(good: false)[12%],
     [3], emph_cell[0], emph_cell[0], emph_cell[0],
   table.cell(rowspan: 4)[Fermat],
@@ -204,10 +204,6 @@
     [2], emph_cell[0], emph_cell[0], emph_cell(good: false)[100%],
     [3], emph_cell[0], emph_cell[0], emph_cell[0],
 )]]
-
-// #message(fill: POSITIVE_COLOR)[
-//   Similar al caso sin ruido, Fermat logra mayoritariamente detectar un único agujero en los anteojos para el 98% de las corridas
-// ]
 
 
 === Círculo relleno
