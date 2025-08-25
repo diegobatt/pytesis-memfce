@@ -19,6 +19,11 @@
 #set text(10pt)
 #set heading(numbering: "1.")
 
+#heading(outlined: false, bookmarked: false)[
+  Cuando empezamos a trabajar en esta tesis...
+
+  #figure(image("imagenes/covid.jpg", width: 50%))
+]
 
 = Qué buscamos y qué aprendimos
 
