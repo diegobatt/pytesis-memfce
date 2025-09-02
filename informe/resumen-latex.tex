@@ -16,6 +16,7 @@
 
 \renewcommand{\abstractname}{Abstract}
 \begin{abstract}
+    \textbf{Hypothesis testing for persistent homology using the Fermat distance}
 
     This dissertation focuses on topological data analysis (TDA) and, specifically, on the development of hypothesis tests to detect topological features of a manifold based on i.i.d. samples. Key TDA concepts are introduced, and state-of-the-art techniques for hypothesis testing on persistence diagrams are described. These diagrams summarize the homology of a dataset, helping to identify first-degree cycles (curves that cannot be deformed to a point). Traditionally, such tests rely on the Euclidean norm, but this work explores the use of the Fermat distance, which has shown benefits in datasets with underlying topology. Through simulations of confidence sets on synthetic and real datasets, both distances are compared, demonstrating that Fermat distance outperforms Euclidean distance in detecting topological features, with statistically significant results. Moreover, Fermat distance is shown to be computationally scalable with respect to data dimensionality. As an additional contribution, an R library was developed to facilitate future research on Fermat distance in this context.
 
